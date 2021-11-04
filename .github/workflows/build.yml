@@ -1,0 +1,14 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: silkeh/clang:latest
+    steps:
+    - uses: actions/checkout@v2
+    - run: make -j
