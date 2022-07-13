@@ -1,0 +1,11 @@
+/build
+/.vscode
+
+*.lnk
+desktop.ini
+
+*.exe
+*.out
+*.elf
+*.d
+*.o
