@@ -57,9 +57,27 @@ struct Token {
 };
 
 enum NodeKind {
+  ND_TYPE,
+  
   ND_VALUE,
+  ND_VARIABLE,
+  ND_CALLFUNC,
+
+  ND_ADDR,
 
   ND_EXPR,
+
+  ND_LET,
+  ND_IF,
+  ND_FOR,
+  ND_FOREACH,
+  ND_LOOP,
+  ND_WHILE,
+  ND_DO_WHILE,
+
+  ND_FUNCTION,
+
+  ND_CLASS,
 };
 
 enum ExprKind {

@@ -32,12 +32,6 @@ int Application::main(int argc, char** argv) {
   Lexer lexer{ source };
 
   auto token = lexer.lex();
-
-  // print token
-  for(auto t=token;t->kind!=TOK_END;t=t->next){
-    std::cout<<t->str<<std::endl;
-  }
-
   alert;
 
   Parser parser{ token };
@@ -49,8 +43,6 @@ int Application::main(int argc, char** argv) {
   Evaluater eval;
   auto type = eval.eval(node);
   alert;
-
-  std::cout << type.to_string() << std::endl;
 
   NodeRunner runner;
   auto obj = runner.run(node);

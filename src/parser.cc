@@ -15,6 +15,10 @@ Node* Parser::factor() {
       next();
       return node;
     
+    case TOK_IDENT: {
+      node->kind = ND_VARIABLE;
+    }
+
     default: {
 
       break;
