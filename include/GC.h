@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Object.h"
+
 class GC {
 public:
   static void execute();

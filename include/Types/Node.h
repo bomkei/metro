@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 enum NodeKind {
   ND_TYPE,
   
@@ -32,6 +34,7 @@ enum ExprKind {
   EX_DIV,
 };
 
+struct Token;
 struct Object;
 struct Node {
   struct ExprItem {
@@ -65,11 +68,6 @@ struct Node {
   {
   }
 
-  Node* append(Node* node) {
-    return nodes.emplace_back(node);
-  }
-
-  ExprItem& expr_append(ExprKind kind, Node* node) {
-    return expr.emplace_back(kind, node);
-  }
+  Node* append(Node* node);
+  ExprItem& expr_append(ExprKind kind, Node* node);
 };

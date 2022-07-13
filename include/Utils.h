@@ -2,6 +2,8 @@
 
 #include <string>
 #include <vector>
+#include <locale>
+#include <codecvt>
 
 //#define  METRO_DEBUG  1
 #define  METRO_DEBUG  (Application::get_instance()->is_debug_enabled())
@@ -10,6 +12,9 @@
 
 #define  alert  _Alert(__FILE__,__LINE__)
 #define  crash  _Crash(__FILE__,__LINE__)
+
+int _Alert(char const* f, int n);
+void _Crash(char const* f, int n);
 
 // debugs
 // inline static int _Alert(char const* f, int n) {
@@ -21,9 +26,6 @@
 //   exit(1);
 // }
 
-int _Alert(char const* f, int n);
-void _Crash(char const* f, int n);
-
 namespace Utils {
   template <class... Args>
   std::string format(char const* fmt, Args&&... args) {
@@ -32,16 +34,8 @@ namespace Utils {
     return buf;
   }
 
-  class Strings {
-    static inline std::wstring_convert<std::codecvt_utf8<char16_t>, char16_t> conv;
-  
-  public:
-    static auto to_wstring(std::string const& s) {
-      return conv.from_bytes(s);
-    }
-
-    static auto to_string(std::u16string const& s) {
-      return conv.to_bytes(s);
-    }
+  namespace Strings {
+    std::u16string to_u16string(std::string const& s);
+    std::string to_string(std::u16string const& s);
   };
 }

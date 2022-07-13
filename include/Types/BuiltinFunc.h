@@ -3,8 +3,11 @@
 /* -------------------- //
   BuiltinFunc
 
-  
+
 // --------------------- */
+
+#include <vector>
+#include "Object.h"
 
 struct BuiltinFunc {
   using FuncPointer = Object*(*)(std::vector<Object*> const& args);
