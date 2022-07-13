@@ -25,7 +25,10 @@
 
 enum TokenKind {
   TOK_INT,
+  TOK_FLOAT,
   TOK_IDENT,
+  TOK_CHAR,
+  TOK_STRING,
   TOP_OPERATOR,
   TOK_PUNCTUATER,
   TOK_END
@@ -213,6 +216,8 @@ public:
 
   Node* factor();
   Node* add();
+  Node* mul();
+  Node* expr();
 
   Node* parse();
 

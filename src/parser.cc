@@ -17,15 +17,30 @@ Node* Parser::factor() {
     
     case TOK_IDENT: {
       node->kind = ND_VARIABLE;
+
+      next();
+
+      if( eat("(") ) {
+        node->kind = ND_CALLFUNC;
+
+        if( !eat(")") ) {
+          do {
+            node->nodes.emplace_back(expr());
+          } while( eat(",") );
+          expect(")");
+        }
+      }
+
+      break;
     }
 
     default: {
 
-      break;
+      crash;
     }
   }
 
-  crash;
+  return node;
 }
 
 Node* Parser::add() {
@@ -43,6 +58,8 @@ Node* Parser::add() {
 
   return x;
 }
+
+Node* Parser::
 
 Node* Parser::parse() {
   return add();

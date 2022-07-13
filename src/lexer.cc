@@ -57,12 +57,33 @@ Token* Lexer::lex() {
     // digits
     if( isdigit(ch) ) {
       while( isdigit(peek()) ) position++;
+
+      if( peek() == '.' ) {
+        position++;
+
+        if( peek() <= ' ' ) {
+          cur->kind = TOK_FLOAT;
+        }
+        else if( isalpha(ch == peek()) || ch == '_' ) {
+          position--;
+        }
+      }
     }
 
     // ident
     else if( isalpha(ch) || ch == '_' ) {
       cur->kind = TOK_IDENT;
       while( isalnum(ch = peek()) || ch == '_' ) position++;
+    }
+
+    // char, string
+    else if( ch == '"' || ch == '\'' ) {
+      auto begin = ch;
+
+      cur->kind = begin == '"' ? TOK_STRING : TOK_CHAR;
+
+      for( position++; (ch = peek()) != begin; position++ );
+      position++;
     }
     
     else {
