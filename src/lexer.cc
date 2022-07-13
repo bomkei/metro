@@ -52,6 +52,8 @@ Token* Lexer::lex() {
     auto pos = position;
     auto str = source.data() + pos;
 
+    cur = new Token(TOK_INT, cur, pos);
+
     // digits
     if( isdigit(ch) ) {
       while( isdigit(peek()) ) position++;
@@ -59,6 +61,7 @@ Token* Lexer::lex() {
 
     // ident
     else if( isalpha(ch) || ch == '_' ) {
+      cur->kind = TOK_IDENT;
       while( isalnum(ch = peek()) || ch == '_' ) position++;
     }
     
@@ -68,13 +71,15 @@ Token* Lexer::lex() {
       for( std::string_view s : long_operators ) {
         if( match(s) ) {
           position += s.length();
+          cur->str = s;
           goto found_op;
         }
       }
 
-      for( char c : operators ) {
+      for( char const& c : operators ) {
         if( ch == c ) {
           position++;
+          cur->str = { &c, 1 };
           goto found_op;
         }
       }

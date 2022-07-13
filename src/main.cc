@@ -24,7 +24,15 @@ int main(int argc, char** argv) {
 
   alert;
 
-  
+  Parser parser{ token };
 
+  auto node = parser.parse();
+
+  alert;
+
+  Evaluater eval;
+  auto type = eval.eval(node);
+
+  std::cout << type.to_string() << std::endl;
 
 }

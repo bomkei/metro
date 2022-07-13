@@ -4,6 +4,9 @@
 *.lnk
 desktop.ini
 
+test.*
+memo.*
+
 *.exe
 *.out
 *.elf
