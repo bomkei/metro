@@ -15,10 +15,12 @@ LDFLAGS			:= -Wl,--gc-sections
 
 %.o: %.c
 	@echo $(notdir $<)
+	@$(CC) $(CFLAGS) -MP -MMD -MF $*.d -S -o $*.s $<
 	@$(CC) $(CFLAGS) -MP -MMD -MF $*.d -c -o $@ $<
 
 %.o: %.cc
 	@echo $(notdir $<)
+	@$(CXX) $(CXXFLAGS) -MP -MMD -MF $*.d -S -o $*.s $<
 	@$(CXX) $(CXXFLAGS) -MP -MMD -MF $*.d -c -o $@ $<
 
 ifneq ($(notdir $(CURDIR)),$(BUILD))

@@ -10,16 +10,18 @@
 #include <list>
 #include <map>
 
-#define  METRO_DEBUG  1
+//#define  METRO_DEBUG  1
+#define  METRO_DEBUG  (Application::get_instance()->is_debug_enabled())
+
 #define  BIT(n)   (1 << n)
 
-#if METRO_DEBUG
-  #define alert     fprintf(stderr,"\t#alert %s:%d\n",__FILE__,__LINE__)
-  #define crash     { alert; fprintf(stderr,"\n\t#application has been crashed.\n"); exit(1); }
-#else
-  #define alert     0
-  #define crash     exit(1)
-#endif
+// #if METRO_DEBUG
+//   #define alert     fprintf(stderr,"\t#alert %s:%d\n",__FILE__,__LINE__)
+//   #define crash     { alert; fprintf(stderr,"\n\tcrashed!!\n"); exit(1); }
+// #else
+//   #define alert     0
+//   #define crash     exit(1)
+// #endif
 
 enum TokenKind {
   TOK_INT,
@@ -137,22 +139,36 @@ struct TypeInfo {
         return "none";
     }
 
-    return "(unknown type object)";
+    return "(unknown type)";
   }
 };
 
 struct Object {
   TypeInfo    type;
   size_t      ref_count;
+  bool        is_weak;
 
   union {
     int64_t     v_int;
   };
 
+  static Object* none;
+
   Object(TypeInfo type = TYPE_NONE)
     : type(type),
-      ref_count(0)
+      ref_count(0),
+      is_weak(false)
   {
+  }
+
+  std::string to_string() const {
+    switch( type.kind ) {
+      case TYPE_INT: {
+        return std::to_string(v_int);
+      }
+    }
+
+    return "(unknown type object)";
   }
 };
 
@@ -207,4 +223,60 @@ private:
   std::map<Node*, TypeInfo> caches;
 };
 
+class NodeRunner {
+public:
+  NodeRunner() { }
+
+  Object* clone(Object* obj);
+
+  Object* run(Node* node);
+
+  Object* objAdd(Object* left, Object* right);
+
+private:
+
+};
+
+class GC {
+public:
+  static void execute();
+  static void stop();
+
+  static Object* append(Object* obj);
+};
+
+class Application {
+public:
+
+  Application(bool const);
+
+  int main(int argc, char** argv);
+
+  bool is_debug_enabled();
+
+  static Application* get_instance();
+
+private:
+
+  bool const _debug;
+};
+
+template <class... Args>
+inline Object* gcnew(Args&&... args) {
+  return GC::append(new Object(args...));
+}
+
+#define  alert  _Alert(__FILE__,__LINE__)
+#define  crash  _Crash(__FILE__,__LINE__)
+
+// debugs
+inline static int _Alert(char const* f, int n) {
+  return METRO_DEBUG ? fprintf(stderr,"\t#alert %s:%d\n",f,n) : 0;
+}
+
+inline static void _Crash(char const* f, int n) {
+  alert;
+  fprintf(stderr,"crashed!!\n");
+  exit(1);
+}
 

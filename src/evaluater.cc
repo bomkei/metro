@@ -3,6 +3,10 @@
 bool Evaluater::isAddable(TypeInfo left, TypeInfo right) {
   int i = 0;
 
+  if( !left.equals(right) ) {
+    return false;
+  }
+
 __re:
   switch( left.kind ) {
     case TYPE_INT:
@@ -43,6 +47,7 @@ TypeInfo Evaluater::eval(Node* node) {
           crash;
       }
 
+      ret = obj->type;
       break;
     }
 
@@ -57,6 +62,7 @@ TypeInfo Evaluater::eval(Node* node) {
         }
       }
 
+      ret = eval(node->expr[0].node);
       break;
     }
 
