@@ -42,12 +42,30 @@ TypeInfo Evaluater::eval(Node* node) {
           obj->type = TYPE_INT;
           obj->v_int = atoi(node->token->str.data());
           break;
+
+        case TOK_FLOAT:
+          obj->type = TYPE_FLOAT;
+          obj->v_float = atof(node->token->str.data());
+          break;
         
+        case TOK_CHAR: {
+          std::u16string s = ;
+
+          obj->type = TYPE_CHAR;
+          obj->v_char = 
+        }
+
         default:
           crash;
       }
 
       ret = obj->type;
+      break;
+    }
+
+    case ND_CALLFUNC: {
+
+
       break;
     }
 

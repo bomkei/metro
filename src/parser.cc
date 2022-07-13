@@ -10,8 +10,16 @@ Node* Parser::factor() {
   
   auto node = new Node(ND_VALUE, cur);
 
+  if( eat("true") || eat("false") ) {
+    node->token->kind = TOK_BOOL;
+  }
+
   switch( cur->kind ) {
     case TOK_INT:
+    case TOK_FLOAT:
+    case TOK_BOOL:
+    case TOK_CHAR:
+    case TOK_STRING:
       next();
       return node;
     
@@ -35,7 +43,6 @@ Node* Parser::factor() {
     }
 
     default: {
-
       crash;
     }
   }
@@ -43,13 +50,14 @@ Node* Parser::factor() {
   return node;
 }
 
-Node* Parser::add() {
+Node* Parser::mul() {
   auto x = factor();
 
   while( check() ) {
-    if( eat("+") || eat("-") ) {
+    if( eat("*") || eat("/") ) {
       x = makeexpr(x);
-      if( ate->str == "+" ) x->expr_append(EX_ADD, factor());
+      if( ate->str == "+" ) x->expr_append(EX_MUL, factor());
+      else if( ate->str == "-" ) x->expr_append(EX_DIV, factor());
     }
     else {
       break;
@@ -59,10 +67,29 @@ Node* Parser::add() {
   return x;
 }
 
-Node* Parser::
+Node* Parser::add() {
+  auto x = mul();
+
+  while( check() ) {
+    if( eat("+") || eat("-") ) {
+      x = makeexpr(x);
+      if( ate->str == "+" ) x->expr_append(EX_ADD, mul());
+      else if( ate->str == "-" ) x->expr_append(EX_SUB, mul());
+    }
+    else {
+      break;
+    }
+  }
+
+  return x;
+}
+
+Node* Parser::expr() {
+  return add();
+}
 
 Node* Parser::parse() {
-  return add();
+  return expr();
 }
 
 bool Parser::check() {

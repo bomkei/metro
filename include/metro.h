@@ -4,6 +4,8 @@
 #include <cstdarg>
 #include <cstdint>
 #include <cstring>
+#include <locale>
+#include <codecvt>
 #include <string>
 #include <vector>
 #include <memory>
@@ -23,12 +25,35 @@
 //   #define crash     exit(1)
 // #endif
 
+namespace Utils {
+  template <class... Args>
+  std::string format(char const* fmt, Args&&... args) {
+    static char buf[0x1000];
+    sprintf(buf, fmt, args...);
+    return buf;
+  }
+
+  class Strings {
+    static inline std::wstring_convert<std::codecvt_utf8<char16_t>, char16_t> conv;
+  
+  public:
+    static auto to_wstring(std::string const& s) {
+      return conv.from_bytes(s);
+    }
+
+    static auto to_string(std::u16string const& s) {
+      return conv.to_bytes(s);
+    }
+  };
+}
+
 enum TokenKind {
   TOK_INT,
   TOK_FLOAT,
-  TOK_IDENT,
+  TOK_BOOL,
   TOK_CHAR,
   TOK_STRING,
+  TOK_IDENT,
   TOP_OPERATOR,
   TOK_PUNCTUATER,
   TOK_END
@@ -86,6 +111,9 @@ enum NodeKind {
 enum ExprKind {
   EX_BEGIN,
   EX_ADD,
+  EX_SUB,
+  EX_MUL,
+  EX_DIV,
 };
 
 struct Object;
@@ -171,7 +199,12 @@ struct Object {
 
   union {
     int64_t     v_int;
+    double      v_float;
+    bool        v_bool;
+    char16_t    v_char;
   };
+  
+  std::u16string  v_str;
 
   static Object* none;
 
