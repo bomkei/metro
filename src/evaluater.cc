@@ -48,11 +48,24 @@ TypeInfo Evaluater::eval(Node* node) {
           obj->v_float = atof(node->token->str.data());
           break;
         
-        case TOK_CHAR: {
-          std::u16string s = ;
+        case TOK_CHAR:
+        case TOK_STRING: {
+          std::u16string s = Utils::Strings::to_wstring(std::string(node->token->str));
 
-          obj->type = TYPE_CHAR;
-          obj->v_char = 
+          if( node->kind == TOK_CHAR ) {
+            if( s.length() == 0 || s.length() > 1 ) {
+              crash;
+            }
+
+            obj->type = TYPE_CHAR;
+            obj->v_char = s[0];
+          }
+          else {
+            obj->type = TYPE_STRING;
+            obj->v_str = std::move(s);
+          }
+
+          break;
         }
 
         default:
