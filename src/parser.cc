@@ -94,14 +94,37 @@ Node* Parser::expr() {
 
 Node* Parser::func() {
   if( eat("fn") ) {
+    auto node = new Node(ND_FUNCTION, ate);
 
+    expect_ident();
+    node->name = cur;
+
+    next();
+    expect("(");
+
+    if( !eat(")") ) {
+      do {
+
+      } while( eat(",") );
+      expect(")");
+    }
+
+    if( eat("->") ) {
+
+    }
   }
 
   crash;
 }
 
 Node* Parser::parse() {
-  return expr();
+  auto node = new Node(ND_SCOPE, nullptr);
+
+  while( check() ) {
+    node->append(func());
+  }
+
+  return node;
 }
 
 bool Parser::check() {
@@ -128,6 +151,12 @@ void Parser::expect(std::string_view const& str) {
   }
 }
 
+void Parser::expect_ident() {
+  if( cur->kind != TOK_IDENT ) {
+    crash;
+  }
+}
+
 Node* Parser::makeexpr(Node* node) {
   if( node->kind == ND_EXPR )
     return node;
@@ -137,3 +166,30 @@ Node* Parser::makeexpr(Node* node) {
 
   return x;
 }
+
+Node* Parser::scope_with_bracket() {
+  auto node = new Node(ND_SCOPE, cur);
+
+  expect("{");
+
+  if( eat("}") ) {
+    return nullptr;
+  }
+
+  while( check() ) {
+    node->append(expr());
+
+    if( eat(";") ) {
+      if( eat("}") ) {
+        node->append(nullptr);
+        break;
+      }
+    }
+    else if( eat("}") ) {
+      break;
+    }
+  }
+
+  return node;
+}
+

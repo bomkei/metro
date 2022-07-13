@@ -100,6 +100,7 @@ enum NodeKind {
   ND_LOOP,
   ND_WHILE,
   ND_DO_WHILE,
+  ND_SCOPE,
   ND_EXPR,
 
   ND_FUNCTION,
@@ -136,7 +137,8 @@ struct Node {
   std::vector<Node*> nodes;
   std::vector<ExprItem> expr;
 
-  Node*  code;
+  Node*   code;
+  Token*  name;
 
   Node(NodeKind kind, Token* token)
     : kind(kind),
@@ -251,7 +253,7 @@ struct BuiltinFunc {
   char const*   name;
   TypeInfo  ret_type;
   std::vector<TypeInfo>  arg_types;
-  FuncPointer     func;
+  FuncPointer const func;
 };
 
 class Lexer {
@@ -289,9 +291,9 @@ private:
   void next();
   bool eat(std::string_view const& str);
   void expect(std::string_view const& str);
+  void expect_ident();
   Node* makeexpr(Node* node);
 
-  Node* scope();
   Node* scope_with_bracket();
 
   Token* cur;
@@ -335,6 +337,11 @@ public:
   static Object* append(Object* obj);
 };
 
+template <class... Args>
+inline Object* gcnew(Args&&... args) {
+  return GC::append(new Object(args...));
+}
+
 class Application {
 public:
 
@@ -350,11 +357,6 @@ private:
 
   bool const _debug;
 };
-
-template <class... Args>
-inline Object* gcnew(Args&&... args) {
-  return GC::append(new Object(args...));
-}
 
 #define  alert  _Alert(__FILE__,__LINE__)
 #define  crash  _Crash(__FILE__,__LINE__)

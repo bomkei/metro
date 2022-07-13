@@ -10,8 +10,20 @@ static constexpr char const operators[] =
 static constexpr char const* long_operators[] = {
   ">>=",
   "<<=",
+  "->",
   ">=",
   "<=",
+  "+=",
+  "-=",
+  "*=",
+  "/=",
+  "%=",
+  "++",
+  "--",
+  "<<",
+  ">>",
+  "&&",
+  "||",
 };
 
 Lexer::Lexer(std::string const& source)
