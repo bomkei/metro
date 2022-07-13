@@ -1,8 +1,10 @@
 #pragma once
 
+struct Object;
 class NodeRunner {
 public:
-  NodeRunner() { }
+  NodeRunner();
+  ~NodeRunner();
 
   Object* clone(Object* obj);
 
@@ -12,5 +14,4 @@ public:
   Object* objMul(Object* left, Object* right);
 
 private:
-
 };

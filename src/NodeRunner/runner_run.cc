@@ -1,30 +1,10 @@
-#include "metro.h"
-
-Object* NodeRunner::clone(Object* obj) {
-  return gcnew(*obj);
-}
-
-Object* NodeRunner::objAdd(Object* left, Object* right) {
-  
-  switch( left->type.kind ) {
-    case TYPE_INT:
-      left->v_int += right->v_int;
-      break;
-  }
-
-  return left;
-}
-
-Object* NodeRunner::objMul(Object* left, Object* right) {
-  
-  switch( left->type.kind ) {
-    case TYPE_INT:
-      left->v_int *= right->v_int;
-      break;
-  }
-
-  return left;
-}
+#include <iostream>
+#include "Types/Token.h"
+#include "Types/Object.h"
+#include "Types/Node.h"
+#include "NodeRunner.h"
+#include "GC.h"
+#include "Utils.h"
 
 Object* NodeRunner::run(Node* node) {
   if( !node ) {

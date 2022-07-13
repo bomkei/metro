@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Object.h"
+#include "Types/Object.h"
 
 class GC {
 public:
