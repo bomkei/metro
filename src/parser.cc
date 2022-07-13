@@ -24,6 +24,8 @@ Node* Parser::factor() {
       return node;
     
     case TOK_IDENT: {
+      alert;
+
       node->kind = ND_VARIABLE;
 
       next();
@@ -35,6 +37,8 @@ Node* Parser::factor() {
           do {
             node->nodes.emplace_back(expr());
           } while( eat(",") );
+
+          alert;
           expect(")");
         }
       }
@@ -56,8 +60,8 @@ Node* Parser::mul() {
   while( check() ) {
     if( eat("*") || eat("/") ) {
       x = makeexpr(x);
-      if( ate->str == "+" ) x->expr_append(EX_MUL, factor());
-      else if( ate->str == "-" ) x->expr_append(EX_DIV, factor());
+      if( ate->str == "*" ) x->expr_append(EX_MUL, factor());
+      else if( ate->str == "/" ) x->expr_append(EX_DIV, factor());
     }
     else {
       break;
@@ -86,6 +90,14 @@ Node* Parser::add() {
 
 Node* Parser::expr() {
   return add();
+}
+
+Node* Parser::func() {
+  if( eat("fn") ) {
+
+  }
+
+  crash;
 }
 
 Node* Parser::parse() {

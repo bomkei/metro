@@ -52,7 +52,7 @@ TypeInfo Evaluater::eval(Node* node) {
         case TOK_STRING: {
           std::u16string s = Utils::Strings::to_wstring(std::string(node->token->str));
 
-          if( node->kind == TOK_CHAR ) {
+          if( node->token->kind == TOK_CHAR ) {
             if( s.length() == 0 || s.length() > 1 ) {
               crash;
             }
@@ -76,14 +76,37 @@ TypeInfo Evaluater::eval(Node* node) {
       break;
     }
 
-    case ND_CALLFUNC: {
+    case ND_VARIABLE: {
 
 
       break;
     }
 
+    case ND_CALLFUNC: {
+      auto const& name = node->token->str;
+
+      std::vector<TypeInfo> arg_types;
+
+      for( auto&& arg : node->nodes ) {
+        arg_types.emplace_back(eval(arg));
+      }
+
+      if( name == "println" ) {
+        ret = TYPE_INT;
+      }
+      else {
+        crash;
+      }
+
+      break;
+    }
+
     case ND_EXPR: {
+      ret = eval(node->expr[0].node);
+
       for( auto it = node->expr.begin() + 1; it != node->expr.end(); it++ ) {
+        eval(it->node);
+
         switch( it->kind ) {
           case EX_ADD:
             if( !isAddable(eval((it - 1)->node), eval(it->node)) ) {
@@ -93,7 +116,6 @@ TypeInfo Evaluater::eval(Node* node) {
         }
       }
 
-      ret = eval(node->expr[0].node);
       break;
     }
 

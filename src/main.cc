@@ -3,5 +3,5 @@
 
 int main(int argc, char** argv) {
 
-  return Application(true).main(argc, argv);
+  return Application(0).main(argc, argv);
 }

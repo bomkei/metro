@@ -93,8 +93,6 @@ enum NodeKind {
 
   ND_ADDR,
 
-  ND_EXPR,
-
   ND_LET,
   ND_IF,
   ND_FOR,
@@ -102,6 +100,7 @@ enum NodeKind {
   ND_LOOP,
   ND_WHILE,
   ND_DO_WHILE,
+  ND_EXPR,
 
   ND_FUNCTION,
 
@@ -137,9 +136,14 @@ struct Node {
   std::vector<Node*> nodes;
   std::vector<ExprItem> expr;
 
+  Node*  code;
+
   Node(NodeKind kind, Token* token)
     : kind(kind),
-      token(token)
+      token(token),
+      object(nullptr),
+      owner(nullptr),
+      code(nullptr)
   {
   }
 
@@ -155,6 +159,7 @@ struct Node {
 enum TypeKind {
   TYPE_INT,
   TYPE_FLOAT,
+  TYPE_BOOL,
   TYPE_CHAR,
   TYPE_STRING,
   TYPE_NONE
@@ -217,13 +222,36 @@ struct Object {
 
   std::string to_string() const {
     switch( type.kind ) {
-      case TYPE_INT: {
+      case TYPE_INT:
         return std::to_string(v_int);
-      }
+
+      case TYPE_FLOAT:
+        return std::to_string(v_float);
+
+      case TYPE_BOOL:
+        return v_bool ? "true" : "false";
+      
+      case TYPE_CHAR:
+        return Utils::Strings::to_string(std::u16string(v_char, 1));
+      
+      case TYPE_STRING:
+        return Utils::Strings::to_string(v_str);
+      
+      case TYPE_NONE:
+        return "none";
     }
 
     return "(unknown type object)";
   }
+};
+
+struct BuiltinFunc {
+  using FuncPointer = Object*(*)(std::vector<Object*> const& args);
+
+  char const*   name;
+  TypeInfo  ret_type;
+  std::vector<TypeInfo>  arg_types;
+  FuncPointer     func;
 };
 
 class Lexer {
@@ -252,6 +280,8 @@ public:
   Node* mul();
   Node* expr();
 
+  Node* func();
+
   Node* parse();
 
 private:
@@ -260,6 +290,9 @@ private:
   bool eat(std::string_view const& str);
   void expect(std::string_view const& str);
   Node* makeexpr(Node* node);
+
+  Node* scope();
+  Node* scope_with_bracket();
 
   Token* cur;
   Token* ate;
@@ -288,6 +321,7 @@ public:
   Object* run(Node* node);
 
   Object* objAdd(Object* left, Object* right);
+  Object* objMul(Object* left, Object* right);
 
 private:
 
@@ -331,8 +365,7 @@ inline static int _Alert(char const* f, int n) {
 }
 
 inline static void _Crash(char const* f, int n) {
-  alert;
-  fprintf(stderr,"crashed!!\n");
+  fprintf(stderr,"crashed!! %s:%d\n",f,n);
   exit(1);
 }
 
