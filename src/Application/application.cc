@@ -2,7 +2,7 @@
 #include "Application.h"
 #include "Lexer.h"
 #include "Parser.h"
-#include "Sema.h"
+#include "Sema/Analyzer.h"
 #include "Evaluator.h"
 #include "Utils.h"
 
@@ -49,12 +49,14 @@ namespace Metro {
     alert;
 
     Sema::Analyzer analyzer;
-    auto type = analyzer.Sema(node);
+    auto type = analyzer.Check(node);
     alert;
 
     Evaluator eval;
     //auto obj = runner.run(node);
     auto obj = eval.eval(node->nodes[0]->code);
+
+    alert;
 
     //std::cout << obj->to_string() << std::endl;
 

@@ -11,9 +11,10 @@ SOURCES	= \
 	src/Application \
 	src/builtin \
 	src/builtin/std \
-	src/Evaluater \
-	src/NodeRunner \
+	src/Evaluator \
+	src/GC \
 	src/Parser \
+	src/Semantics \
 	src/Types
 
 BASEFLAGS		:= -O2

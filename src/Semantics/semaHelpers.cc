@@ -4,8 +4,8 @@
 #include "Sema/Analyzer.h"
 #include "Utils.h"
 
-namespace Metro {
-  bool Evaluater::isAddable(TypeInfo left, TypeInfo right) {
+namespace Metro::Sema {
+  bool Analyzer::isAddable(TypeInfo left, TypeInfo right) {
     if( !left.equals(right) ) {
       return false;
     }

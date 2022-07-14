@@ -5,81 +5,80 @@
 #include "Utils.h"
 
 namespace Metro {
-bool Parser::check() {
-  return cur->kind != TOK_END;
-}
+  bool Parser::check() {
+    return cur->kind != TOK_END;
+  }
 
-void Parser::next() {
-  cur = cur->next;
-}
+  void Parser::next() {
+    cur = cur->next;
+  }
 
-bool Parser::eat(std::string_view const& str) {
-  if( cur->str == str ) {
-    ate = cur;
+  bool Parser::eat(std::string_view const& str) {
+    if( cur->str == str ) {
+      ate = cur;
+      next();
+      return true;
+    }
+
+    return false;
+  }
+
+  void Parser::expect(std::string_view const& str) {
+    if( !eat(str) ) {
+      crash;
+    }
+  }
+
+  void Parser::expect_ident() {
+    if( cur->kind != TOK_IDENT ) {
+      crash;
+    }
+  }
+
+  Node* Parser::expect_type() {
+    auto node = new Node(ND_TYPE, cur);
+
+    expect_ident();
+    node->name = cur;
+
     next();
-    return true;
+
+    return node;
   }
 
-  return false;
-}
+  Node* Parser::expect_scope() {
+    auto node = new Node(ND_SCOPE, cur);
 
-void Parser::expect(std::string_view const& str) {
-  if( !eat(str) ) {
-    crash;
-  }
-}
+    expect("{");
 
-void Parser::expect_ident() {
-  if( cur->kind != TOK_IDENT ) {
-    crash;
-  }
-}
+    if( eat("}") ) {
+      return nullptr;
+    }
 
-Node* Parser::expect_type() {
-  auto node = new Node(ND_TYPE, cur);
+    while( check() ) {
+      node->append(expr());
 
-  expect_ident();
-  node->name = cur;
-
-  next();
-
-  return node;
-}
-
-Node* Parser::expect_scope() {
-  auto node = new Node(ND_SCOPE, cur);
-
-  expect("{");
-
-  if( eat("}") ) {
-    return nullptr;
-  }
-
-  while( check() ) {
-    node->append(expr());
-
-    if( eat(";") ) {
-      if( eat("}") ) {
-        node->append(nullptr);
+      if( eat(";") ) {
+        if( eat("}") ) {
+          node->append(nullptr);
+          break;
+        }
+      }
+      else if( eat("}") ) {
         break;
       }
     }
-    else if( eat("}") ) {
-      break;
-    }
+
+    return node;
   }
 
-  return node;
-}
+  Node* Parser::makeexpr(Node* node) {
+    if( node->kind == ND_EXPR )
+      return node;
 
-Node* Parser::makeexpr(Node* node) {
-  if( node->kind == ND_EXPR )
-    return node;
+    auto x = new Node(ND_EXPR, node->token);
+    x->expr_append(EX_BEGIN, node);
 
-  auto x = new Node(ND_EXPR, node->token);
-  x->expr_append(EX_BEGIN, node);
-
-  return x;
-}
-
+    return x;
+  }
 }

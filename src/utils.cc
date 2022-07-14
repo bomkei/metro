@@ -1,4 +1,3 @@
-#include "Application.h"
 #include "Utils.h"
 
 namespace Utils::Strings {

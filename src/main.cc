@@ -2,5 +2,5 @@
 #include "Application.h"
 
 int main(int argc, char** argv) {
-  return Application().main(argc, argv);
+  return Metro::Application().main(argc, argv);
 }
