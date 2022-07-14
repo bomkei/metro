@@ -5,14 +5,12 @@
 #include <locale>
 #include <codecvt>
 
-#define  METRO_DEBUG  1
-
 #if METRO_DEBUG
   #define  alert  fprintf(stderr,"\t#alert " __FILE__ ":%d\n",__LINE__)
   #define  crash  { alert; fprintf(stderr,"\n\n# application has been crashed.\n"); exit(1); }
 #else
   #define  alert  0
-  #define  crash  ;
+  #define  crash  exit(1);
 #endif
 
 #define  BIT(n)   (1 << n)

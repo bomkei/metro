@@ -19,6 +19,7 @@ SOURCES	= \
 	src/Types
 
 BASEFLAGS		:= -O2
+DEBUGFLAGS	:= -DMETRO_DEBUG=0
 CFLAGS			:= $(BASEFLAGS) $(INCLUDES)
 CXXFLAGS		:= $(CFLAGS) -std=c++20
 LDFLAGS			:= -Wl,--gc-sections
@@ -62,7 +63,7 @@ $(BUILD):
 .PHONY: debug
 debug:
 	@[ -d $(BUILD) ] || mkdir -p $(BUILD)
-	@$(MAKE) --no-print-directory BASEFLAGS="-O0 -g" LDFLAGS="" -C $(BUILD) -f $(CURDIR)/Makefile
+	@$(MAKE) --no-print-directory BASEFLAGS="-O0 -g" DEBUGFLAGS="-DMETRO_DEBUG=1" LDFLAGS="" -C $(BUILD) -f $(CURDIR)/Makefile
 
 .PHONY: clean
 clean:
