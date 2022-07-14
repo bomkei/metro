@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+
+struct Token;
 class Lexer {
 public:
   explicit Lexer(std::string const& source);

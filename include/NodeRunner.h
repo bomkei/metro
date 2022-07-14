@@ -1,6 +1,7 @@
 #pragma once
 
 struct Object;
+struct Node;
 class NodeRunner {
 public:
   NodeRunner();

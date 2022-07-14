@@ -1,7 +1,6 @@
 #include <fstream>
-#include "metro.h"
+#include "Application.h"
 
 int main(int argc, char** argv) {
-
-  return Application(0).main(argc, argv);
+  return Application().main(argc, argv);
 }

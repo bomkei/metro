@@ -1,4 +1,7 @@
-#include "metro.h"
+#include <cstring>
+#include "Types/Token.h"
+#include "Lexer.h"
+#include "Utils.h"
 
 static constexpr char const operators[] =
   "(){}[]<>"

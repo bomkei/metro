@@ -1,20 +1,19 @@
 #include <fstream>
-#include "metro.h"
+#include "Application.h"
+#include "Lexer.h"
+#include "Parser.h"
+#include "Evaluater.h"
+#include "NodeRunner.h"
+#include "Utils.h"
 
-Application* _inst;
+static Application* _inst;
 
-Application::Application(bool const dbg)
-  : _debug(dbg)
-{
+Application::Application() {
   _inst = this;
 }
 
 Application* Application::get_instance() {
   return _inst;
-}
-
-bool Application::is_debug_enabled() {
-  return _debug;
 }
 
 int Application::main(int argc, char** argv) {

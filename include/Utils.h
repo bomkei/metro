@@ -5,26 +5,18 @@
 #include <locale>
 #include <codecvt>
 
-//#define  METRO_DEBUG  1
-#define  METRO_DEBUG  (Application::get_instance()->is_debug_enabled())
+#define  METRO_DEBUG  1
+
+#if METRO_DEBUG
+  #define  alert  fprintf(stderr,"\t#alert " __FILE__ ":%d\n",__LINE__)
+  #define  crash  { alert; fprintf(stderr,"\n\n# application has been crashed.\n"); exit(1); }
+#else
+  #define  alert  0
+  #define  crash  ;
+#endif
 
 #define  BIT(n)   (1 << n)
-
-#define  alert  _Alert(__FILE__,__LINE__)
-#define  crash  _Crash(__FILE__,__LINE__)
-
-int _Alert(char const* f, int n);
-void _Crash(char const* f, int n);
-
-// debugs
-// inline static int _Alert(char const* f, int n) {
-//   return METRO_DEBUG ? fprintf(stderr,"\t#alert %s:%d\n",f,n) : 0;
-// }
-
-// inline static void _Crash(char const* f, int n) {
-//   fprintf(stderr,"crashed!! %s:%d\n",f,n);
-//   exit(1);
-// }
+#define  TODO_IMPL  { alert; fprintf(stderr,"\n\n# Not implemented error.\n"); exit(1); }
 
 namespace Utils {
   template <class... Args>

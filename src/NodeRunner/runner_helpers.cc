@@ -1,5 +1,5 @@
-#include "Node.h"
-#include "Object.h"
+#include "Types/Node.h"
+#include "Types/Object.h"
 #include "NodeRunner.h"
 #include "GC.h"
 

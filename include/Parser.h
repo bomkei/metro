@@ -1,5 +1,7 @@
 #pragma once
 
+struct Token;
+struct Node;
 class Parser {
 public:
   explicit Parser(Token* token);

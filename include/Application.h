@@ -3,15 +3,11 @@
 class Application {
 public:
 
-  Application(bool const);
+  Application();
 
   int main(int argc, char** argv);
-
-  bool is_debug_enabled();
 
   static Application* get_instance();
 
 private:
-
-  bool const _debug;
 };

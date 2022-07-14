@@ -1,36 +1,10 @@
-#include "metro.h"
+#include "Types/Token.h"
+#include "Types/Object.h"
+#include "Types/Node.h"
+#include "Evaluater.h"
+#include "Utils.h"
 
-bool Evaluater::isAddable(TypeInfo left, TypeInfo right) {
-  int i = 0;
-
-  if( !left.equals(right) ) {
-    return false;
-  }
-
-__re:
-  switch( left.kind ) {
-    case TYPE_INT:
-    case TYPE_FLOAT:
-      break;
-    
-    default:
-      return false;
-  }
-
-  if( i == 0 ) {
-    i++;
-    left = right;
-    goto __re;
-  }
-
-  return true;
-}
-
-TypeInfo Evaluater::eval(Node* node) {
-  if( caches.contains(node) ) {
-    return caches[node];
-  }
-
+TypeInfo Evaluater::eval_expr(Node* node) {
   auto& ret = caches[node];
 
   switch( node->kind ) {
@@ -50,7 +24,7 @@ TypeInfo Evaluater::eval(Node* node) {
         
         case TOK_CHAR:
         case TOK_STRING: {
-          std::u16string s = Utils::Strings::to_wstring(std::string(node->token->str));
+          std::u16string s = Utils::Strings::to_u16string(std::string(node->token->str));
 
           if( node->token->kind == TOK_CHAR ) {
             if( s.length() == 0 || s.length() > 1 ) {
@@ -117,10 +91,6 @@ TypeInfo Evaluater::eval(Node* node) {
       }
 
       break;
-    }
-
-    default: {
-      crash;
     }
   }
 

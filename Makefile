@@ -6,7 +6,14 @@ TARGET	= metro
 
 BUILD		= build
 INCLUDE	= include
-SOURCES	= src
+SOURCES	= \
+	src \
+	src/builtin \
+	src/builtin/std \
+	src/Evaluater \
+	src/NodeRunner \
+	src/Parser \
+	src/Types
 
 BASEFLAGS		:= -O2
 CFLAGS			:= $(BASEFLAGS) $(INCLUDES)
