@@ -63,6 +63,20 @@ Object* NodeRunner::run(Node* node) {
 
       return obj;
     }
+
+    case ND_FUNCTION:
+      break;
+
+    case ND_SCOPE: {
+      for( auto&& node : node->nodes ) {
+        run(node);
+      }
+
+      break;
+    }
+
+    default:
+      TODO_IMPL;
   }
 
   return Object::none;

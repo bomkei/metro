@@ -92,6 +92,14 @@ TypeInfo Evaluater::eval_expr(Node* node) {
 
       break;
     }
+
+    case ND_SCOPE: {
+      for( auto&& node : node->nodes ) {
+        eval(node);
+      }
+
+      break;
+    }
   }
 
   return ret;

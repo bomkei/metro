@@ -8,6 +8,7 @@ BUILD		= build
 INCLUDE	= include
 SOURCES	= \
 	src \
+	src/Application \
 	src/builtin \
 	src/builtin/std \
 	src/Evaluater \

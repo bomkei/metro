@@ -6,6 +6,10 @@
 #include "NodeRunner.h"
 #include "Utils.h"
 
+#include "Types/Token.h"
+#include "Types/Object.h"
+#include "Types/Node.h"
+
 static Application* _inst;
 
 Application::Application() {
@@ -48,7 +52,8 @@ int Application::main(int argc, char** argv) {
   alert;
 
   NodeRunner runner;
-  auto obj = runner.run(node);
+  //auto obj = runner.run(node);
+  auto obj = runner.run(node->nodes[0]->code);
 
   //std::cout << obj->to_string() << std::endl;
 

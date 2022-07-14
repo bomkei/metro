@@ -99,6 +99,10 @@ Token* Lexer::lex() {
 
       for( position++; (ch = peek()) != begin; position++ );
       position++;
+
+      cur->str = { str + 1, position - pos - 2 };
+      pass_space();
+      continue;
     }
     
     else {
