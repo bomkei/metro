@@ -1,8 +1,9 @@
 #pragma once
 
+#include "Types/Node.h"
+
 namespace Metro {
   struct Object;
-  struct Node;
   class Evaluator {
   public:
     Evaluator();
@@ -12,8 +13,7 @@ namespace Metro {
 
     Object* eval(Node* node);
 
-    Object* objAdd(Object* left, Object* right);
-    Object* objMul(Object* left, Object* right);
+    Object* calcObj(ExprKind kind, Object* left, Object* right);
 
   private:
   };

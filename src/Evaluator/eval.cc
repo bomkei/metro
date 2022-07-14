@@ -47,19 +47,7 @@ namespace Metro {
         auto obj = eval(node->expr[0].node);
 
         for( auto it = node->expr.begin() + 1; it != node->expr.end(); it++ ) {
-          auto term = eval(it->node);
-
-          switch( it->kind ) {
-            case EX_ADD: {
-              term = objAdd(obj, term);
-              break;
-            }
-
-            case EX_MUL: {
-              term = objMul(obj, term);
-              break;
-            }
-          }
+          calcObj(it->kind, obj, eval(it->node));
         }
 
         return obj;
