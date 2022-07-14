@@ -54,6 +54,8 @@ namespace Metro {
 
     Evaluator eval;
     //auto obj = runner.run(node);
+
+    alert;
     auto obj = eval.eval(node->nodes[0]->code);
 
     alert;

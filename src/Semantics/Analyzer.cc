@@ -36,7 +36,7 @@ namespace Metro::Sema {
       case ND_EXPR:
       case ND_SCOPE:
         alert;
-        ret = Check(node);
+        ret = Expr(node);
         break;
 
       case ND_ARGUMENT:

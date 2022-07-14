@@ -58,6 +58,11 @@ $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $@ -f $(CURDIR)/Makefile
 
+.PHONY: debug
+debug:
+	@[ -d $(BUILD) ] || mkdir -p $(BUILD)
+	@$(MAKE) --no-print-directory BASEFLAGS="-O0 -g" LDFLAGS="" -C $(BUILD) -f $(CURDIR)/Makefile
+
 .PHONY: clean
 clean:
 	@rm -rf $(BUILD) $(OUTPUT)
