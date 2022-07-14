@@ -63,10 +63,12 @@ namespace Metro {
           node->append(nullptr);
           break;
         }
+
+        continue;
       }
-      else if( eat("}") ) {
-        break;
-      }
+
+      expect("}");
+      break;
     }
 
     return node;
