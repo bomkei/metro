@@ -13,6 +13,7 @@ SOURCES	= \
 	src/builtin/std \
 	src/Evaluator \
 	src/GC \
+	src/Lexer \
 	src/Parser \
 	src/Semantics \
 	src/Types
