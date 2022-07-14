@@ -3,11 +3,21 @@ import glob
 import collections
 
 source = 'src'
+total_lines  = 0
 
 src_files = [ ]
 
 for ext in ['c', 'cc']:
   src_files += glob.glob(f'{source}/**/*.{ext}', recursive=True)
+
+# line count
+for i in src_files:
+  with open(i, mode='r') as f:
+    ll = len(f.readlines())
+    total_lines += ll
+    print(f'{i}: {ll}')
+
+print(f'total lines = {total_lines}\n')
 
 # to lower
 src_files = list(map(lambda name: os.path.basename(name).lower(), src_files))
