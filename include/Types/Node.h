@@ -21,6 +21,7 @@ enum NodeKind {
   ND_SCOPE,
   ND_EXPR,
 
+  ND_ARGUMENT,
   ND_FUNCTION,
 
   ND_CLASS,
@@ -57,6 +58,7 @@ struct Node {
   std::vector<ExprItem> expr;
 
   Node*   code;
+  Node*   type;
   Token*  name;
 
   Node(NodeKind kind, Token* token)
@@ -64,7 +66,8 @@ struct Node {
       token(token),
       object(nullptr),
       owner(nullptr),
-      code(nullptr)
+      code(nullptr),
+      type(nullptr)
   {
   }
 

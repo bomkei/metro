@@ -16,14 +16,26 @@ Node* Parser::func() {
 
     if( !eat(")") ) {
       do {
+        auto arg = new Node(ND_ARGUMENT, cur);
 
+        expect_ident();
+        arg->name = cur;
+
+        next();
+        expect(":");
+
+        arg->type = expect_type();
       } while( eat(",") );
       expect(")");
     }
 
     if( eat("->") ) {
-
+      node->type = expect_type();
     }
+
+    node->code = expect_scope();
+
+    return node;
   }
 
   crash;

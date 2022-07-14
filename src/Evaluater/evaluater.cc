@@ -19,7 +19,6 @@ TypeInfo Evaluater::eval(Node* node) {
       return eval_expr(node);
 
     case ND_FUNCTION: {
-      TODO_IMPL
 
       break;
     }

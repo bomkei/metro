@@ -1,6 +1,8 @@
 #include "Types/Object.h"
 #include "Utils.h"
 
+Object* Object::none = new Object(TYPE_NONE);
+
 std::string Object::to_string() const {
   switch( type.kind ) {
     case TYPE_INT:

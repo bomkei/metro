@@ -21,9 +21,10 @@ private:
   bool eat(std::string_view const& str);
   void expect(std::string_view const& str);
   void expect_ident();
+  Node* expect_type();
+  Node* expect_scope();
   Node* makeexpr(Node* node);
 
-  Node* scope_with_bracket();
 
   Token* cur;
   Token* ate;

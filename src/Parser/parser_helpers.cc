@@ -34,17 +34,18 @@ void Parser::expect_ident() {
   }
 }
 
-Node* Parser::makeexpr(Node* node) {
-  if( node->kind == ND_EXPR )
-    return node;
+Node* Parser::expect_type() {
+  auto node = new Node(ND_TYPE, cur);
 
-  auto x = new Node(ND_EXPR, node->token);
-  x->expr_append(EX_BEGIN, node);
+  expect_ident();
+  node->name = cur;
 
-  return x;
+  next();
+
+  return node;
 }
 
-Node* Parser::scope_with_bracket() {
+Node* Parser::expect_scope() {
   auto node = new Node(ND_SCOPE, cur);
 
   expect("{");
@@ -68,5 +69,15 @@ Node* Parser::scope_with_bracket() {
   }
 
   return node;
+}
+
+Node* Parser::makeexpr(Node* node) {
+  if( node->kind == ND_EXPR )
+    return node;
+
+  auto x = new Node(ND_EXPR, node->token);
+  x->expr_append(EX_BEGIN, node);
+
+  return x;
 }
 
