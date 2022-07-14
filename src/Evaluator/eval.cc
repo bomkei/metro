@@ -34,7 +34,7 @@ namespace Metro {
 
         if( name == "println" ) {
           for( auto&& obj : args ) {
-            std::cout << obj->to_string() << std::endl;
+            std::cout << obj->to_string();
           }
 
           std::cout << std::endl;
