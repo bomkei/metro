@@ -4,6 +4,7 @@
 #include "Parser.h"
 #include "Utils.h"
 
+namespace Metro {
 bool Parser::check() {
   return cur->kind != TOK_END;
 }
@@ -81,3 +82,4 @@ Node* Parser::makeexpr(Node* node) {
   return x;
 }
 
+}

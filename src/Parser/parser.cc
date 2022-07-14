@@ -4,18 +4,20 @@
 #include "Parser.h"
 #include "Utils.h"
 
-Parser::Parser(Token* token)
-  : cur(token),
-    ate(nullptr)
-{
-}
-
-Node* Parser::parse() {
-  auto node = new Node(ND_SCOPE, nullptr);
-
-  while( check() ) {
-    node->append(func());
+namespace Metro {
+  Parser::Parser(Token* token)
+    : cur(token),
+      ate(nullptr)
+  {
   }
 
-  return node;
+  Node* Parser::parse() {
+    auto node = new Node(ND_SCOPE, nullptr);
+
+    while( check() ) {
+      node->append(func());
+    }
+
+    return node;
+  }
 }

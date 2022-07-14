@@ -4,6 +4,8 @@
 #include "Parser.h"
 #include "Utils.h"
 
+namespace Metro {
+
 Node* Parser::factor() {
   
   auto node = new Node(ND_VALUE, cur);
@@ -88,4 +90,8 @@ Node* Parser::add() {
 
 Node* Parser::expr() {
   return add();
+}
+
+
+
 }

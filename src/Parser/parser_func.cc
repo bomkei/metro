@@ -4,6 +4,8 @@
 #include "Parser.h"
 #include "Utils.h"
 
+namespace Metro {
+
 Node* Parser::func() {
   if( eat("fn") ) {
     auto node = new Node(ND_FUNCTION, ate);
@@ -39,4 +41,6 @@ Node* Parser::func() {
   }
 
   crash;
+}
+
 }

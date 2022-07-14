@@ -12,7 +12,7 @@ namespace Metro::Sema {
   public:
     Analyzer() { }
 
-    TypeInfo Sema(Node* node);
+    TypeInfo Check(Node* node);
     TypeInfo Expr(Node* node);
 
   private:
