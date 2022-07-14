@@ -7,6 +7,12 @@
 namespace Metro {
   Node* Parser::factor() {
     
+    if( eat("(") ) {
+      auto x = expr();
+      expect(")");
+      return x;
+    }
+
     auto node = new Node(ND_VALUE, cur);
 
     if( eat("true") || eat("false") ) {
