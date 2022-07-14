@@ -2,20 +2,22 @@
 
 #include <string>
 
-struct Token;
-class Lexer {
-public:
-  explicit Lexer(std::string const& source);
+namespace Metro {
+  struct Token;
+  class Lexer {
+  public:
+    explicit Lexer(std::string const& source);
 
-  Token* lex();
+    Token* lex();
 
-private:
-  bool check();
-  char peek();
-  bool match(std::string_view const& s);
-  void pass_space();
+  private:
+    bool check();
+    char peek();
+    bool match(std::string_view const& s);
+    void pass_space();
 
-  std::string const& source;
-  size_t position;
-  size_t const length;
-};
+    std::string const& source;
+    size_t position;
+    size_t const length;
+  };
+}

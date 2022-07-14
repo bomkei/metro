@@ -2,60 +2,62 @@
 #include "Application.h"
 #include "Lexer.h"
 #include "Parser.h"
-#include "Evaluater.h"
-#include "NodeRunner.h"
+#include "Sema.h"
+#include "Evaluator.h"
 #include "Utils.h"
 
 #include "Types/Token.h"
 #include "Types/Object.h"
 #include "Types/Node.h"
 
-static Application* _inst;
+namespace Metro {
+  static Application* _inst;
 
-Application::Application() {
-  _inst = this;
-}
-
-Application* Application::get_instance() {
-  return _inst;
-}
-
-int Application::main(int argc, char** argv) {
-
-  std::string source;
-  std::ifstream ifs{ "test.txt" };
-
-  // read source
-  for( std::string line; std::getline(ifs, line); ) {
-    source += line + '\n';
+  Application::Application() {
+    _inst = this;
   }
 
-  Lexer lexer{ source };
+  Application* Application::get_instance() {
+    return _inst;
+  }
 
-  auto token = lexer.lex();
+  int Application::main(int argc, char** argv) {
 
-  // print token
-  // for(auto t=token;t->kind!=TOK_END;t=t->next){
-  //   std::cout<<t->str<<std::endl;
-  // }
+    std::string source;
+    std::ifstream ifs{ "test.txt" };
 
-  alert;
+    // read source
+    for( std::string line; std::getline(ifs, line); ) {
+      source += line + '\n';
+    }
 
-  Parser parser{ token };
+    Lexer lexer{ source };
 
-  auto node = parser.parse();
+    auto token = lexer.lex();
 
-  alert;
+    // print token
+    // for(auto t=token;t->kind!=TOK_END;t=t->next){
+    //   std::cout<<t->str<<std::endl;
+    // }
 
-  Evaluater eval;
-  auto type = eval.eval(node);
-  alert;
+    alert;
 
-  NodeRunner runner;
-  //auto obj = runner.run(node);
-  auto obj = runner.run(node->nodes[0]->code);
+    Parser parser{ token };
 
-  //std::cout << obj->to_string() << std::endl;
+    auto node = parser.parse();
 
-  return 0;
+    alert;
+
+    Sema::Analyzer analyzer;
+    auto type = analyzer.Sema(node);
+    alert;
+
+    Evaluator eval;
+    //auto obj = runner.run(node);
+    auto obj = eval.eval(node->nodes[0]->code);
+
+    //std::cout << obj->to_string() << std::endl;
+
+    return 0;
+  }
 }

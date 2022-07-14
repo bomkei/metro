@@ -1,13 +1,15 @@
 #pragma once
 
-class Application {
-public:
+namespace Metro {
+  class Application {
+  public:
 
-  Application();
+    Application();
 
-  int main(int argc, char** argv);
+    int main(int argc, char** argv);
 
-  static Application* get_instance();
+    static Application* get_instance();
 
-private:
-};
+  private:
+  };
+}

@@ -2,11 +2,13 @@
 #include "Types/Token.h"
 #include "Types/Object.h"
 #include "Types/Node.h"
-#include "NodeRunner.h"
+#include "Evaluator.h"
 #include "GC.h"
 #include "Utils.h"
 
-Object* NodeRunner::run(Node* node) {
+namespace Metro {
+
+Object* Evaluator::eval(Node* node) {
   if( !node ) {
     alert;
     return Object::none;
@@ -28,7 +30,7 @@ Object* NodeRunner::run(Node* node) {
       std::vector<Object*> args;
 
       for( auto&& arg : node->nodes ) {
-        args.emplace_back(run(arg));
+        args.emplace_back(eval(arg));
       }
 
       if( name == "println" ) {
@@ -43,10 +45,10 @@ Object* NodeRunner::run(Node* node) {
     }
     
     case ND_EXPR: {
-      auto obj = run(node->expr[0].node);
+      auto obj = eval(node->expr[0].node);
 
       for( auto it = node->expr.begin() + 1; it != node->expr.end(); it++ ) {
-        auto term = run(it->node);
+        auto term = eval(it->node);
 
         switch( it->kind ) {
           case EX_ADD: {
@@ -69,7 +71,7 @@ Object* NodeRunner::run(Node* node) {
 
     case ND_SCOPE: {
       for( auto&& node : node->nodes ) {
-        run(node);
+        eval(node);
       }
 
       break;
@@ -80,4 +82,6 @@ Object* NodeRunner::run(Node* node) {
   }
 
   return Object::none;
+}
+
 }

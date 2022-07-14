@@ -2,75 +2,77 @@
 
 #include <vector>
 
-enum NodeKind {
-  ND_TYPE,
-  
-  ND_VALUE,
-  ND_VARIABLE,
-  ND_CALLFUNC,
+namespace Metro {
+  enum NodeKind {
+    ND_TYPE,
+    
+    ND_VALUE,
+    ND_VARIABLE,
+    ND_CALLFUNC,
 
-  ND_ADDR,
+    ND_ADDR,
 
-  ND_LET,
-  ND_IF,
-  ND_FOR,
-  ND_FOREACH,
-  ND_LOOP,
-  ND_WHILE,
-  ND_DO_WHILE,
-  ND_SCOPE,
-  ND_EXPR,
+    ND_LET,
+    ND_IF,
+    ND_FOR,
+    ND_FOREACH,
+    ND_LOOP,
+    ND_WHILE,
+    ND_DO_WHILE,
+    ND_SCOPE,
+    ND_EXPR,
 
-  ND_ARGUMENT,
-  ND_FUNCTION,
+    ND_ARGUMENT,
+    ND_FUNCTION,
 
-  ND_CLASS,
-};
-
-enum ExprKind {
-  EX_BEGIN,
-  EX_ADD,
-  EX_SUB,
-  EX_MUL,
-  EX_DIV,
-};
-
-struct Token;
-struct Object;
-struct Node {
-  struct ExprItem {
-    ExprKind kind;
-    Node*    node;
-
-    explicit ExprItem(ExprKind kind, Node* node)
-      : kind(kind),
-        node(node)
-    {
-    }
+    ND_CLASS,
   };
 
-  NodeKind    kind;
-  Token*      token;
-  Object*     object;
+  enum ExprKind {
+    EX_BEGIN,
+    EX_ADD,
+    EX_SUB,
+    EX_MUL,
+    EX_DIV,
+  };
 
-  Node*  owner;
-  std::vector<Node*> nodes;
-  std::vector<ExprItem> expr;
+  struct Token;
+  struct Object;
+  struct Node {
+    struct ExprItem {
+      ExprKind kind;
+      Node*    node;
 
-  Node*   code;
-  Node*   type;
-  Token*  name;
+      explicit ExprItem(ExprKind kind, Node* node)
+        : kind(kind),
+          node(node)
+      {
+      }
+    };
 
-  Node(NodeKind kind, Token* token)
-    : kind(kind),
-      token(token),
-      object(nullptr),
-      owner(nullptr),
-      code(nullptr),
-      type(nullptr)
-  {
-  }
+    NodeKind    kind;
+    Token*      token;
+    Object*     object;
 
-  Node* append(Node* node);
-  ExprItem& expr_append(ExprKind kind, Node* node);
-};
+    Node*  owner;
+    std::vector<Node*> nodes;
+    std::vector<ExprItem> expr;
+
+    Node*   code;
+    Node*   type;
+    Token*  name;
+
+    Node(NodeKind kind, Token* token)
+      : kind(kind),
+        token(token),
+        object(nullptr),
+        owner(nullptr),
+        code(nullptr),
+        type(nullptr)
+    {
+    }
+
+    Node* append(Node* node);
+    ExprItem& expr_append(ExprKind kind, Node* node);
+  };
+}

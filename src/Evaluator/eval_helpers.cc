@@ -1,19 +1,34 @@
-#include "Types/Token.h"
-#include "Types/Object.h"
 #include "Types/Node.h"
-#include "Evaluater.h"
-#include "Utils.h"
+#include "Types/Object.h"
+#include "Evaluator.h"
+#include "GC.h"
 
-bool Evaluater::isAddable(TypeInfo left, TypeInfo right) {
-  if( !left.equals(right) ) {
-    return false;
-  }
+namespace Metro {
 
-  switch( left.kind ) {
+Object* Evaluator::clone(Object* obj) {
+  return gcnew(*obj);
+}
+
+Object* Evaluator::objAdd(Object* left, Object* right) {
+  
+  switch( left->type.kind ) {
     case TYPE_INT:
-    case TYPE_FLOAT:
-      return true;
+      left->v_int += right->v_int;
+      break;
   }
 
-  return false;
+  return left;
+}
+
+Object* Evaluator::objMul(Object* left, Object* right) {
+  
+  switch( left->type.kind ) {
+    case TYPE_INT:
+      left->v_int *= right->v_int;
+      break;
+  }
+
+  return left;
+}
+
 }
