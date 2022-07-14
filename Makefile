@@ -1,5 +1,5 @@
-CC		= gcc
-CXX		= g++
+CC		= clang
+CXX		= clang++
 LD		= $(CXX)
 
 TARGET	= metro
@@ -20,9 +20,9 @@ SOURCES	= \
 
 BASEFLAGS		:= -O2
 DEBUGFLAGS	:= -DMETRO_DEBUG=0
-CFLAGS			:= $(BASEFLAGS) $(INCLUDES)
+CFLAGS			:= $(BASEFLAGS) $(INCLUDES) -Wno-switch
 CXXFLAGS		:= $(CFLAGS) -std=c++20
-LDFLAGS			:= -Wl,--gc-sections
+LDFLAGS			:= -Wl,--gc-sections -pthread
 
 %.o: %.c
 	@echo $(notdir $<)
