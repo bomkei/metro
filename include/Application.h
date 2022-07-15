@@ -8,6 +8,7 @@ namespace Metro {
   class Application {
   public:
     Application();
+    ~Application();
 
     Object* execScriptFile(std::string const& path);
 

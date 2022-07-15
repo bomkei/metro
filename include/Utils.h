@@ -5,7 +5,7 @@
 #include <locale>
 #include <codecvt>
 
-#ifdef METRO_DEBUG
+#if METRO_DEBUG
   #define  alert  fprintf(stderr,"\t#alert " __FILE__ ":%d\n",__LINE__)
   #define  crash  { alert; fprintf(stderr,"\n\n# application has been crashed.\n"); exit(1); }
 #else

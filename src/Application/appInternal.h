@@ -5,5 +5,8 @@ namespace Metro {
     friend class Application;
 
     bool isConstructedSystemModules;
+
+  public:
+    ~AppInternal() = default;
   };
 }

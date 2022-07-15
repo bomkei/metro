@@ -16,13 +16,19 @@ namespace Metro {
 
     while( check() ) {
       auto item = func();
+      node->append(item);
+
+      if( cur->kind == TOK_END ) {
+        break;
+      }
 
       switch( item->kind ) {
         case ND_FUNCTION:
+          break;
+        
+        default:
           expect_semi();
       }
-
-      node->append(item);
     }
 
     return node;

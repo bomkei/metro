@@ -20,6 +20,10 @@ namespace Metro {
     _inst = this;
   }
 
+  Application::~Application() {
+
+  }
+
   Application* Application::get_instance() {
     return _inst;
   }
