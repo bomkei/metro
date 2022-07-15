@@ -4,7 +4,9 @@ LD		= $(CXX)
 
 TARGET	= metro
 
-BUILD		= build
+BINDIR	= /usr/local/bin
+
+BUILD	= build
 INCLUDE	= include
 SOURCES	= \
 	src \
@@ -19,7 +21,7 @@ SOURCES	= \
 	src/Types
 
 BASEFLAGS		:= -O2
-DEBUGFLAGS	:= -DMETRO_DEBUG=0
+DEBUGFLAGS		:= -DMETRO_DEBUG=0
 CFLAGS			:= $(BASEFLAGS) $(INCLUDES) -Wno-switch
 CXXFLAGS		:= $(CFLAGS) -std=c++20
 LDFLAGS			:= -Wl,--gc-sections -pthread
@@ -45,31 +47,31 @@ endif
 export TOPDIR		= $(CURDIR)
 export OUTPUT		= $(TOPDIR)/$(TARGET).$(EXT)
 export VPATH		= $(foreach dir,$(SOURCES),$(TOPDIR)/$(dir))
-export INCLUDES	= $(foreach dir,$(INCLUDE),-I$(TOPDIR)/$(dir))
+export INCLUDES		= $(foreach dir,$(INCLUDE),-I$(TOPDIR)/$(dir))
 
 CFILES			= $(notdir $(foreach dir,$(SOURCES),$(wildcard $(dir)/*.c)))
 CXXFILES		= $(notdir $(foreach dir,$(SOURCES),$(wildcard $(dir)/*.cc)))
 
 export OFILES		= $(CFILES:.c=.o) $(CXXFILES:.cc=.o)
 
-.PHONY: all
+.PHONY: all debug install clean re  $(BUILD)
+
 all: $(BUILD)
 
-.PHONY: $(BUILD)
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $@ -f $(CURDIR)/Makefile
 
-.PHONY: debug
 debug:
 	@[ -d $(BUILD) ] || mkdir -p $(BUILD)
 	@$(MAKE) --no-print-directory BASEFLAGS="-O0 -g" DEBUGFLAGS="-DMETRO_DEBUG=1" LDFLAGS="" -C $(BUILD) -f $(CURDIR)/Makefile
 
-.PHONY: clean
+install: all
+	@install $(notdir $(OUTPUT)) $(BINDIR)/$(TARGET)
+
 clean:
 	@rm -rf $(BUILD) $(OUTPUT)
 
-.PHONY: re
 re: clean all
 
 else
