@@ -18,7 +18,8 @@ SOURCES	= \
 	src/Lexer \
 	src/Parser \
 	src/Semantics \
-	src/Types
+	src/Types \
+	src/Utils
 
 BASEFLAGS		:= -O2
 DEBUGFLAGS		:= -DMETRO_DEBUG=0

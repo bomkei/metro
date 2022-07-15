@@ -4,7 +4,9 @@ namespace Metro {
   class AppInternal {
     friend class Application;
 
-    bool isConstructedSystemModules;
+    bool isConstructedSystemModulesNode;
+
+    Node* construct_sysmodules_node();
 
   public:
     ~AppInternal() = default;
