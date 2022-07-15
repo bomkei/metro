@@ -22,9 +22,9 @@ SOURCES	= \
 
 BASEFLAGS		:= -O2
 DEBUGFLAGS		:= -DMETRO_DEBUG=0
-CFLAGS			:= $(BASEFLAGS) $(INCLUDES) -Wno-switch
+CFLAGS			:= $(BASEFLAGS) $(DEBUGFLAGS) $(INCLUDES) -Wno-switch
 CXXFLAGS		:= $(CFLAGS) -std=c++20
-LDFLAGS			:= -Wl,--gc-sections -pthread
+LDFLAGS			:= -Wl,--gc-sections
 
 %.o: %.c
 	@echo $(notdir $<)
@@ -80,7 +80,7 @@ DEPENDS	= $(OFILES:.o=.d)
 
 $(OUTPUT): $(OFILES)
 	@echo linking...
-	@$(LD) $(LDFLAGS) -o $@ $^
+	@$(LD) $(LDFLAGS) -pthread -o $@ $^
 
 -include $(DEPENDS)
 
