@@ -1,10 +1,11 @@
 #include <fstream>
-#include "Application.h"
+#include "Utils.h"
 #include "Lexer.h"
 #include "Parser.h"
 #include "Sema/Analyzer.h"
 #include "Evaluator.h"
-#include "Utils.h"
+#include "Application.h"
+#include "appInternal.h"
 
 #include "Types/Token.h"
 #include "Types/Object.h"
@@ -13,7 +14,9 @@
 namespace Metro {
   static Application* _inst;
 
-  Application::Application() {
+  Application::Application()
+    : _app(new AppInternal)
+  {
     _inst = this;
   }
 
@@ -22,45 +25,8 @@ namespace Metro {
   }
 
   int Application::main(int argc, char** argv) {
-
-    std::string source;
-    std::ifstream ifs{ "test.txt" };
-
-    // read source
-    for( std::string line; std::getline(ifs, line); ) {
-      source += line + '\n';
-    }
-
-    Lexer lexer{ source };
-
-    auto token = lexer.lex();
-
-    // print token
-    // for(auto t=token;t->kind!=TOK_END;t=t->next){
-    //   std::cout<<t->str<<std::endl;
-    // }
-
-    alert;
-
-    Parser parser{ token };
-
-    auto node = parser.parse();
-
-    alert;
-
-    Sema::Analyzer analyzer;
-    auto type = analyzer.Check(node);
-    alert;
-
-    Evaluator eval;
-    //auto obj = runner.run(node);
-
-    alert;
-    auto obj = eval.eval(node->nodes[0]->code);
-
-    alert;
-
-    //std::cout << obj->to_string() << std::endl;
+    
+    auto obj = execScriptFile("test.txt");
 
     return 0;
   }

@@ -15,7 +15,14 @@ namespace Metro {
     auto node = new Node(ND_SCOPE, nullptr);
 
     while( check() ) {
-      node->append(func());
+      auto item = func();
+
+      switch( item->kind ) {
+        case ND_FUNCTION:
+          expect_semi();
+      }
+
+      node->append(item);
     }
 
     return node;

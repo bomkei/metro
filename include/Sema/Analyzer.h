@@ -19,7 +19,6 @@ namespace Metro::Sema {
 
     bool isAddable(TypeInfo left, TypeInfo right);
 
-
     std::map<Node*, TypeInfo> caches;
   };
 }

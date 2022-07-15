@@ -39,6 +39,6 @@ namespace Metro {
       return node;
     }
 
-    crash;
+    return expr();
   }
 }

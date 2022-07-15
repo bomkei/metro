@@ -7,6 +7,7 @@ namespace Metro {
     TYPE_BOOL,
     TYPE_CHAR,
     TYPE_STRING,
+    TYPE_ARGS,
     TYPE_NONE
   };
 

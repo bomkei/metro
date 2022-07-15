@@ -35,6 +35,10 @@ namespace Metro {
     }
   }
 
+  void Parser::expect_semi() {
+    expect(";");
+  }
+
   Node* Parser::expect_type() {
     auto node = new Node(ND_TYPE, cur);
 
