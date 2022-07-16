@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include "BuiltinFunc.h"
+#include "Types/BuiltinFunc.h"
 
 namespace Metro {
   struct Node;

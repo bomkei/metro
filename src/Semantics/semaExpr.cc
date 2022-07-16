@@ -10,7 +10,7 @@ namespace Metro::Sema {
 
     switch( node->kind ) {
       case ND_VALUE: {
-        auto obj = (node->object = new Object());
+        auto obj = (node->nd_object = new Object());
 
         switch( node->token->kind ) {
           case TOK_INT:
@@ -62,7 +62,7 @@ namespace Metro::Sema {
 
         std::vector<TypeInfo> arg_types;
 
-        for( auto&& arg : node->nodes ) {
+        for( auto&& arg : node->list ) {
           arg_types.emplace_back(Check(arg));
         }
 

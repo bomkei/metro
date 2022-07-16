@@ -15,7 +15,7 @@ namespace Metro {
 
     switch( node->kind ) {
       case ND_VALUE: {
-        return clone(node->object);
+        return clone(node->nd_object);
       }
 
       case ND_VARIABLE: {
@@ -28,7 +28,7 @@ namespace Metro {
 
         std::vector<Object*> args;
 
-        for( auto&& arg : node->nodes ) {
+        for( auto&& arg : node->list ) {
           args.emplace_back(eval(arg));
         }
 
@@ -57,7 +57,7 @@ namespace Metro {
         break;
 
       case ND_SCOPE: {
-        for( auto&& node : node->nodes ) {
+        for( auto&& node : node->list ) {
           eval(node);
         }
 

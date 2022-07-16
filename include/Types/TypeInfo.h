@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 namespace Metro {
   enum TypeKind {
     TYPE_INT,
@@ -19,27 +21,9 @@ namespace Metro {
     {
     }
 
-    bool equals(TypeKind kind) const {
-      return this->kind == kind;
-    }
-
-    bool equals(TypeInfo const& type) const {
-      if( kind != type.kind )
-        return false;
-      
-      return true;
-    }
-
-    std::string to_string() const {
-      switch( kind ) {
-        case TYPE_INT:
-          return "int";
-        
-        case TYPE_NONE:
-          return "none";
-      }
-
-      return "(unknown type)";
-    }
+    bool equals(TypeKind kind) const;
+    bool equals(TypeInfo const& type) const;
+    
+    std::string to_string() const;
   };
 }
