@@ -10,7 +10,7 @@ namespace Metro {
       auto node = new Node(ND_FUNCTION, ate);
 
       expect_ident();
-      node->name = cur;
+      node->nd_name = cur;
 
       next();
       expect("(");
@@ -20,21 +20,21 @@ namespace Metro {
           auto arg = new Node(ND_ARGUMENT, cur);
 
           expect_ident();
-          arg->name = cur;
+          arg->nd_name = cur;
 
           next();
           expect(":");
 
-          arg->type = expect_type();
+          arg->nd_type = expect_type();
         } while( eat(",") );
         expect(")");
       }
 
       if( eat("->") ) {
-        node->type = expect_type();
+        node->nd_type = expect_type();
       }
 
-      node->code = expect_scope();
+      node->nd_code = expect_scope();
 
       return node;
     }

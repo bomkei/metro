@@ -5,7 +5,6 @@
 #include "Sema/Analyzer.h"
 #include "Evaluator.h"
 #include "Application.h"
-#include "appInternal.h"
 
 #include "Types/Token.h"
 #include "Types/Object.h"

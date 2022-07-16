@@ -18,7 +18,7 @@ namespace Metro::Sema {
 
     switch( node->kind ) {
       case ND_TYPE: {
-        auto const& name = node->name->str;
+        auto const& name = node->nd_name->str;
 
         if( name == "int" ) {
           ret.kind = TYPE_INT;
@@ -33,27 +33,26 @@ namespace Metro::Sema {
       case ND_VALUE:
       case ND_VARIABLE:
       case ND_CALLFUNC:
-      case ND_EXPR:
       case ND_SCOPE:
-        alert;
+      case ND_EXPR:
         ret = Expr(node);
         break;
 
       case ND_ARGUMENT:
-        ret = Check(node->type);
+        ret = Check(node->nd_type);
         break;
 
       case ND_FUNCTION: {
         // args
-        for( auto&& i : node->nodes ) {
+        for( auto&& i : node->list ) {
           Check(i);
         }
 
         // return type
-        ret = Check(node->type);
+        ret = Check(node->nd_type);
 
         // code
-        Check(node->code);
+        Check(node->nd_code);
 
         break;
       }

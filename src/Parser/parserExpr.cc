@@ -40,7 +40,7 @@ namespace Metro {
 
           if( !eat(")") ) {
             do {
-              node->nodes.emplace_back(expr());
+              node->list.emplace_back(expr());
             } while( eat(",") );
 
             alert;

@@ -5,7 +5,6 @@
 #include "Sema/Analyzer.h"
 #include "Evaluator.h"
 #include "Application.h"
-#include "appInternal.h"
 
 #include "Types/Token.h"
 #include "Types/Object.h"
@@ -13,10 +12,9 @@
 
 namespace Metro {
   static Application* _inst;
+  Node* Application::sysmodules_node;
 
-  Application::Application()
-    : _app(new AppInternal)
-  {
+  Application::Application() {
     _inst = this;
   }
 
@@ -26,6 +24,16 @@ namespace Metro {
 
   Application* Application::get_instance() {
     return _inst;
+  }
+
+  bool Application::wasSysmoduleConstructed() {
+    return sysmodules_node != nullptr;
+  }
+
+  void Application::initialize() {
+    if( wasSysmoduleConstructed() ) {
+      sysmodules_node = construct_sysmodule();
+    }
   }
 
   int Application::main(int argc, char** argv) {

@@ -2,5 +2,10 @@
 #include "Application.h"
 
 int main(int argc, char** argv) {
-  return Metro::Application().main(argc, argv);
+  auto app = new Metro::Application();
+
+  app->initialize();
+  app->execScriptFile("test.txt");
+
+  return 0;
 }

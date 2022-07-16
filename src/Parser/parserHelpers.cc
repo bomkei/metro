@@ -43,7 +43,7 @@ namespace Metro {
     auto node = new Node(ND_TYPE, cur);
 
     expect_ident();
-    node->name = cur;
+    node->nd_name = cur;
 
     next();
 

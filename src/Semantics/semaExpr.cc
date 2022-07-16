@@ -95,10 +95,13 @@ namespace Metro::Sema {
       }
 
       case ND_SCOPE: {
-        for( auto&& node : node->nodes ) {
+        scope_history.push_front(node);
+
+        for( auto&& node : node->list ) {
           Check(node);
         }
 
+        scope_history.pop_front();
         break;
       }
     }
