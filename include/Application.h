@@ -38,7 +38,10 @@ namespace Metro {
     AppContext::Script open_script_file(char const* path);
     Object* execute_script(AppContext::Script& script);
 
-    void parse_args(int argc, char** argv);
+    bool parse_args(int argc, char** argv);
+    void show_help();
+    void show_version();
+
     int main(int argc, char** argv);
 
     static Application* get_instance();

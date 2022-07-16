@@ -1,3 +1,4 @@
+#include <iostream>
 #include <fstream>
 #include "Utils.h"
 #include "Lexer.h"
@@ -15,6 +16,11 @@ namespace Metro {
   AppContext::Script Application::open_script_file(char const* path) {
     std::ifstream ifs{ path };
     AppContext::Script script;
+
+    if( ifs.fail() ) {
+      std::cout << "cannot open file: " << path << std::endl;
+      exit(1);
+    }
 
     script.path = path;
 
@@ -62,6 +68,7 @@ namespace Metro {
     alert;
     auto obj = eval.eval(node);
 
+    alert;
     return obj;
   }
 

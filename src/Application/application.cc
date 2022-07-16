@@ -38,9 +38,9 @@ namespace Metro {
 
   int Application::main(int argc, char** argv) {
     
-    
-
-    auto obj = execScriptFile("test.txt");
+    for( auto&& script : ctx.scripts ) {
+      execute_script(script);
+    }
 
     return 0;
   }
