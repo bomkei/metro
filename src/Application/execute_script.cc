@@ -12,16 +12,29 @@
 
 namespace Metro {
 
-  Object* Application::execScriptFile(std::string const& path) {
-    std::string source;
+  AppContext::Script Application::open_script_file(char const* path) {
     std::ifstream ifs{ path };
+    AppContext::Script script;
 
-    // read source
+    script.path = path;
+
     for( std::string line; std::getline(ifs, line); ) {
-      source += line + '\n';
+      script.data += line + '\n';
     }
 
-    Lexer lexer{ source };
+    return script;
+  }
+
+  Object* Application::execute_script(AppContext::Script& script) {
+    // std::string source;
+    // std::ifstream ifs{ path };
+
+    // // read source
+    // for( std::string line; std::getline(ifs, line); ) {
+    //   source += line + '\n';
+    // }
+
+    Lexer lexer{ script.data };
 
     auto token = lexer.lex();
 
@@ -35,6 +48,7 @@ namespace Metro {
     Parser parser{ token };
 
     auto node = parser.parse();
+    script.node = node;
 
     alert;
 

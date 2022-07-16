@@ -38,6 +38,8 @@ namespace Metro {
 
   int Application::main(int argc, char** argv) {
     
+    
+
     auto obj = execScriptFile("test.txt");
 
     return 0;

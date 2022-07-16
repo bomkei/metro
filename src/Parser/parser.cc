@@ -15,7 +15,9 @@ namespace Metro {
   Node* Parser::parse() {
     auto node = new Node(ND_SCOPE, nullptr);
 
-    
+    if( Application::wasSysmoduleConstructed() ) {
+      
+    }
 
     while( check() ) {
       auto item = func();

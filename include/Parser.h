@@ -27,7 +27,6 @@ namespace Metro {
     Node* expect_scope();
     Node* makeexpr(Node* node);
 
-
     Token* cur;
     Token* ate;
   };

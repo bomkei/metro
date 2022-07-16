@@ -1,5 +1,9 @@
 #pragma once
 
+// ----------------------- //
+//  Semantics
+// ----------------------- //
+
 #include <map>
 #include <list>
 #include "Types/TypeInfo.h"

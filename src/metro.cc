@@ -5,7 +5,7 @@ int main(int argc, char** argv) {
   auto app = new Metro::Application();
 
   app->initialize();
-  app->execScriptFile("test.txt");
+  app->parse_args(argc, argv);
 
-  return 0;
+  return app->main(argc, argv);
 }
