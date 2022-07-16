@@ -4,11 +4,13 @@
 #include <cstring>
 
 #define   nd_name           uni.tok
-#define   nd_object         uni.s0.obj
 #define   nd_builtin_func   uni.bifun
+#define   nd_callee_builtin uni.bifun
+#define   nd_object         uni.s0.obj
 #define   nd_is_ref         uni.s0.bval[0]
 #define   nd_is_const       uni.s0.bval[1]
 #define   nd_type           uni.s0.ndval[0]
+#define   nd_callee         uni.s0.ndval[0]
 #define   nd_item           uni.s0.ndval[0]
 #define   nd_if_true        uni.s0.ndval[0]
 #define   nd_cond           uni.s0.ndval[0]
@@ -59,8 +61,8 @@ namespace Metro {
   struct Object;
   struct BuiltinFunc;
   struct Node {
-    union __attribute__((packed)) __ndUnion {
-      struct __s0_t {
+    union __attribute__((packed)) _nodeunion_t {
+      struct _uni_struct_t {
         Object* obj;
         bool    bval[2];
         Node*   ndval[4];
@@ -68,7 +70,7 @@ namespace Metro {
 
       Token*  tok;
       BuiltinFunc const* bifun;
-      __s0_t  s0;
+      _uni_struct_t  s0;
     };
 
     struct ExprItem {
@@ -85,17 +87,18 @@ namespace Metro {
     NodeKind    kind;
     Token*      token;
     Node*       owner;
-    __ndUnion   uni;
+    _nodeunion_t   uni;
 
     std::vector<Node*> list;
     std::vector<ExprItem> expr;
+    std::vector<Object*> objects;
 
     Node(NodeKind kind, Token* token)
       : kind(kind),
         token(token),
         owner(nullptr)
     {
-      memset(&uni, 0, sizeof(__ndUnion));
+      memset(&uni, 0, sizeof(_nodeunion_t));
     }
 
     Node* append(Node* node);

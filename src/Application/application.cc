@@ -30,14 +30,17 @@ namespace Metro {
     return sysmodules_node != nullptr;
   }
 
+  Node* Application::get_sysmodules_node() {
+    return sysmodules_node;
+  }
+
   void Application::initialize() {
-    if( wasSysmoduleConstructed() ) {
+    if( !wasSysmoduleConstructed() ) {
       sysmodules_node = construct_sysmodule();
     }
   }
 
   int Application::main(int argc, char** argv) {
-    
     for( auto&& script : ctx.scripts ) {
       execute_script(script);
     }

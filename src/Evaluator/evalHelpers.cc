@@ -49,4 +49,16 @@ namespace Metro {
 
     return left;
   }
+
+  void Evaluator::enter_scope(Node* scope) {
+    scope_history.push_front(scope);
+  }
+
+  void Evaluator::leave_scope() {
+    scope_history.pop_front();
+  }
+
+  Node* Evaluator::get_current_scope() {
+    return *scope_history.begin();
+  }
 }

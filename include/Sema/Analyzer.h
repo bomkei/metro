@@ -17,7 +17,7 @@ namespace Metro::Sema {
   public:
     Analyzer() { }
 
-    TypeInfo Check(Node* node);
+    TypeInfo check(Node* node);
     TypeInfo Expr(Node* node);
 
     Node* find_func(std::string_view const& name);

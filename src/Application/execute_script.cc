@@ -59,7 +59,7 @@ namespace Metro {
     alert;
 
     Sema::Analyzer analyzer;
-    auto type = analyzer.Check(node);
+    auto type = analyzer.check(node);
     alert;
 
     Evaluator eval;

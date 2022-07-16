@@ -14,6 +14,7 @@ SOURCES	= \
 	src/builtin \
 	src/builtin/std \
 	src/Evaluator \
+	src/Evaluator/parts \
 	src/GC \
 	src/Lexer \
 	src/Parser \

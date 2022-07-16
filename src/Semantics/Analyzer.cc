@@ -5,7 +5,7 @@
 #include "Utils.h"
 
 namespace Metro::Sema {
-  TypeInfo Analyzer::Check(Node* node) {
+  TypeInfo Analyzer::check(Node* node) {
     if( !node ) {
       return { };
     }
@@ -39,20 +39,32 @@ namespace Metro::Sema {
         break;
 
       case ND_ARGUMENT:
-        ret = Check(node->nd_type);
+        ret = check(node->nd_type);
         break;
 
       case ND_FUNCTION: {
         // args
         for( auto&& i : node->list ) {
-          Check(i);
+          check(i);
         }
 
         // return type
-        ret = Check(node->nd_type);
+        ret = check(node->nd_type);
 
         // code
-        Check(node->nd_code);
+        check(node->nd_code);
+
+        node->objects.resize(node->list.size());
+        break;
+      }
+
+      case ND_BUILTIN_FUNC:
+        break;
+
+      case ND_NAMESPACE: {
+        for( auto&& x : node->list ) {
+          check(x);
+        }
 
         break;
       }

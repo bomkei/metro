@@ -1,5 +1,6 @@
 #include <thread>
 #include <mutex>
+#include <map>
 #include "Types/Token.h"
 #include "Types/Object.h"
 #include "Types/Node.h"
@@ -11,16 +12,19 @@ namespace Metro {
     bool is_running;
     std::thread* thread;
     std::vector<Object*> objects;
+    std::map<Object*, clock_t> objclock;
     std::mutex mtx;
 
     // delete unused object
     void clean() {
       std::lock_guard<std::mutex> lock{ mtx };
 
+      // 1000000 = 1sec
+
       for( size_t i = 0; i < objects.size(); ) {
         auto& obj = objects[i];
 
-        if( obj->ref_count == 0 && !obj->is_weak ) {
+        if( (clock() - objclock[obj]) >= 1000000 && obj->ref_count == 0 && !obj->is_weak ) {
           delete obj;
           objects.erase(objects.begin() + i);
         }
@@ -47,12 +51,17 @@ namespace Metro {
 
   void GC::stop() {
     is_running = false;
-    thread->detach();
+    thread->join();
+
+    for( auto&& obj : objects ) {
+      delete obj;
+    }
   }
 
   Object* GC::append(Object* obj) {
     std::lock_guard<std::mutex> lock{ mtx };
 
+    objclock[obj] = clock();
     return objects.emplace_back(obj);
   }
 }

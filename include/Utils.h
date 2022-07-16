@@ -4,17 +4,9 @@
 #include <vector>
 #include <locale>
 #include <codecvt>
-
-#if METRO_DEBUG
-  #define  alert  fprintf(stderr,"\t#alert " __FILE__ ":%d\n",__LINE__)
-  #define  crash  { alert; fprintf(stderr,"\n\n# application has been crashed.\n"); exit(1); }
-#else
-  #define  alert  0
-  #define  crash  exit(1);
-#endif
+#include "Debug.h"
 
 #define  BIT(n)   (1 << n)
-#define  TODO_IMPL  { alert; fprintf(stderr,"\n\n# Not implemented error.\n"); exit(1); }
 
 namespace Utils {
   template <class... Args>

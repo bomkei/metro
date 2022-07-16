@@ -26,6 +26,7 @@ namespace Metro {
           expect(":");
 
           arg->nd_type = expect_type();
+          node->append(arg);
         } while( eat(",") );
         expect(")");
       }

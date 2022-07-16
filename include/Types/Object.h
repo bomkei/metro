@@ -2,6 +2,7 @@
 
 #include <string>
 #include "TypeInfo.h"
+#include "Debug.h"
 
 namespace Metro {
   struct Object {
@@ -25,6 +26,11 @@ namespace Metro {
         ref_count(0),
         is_weak(false)
     {
+      alert;
+    }
+
+    ~Object() {
+      alert;
     }
 
     std::string to_string() const;

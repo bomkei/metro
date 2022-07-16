@@ -63,28 +63,54 @@ namespace Metro::Sema {
         std::vector<TypeInfo> arg_types;
 
         for( auto&& arg : node->list ) {
-          arg_types.emplace_back(Check(arg));
+          arg_types.emplace_back(check(arg));
         }
 
-        if( name == "println" ) {
-          ret = TYPE_INT;
-        }
-        else {
+        auto find = find_func(name);
+        node->nd_callee = find;
+
+        if( !find ) {
           crash;
         }
+
+        // check args
+        if( find->kind == ND_FUNCTION ) {
+          if( find->list.size() == arg_types.size() ) {
+            for( auto callee_arg = find->list.begin(), arg = node->list.begin(); arg != node->list.end(); callee_arg++, arg++ ) {
+              if( !check(*callee_arg).equals(check(*arg)) ) {
+                crash;
+              }
+            }
+          }
+          else {
+            crash;
+          }
+
+          ret = check(find->nd_ret_type);
+        }
+        else {
+
+        }
+
+        // if( name == "println" ) {
+        //   ret = TYPE_INT;
+        // }
+        // else {
+        //   crash;
+        // }
 
         break;
       }
 
       case ND_EXPR: {
-        ret = Check(node->expr[0].node);
+        ret = check(node->expr[0].node);
 
         for( auto it = node->expr.begin() + 1; it != node->expr.end(); it++ ) {
-          Check(it->node);
+          check(it->node);
 
           switch( it->kind ) {
             case EX_ADD:
-              if( !isAddable(Check((it - 1)->node), Check(it->node)) ) {
+              if( !isAddable(check((it - 1)->node), check(it->node)) ) {
                 crash;
               }
               break;
@@ -98,7 +124,7 @@ namespace Metro::Sema {
         scope_history.push_front(node);
 
         for( auto&& node : node->list ) {
-          Check(node);
+          check(node);
         }
 
         scope_history.pop_front();

@@ -46,6 +46,7 @@ namespace Metro {
 
     static Application* get_instance();
     static bool wasSysmoduleConstructed();
+    static Node* get_sysmodules_node();
 
   private:
 

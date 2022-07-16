@@ -7,7 +7,21 @@
 namespace Metro::Sema {
   Node* Analyzer::find_func(std::string_view const& name) {
     for( auto&& scope : scope_history ) {
-      
+      for( auto&& item : scope->list ) {
+        if( !item ) {
+          continue;
+        }
+
+        switch( item->kind ) {
+          case ND_FUNCTION: {
+            if( item->nd_name->str == name ) {
+              return item;
+            }
+
+            break;
+          }
+        }
+      }
     }
 
     return nullptr;
