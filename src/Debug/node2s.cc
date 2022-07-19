@@ -1,9 +1,9 @@
-//#include <format> // f**
+//#include <format> // f*
 
-#include "Utils.h"
 #include "Types/Token.h"
 #include "Types/Object.h"
 #include "Types/Node.h"
+#include "Utils.h"
 
 namespace Metro::Debug {
   #define strss(x) std::string(x)

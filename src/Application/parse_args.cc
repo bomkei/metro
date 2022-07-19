@@ -8,7 +8,19 @@ namespace Metro {
     return std::string_view{ s, len };
   }
 
+  template <size_t Len>
+  static inline bool startswith(char const* s, char const (&cmp) [Len]) {
+    for( size_t i = 0; auto&& c : cmp ) {
+      if( s[i] == 0 ) break;
+      else if( s[i] != c ) return false;
+    }
+
+    return true;
+  }
+
   bool Application::parse_args(int argc, char** argv) {
+    #define _Invalid_arg goto _L_invalid_arg;
+
     ctx.argc = argc;
     ctx.argv = argv;
     ctx.app_name = *argv;
@@ -31,11 +43,25 @@ namespace Metro {
         continue;
       }
     #if METRO_DEBUG
+      else if( arg == "--EXTRADEBUG" ) {
+        ctx.__dbg_all_flag_bits = (uint32_t)-1;
+      }
       else if( i <= argc - 2 && argv[i] == "--d_appstep"_view ) {
         ctx._d_max_step_to = atoi(argv[i + 1]);
         std::cout << "@debug: max app step is " << ctx._d_max_step_to << std::endl;
         i += 2;
         continue;
+      }
+      else if( startswith(argv[i], "--d_print=") ) {
+        if( arg.length() == 10 ) {
+          _Invalid_arg
+        }
+
+        for( size_t i = 10; i < arg.length(); i++ ) {
+          switch( arg[i] ) {
+            case 'N':
+          }
+        }
       }
     #endif
       else if( *argraw == '-' ) {
@@ -54,5 +80,9 @@ namespace Metro {
     }
 
     return true;
+
+  _L_invalid_arg:
+    std::cerr << "invalid argument" << std::endl;
+    return 0;
   }
 }

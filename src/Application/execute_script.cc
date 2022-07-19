@@ -58,6 +58,10 @@ namespace Metro {
     auto node = parser.parse();
     script.node = node;
 
+  #if METRO_DEBUG
+    
+  #endif
+
     alert;
 
   _dfn_check_step(3);

@@ -12,7 +12,10 @@
 
 #define  TODO_IMPL  { alert; fprintf(stderr,"\n\n# Not implemented error.\n"); exit(1); }
 
-namespace Debug {
+namespace Metro {
   struct Node;
-  std::string node2s(Node* node);
+
+  namespace Debug {
+    std::string node2s(Node* node);
+  }
 }

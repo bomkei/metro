@@ -28,7 +28,23 @@ namespace Metro {
     //  3. Semantics
     //  4. Evaluate
     int     _d_max_step_to = 0;
-    
+
+    // flags debugging
+    union {
+      struct __attribute__((packed)) _dt_ctrl_print_flags {
+        bool _df_tokens        : 1;
+        bool _df_nodes         : 1;
+        bool _df_sema_result   : 1;
+        bool _df_evaluated_obj : 1;
+      };
+
+      struct {
+        _dt_ctrl_print_flags    _d_print;
+      };
+
+      uint32_t __dbg_all_flag_bits = 0;
+    };
+
   #endif
     // -------------- //
 
