@@ -59,69 +59,79 @@ namespace Metro::Sema {
         break;
       }
 
+      //
+      // Call function
       case ND_CALLFUNC: {
         auto const& name = node->token->str;
 
-        std::vector<TypeInfo> arg_types;
+        // find
+        auto func_node = find_func(name);
+        node->nd_callee = func_node;
 
-        for( auto&& arg : node->list ) {
-          arg_types.emplace_back(check(arg));
-        }
-
-        auto find = find_func(name);
-        node->nd_callee = find;
-
-        if( !find ) {
+        // not found
+        if( !func_node ) {
           Error::add_error(ERR_UNDEFINED_FUNC, node->token, "function '" + std::string(name) + "' is not defined");
           Error::exit_app();
         }
 
-        // check args
-        if( find->kind == ND_FUNCTION ) {
-          ret = check(find->nd_ret_type);
+        bool is_builtin = func_node->kind == ND_BUILTIN_FUNC;
+        BuiltinFunc const* builtin = func_node->nd_builtin_func;
 
-          if( find->list.size() == arg_types.size() ) {
-            for( auto x = find->list.begin(), y = node->list.begin(); auto&& z : arg_types ) {
-              auto&& xx = check(*x);
+        std::vector<TypeInfo>   args;
+        std::vector<TypeInfo>   func_args;
 
-              if( xx.kind == TYPE_ARGS ) {
-                break;
-              }
+        for( auto&& arg : node->list ) {
+          args.emplace_back(check(arg));
+        }
 
-              if( !xx.equals(z) ) {
-                Error::add_error(ERR_TYPE_MISMATCH, (*y++)->token, "type mismatch");
-              }
+        // get argument types of function
+        if( !is_builtin ) { // user-defined
+          for( auto&& x : func_node->list ) {
+            func_args.emplace_back(check(x));
+          }
+
+          ret = check(func_node->nd_ret_type);
+        }
+        else { // built-in
+          func_args = builtin->arg_types;
+          ret = builtin->ret_type;
+        }
+
+        auto arg_iter       = args.begin();
+        auto arg_iter_func  = func_args.begin();
+
+        auto arg_nd   = node->list.begin();
+
+        // check arguments
+        for( ; ; arg_iter++, arg_iter_func++ ) {
+          if( arg_iter_func == func_args.end() ) {
+            if( arg_iter != args.end() ) {
+              Error::add_error(ERR_NO_MATCH_ARGUMENTS, node->token, "too many arguments");
             }
           }
-          else { // no match args count
-            goto _no_match_arg_count;
+          else if( arg_iter == args.end() ) {
+            if( arg_iter_func != func_args.end() && !arg_iter_func->equals(TYPE_ARGS) ) {
+              Error::add_error(ERR_NO_MATCH_ARGUMENTS, node->token, "too few arguments");
+            }
+          }
+
+          // variadic arguments
+          if( arg_iter_func->equals(TYPE_ARGS) ) {
+            break;
+          }
+
+          if( !arg_iter->equals(*arg_iter_func) ) {
+            Error::add_error(ERR_TYPE_MISMATCH, (*arg_nd)->token, "type mismatch");
+            break;
           }
         }
-        else {
-          BuiltinFunc const* bifun = find->nd_builtin_func;
+
+        if( !is_builtin ) {
+          check(func_node->nd_code);
+
           
-          ret = bifun->ret_type;
-
-          if( bifun->arg_types.size() == arg_types.size() ) {
-            for( auto x = bifun->arg_types.begin(), y = arg_types.cbegin(); auto&& z : node->list ) {
-              if( x->kind == TYPE_ARGS ) {
-                break;
-              }
-
-              if( !(x++)->equals(*y++) ) {
-                Error::add_error(ERR_TYPE_MISMATCH, z, "type mismatch");
-              }
-            }
-          }
-          else {
-            goto _no_match_arg_count;
-          }
         }
 
-        break;
-
-      _no_match_arg_count:;
-        Error::add_error(ERR_NO_MATCH_ARGUMENTS, node->token, "no match arguments in call '" + std::string(name) + "'");
         break;
       }
 
