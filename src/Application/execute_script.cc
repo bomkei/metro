@@ -13,6 +13,12 @@
 
 namespace Metro {
 
+  static void _print_token(Token* token) {
+    for( ; token->kind != TOK_END; token = token->next ) {
+      std::cout << token->str << std::endl;
+    }
+  }
+
   AppContext::Script Application::open_script_file(char const* path) {
     std::ifstream ifs{ path };
     AppContext::Script script;
@@ -32,25 +38,21 @@ namespace Metro {
   }
 
   Object* Application::execute_script(AppContext::Script& script) {
-    // std::string source;
-    // std::ifstream ifs{ path };
+    auto const* ctx = Application::get_cur_appcontext();
 
-    // // read source
-    // for( std::string line; std::getline(ifs, line); ) {
-    //   source += line + '\n';
-    // }
+  #if METRO_DEBUG
+    #define  _dfn_check_step(__n) \
+      if( ctx->_d_max_step_to < __n ) return nullptr;
+  #endif
 
+  _dfn_check_step(1);
     Lexer lexer{ script.data };
 
     auto token = lexer.lex();
 
-    // print token
-    // for(auto t=token;t->kind!=TOK_END;t=t->next){
-    //   std::cout<<t->str<<std::endl;
-    // }
-
     alert;
 
+  _dfn_check_step(2);
     Parser parser{ token };
 
     auto node = parser.parse();
@@ -58,18 +60,18 @@ namespace Metro {
 
     alert;
 
+  _dfn_check_step(3);
     Sema::Analyzer analyzer;
     auto type = analyzer.check(node);
     alert;
 
+  _dfn_check_step(4);
     Evaluator eval;
-    //auto obj = runner.run(node);
-
     alert;
+
     auto obj = eval.eval(node);
-
     alert;
+ 
     return obj;
   }
-
 }

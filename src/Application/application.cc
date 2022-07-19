@@ -1,3 +1,4 @@
+#include <iostream>
 #include <fstream>
 #include "Utils.h"
 #include "Lexer.h"
@@ -26,6 +27,10 @@ namespace Metro {
     return _inst;
   }
 
+  AppContext const* Application::get_cur_appcontext() {
+    return const_cast<AppContext const*>(&_inst->ctx);
+  }
+
   bool Application::wasSysmoduleConstructed() {
     return sysmodules_node != nullptr;
   }
@@ -42,6 +47,11 @@ namespace Metro {
 
   int Application::main(int argc, char** argv) {
     for( auto&& script : ctx.scripts ) {
+      if( !ctx.no_print_filenames ) {
+        std::cout
+          << script.path << std::endl;
+      }
+
       execute_script(script);
     }
 

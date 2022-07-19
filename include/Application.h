@@ -19,6 +19,19 @@ namespace Metro {
     char**  argv;
     std::string_view  app_name;
 
+    // --- Debugs --- //
+  #if METRO_DEBUG
+    // how far run app
+    //  0. Nothing
+    //  1. Lex
+    //  2. Parse
+    //  3. Semantics
+    //  4. Evaluate
+    int     _d_max_step_to = 0;
+    
+  #endif
+    // -------------- //
+
     // --- Flags --- //
     bool    is_debug_enabled      = 0;
     bool    no_print_filenames    = 0; // don't print script path while running multiple script files
@@ -45,6 +58,8 @@ namespace Metro {
     int main(int argc, char** argv);
 
     static Application* get_instance();
+    static AppContext const* get_cur_appcontext();
+
     static bool wasSysmoduleConstructed();
     static Node* get_sysmodules_node();
 
