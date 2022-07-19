@@ -6,7 +6,7 @@
 #include "Utils.h"
 
 namespace Metro::Sema {
-  TypeInfo Analyzer::Expr(Node* node) {
+  TypeInfo Analyzer::expr(Node* node) {
     auto& ret = caches[node];
 
     switch( node->kind ) {
@@ -71,7 +71,8 @@ namespace Metro::Sema {
         node->nd_callee = find;
 
         if( !find ) {
-          crash;
+          Error::add_error(ERR_UNDEFINED_FUNC, node->token, "function '" + std::string(name) + "' is not defined");
+          Error::exit_app();
         }
 
         // check args
@@ -84,7 +85,7 @@ namespace Metro::Sema {
             }
           }
           else { // no match args count
-            Error::add_error(node->token, "no match arguments in call " + std::string(name));
+            Error::add_error(ERR_NO_MATCH_ARGUMENTS, node->token, "no match arguments in call " + std::string(name));
           }
 
           ret = check(find->nd_ret_type);
@@ -92,13 +93,6 @@ namespace Metro::Sema {
         else {
 
         }
-
-        // if( name == "println" ) {
-        //   ret = TYPE_INT;
-        // }
-        // else {
-        //   crash;
-        // }
 
         break;
       }

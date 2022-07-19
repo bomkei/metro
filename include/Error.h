@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 namespace Metro {
   struct Token;
   struct Node;
@@ -8,7 +10,9 @@ namespace Metro {
     ERR_INVALID_TOKEN,
     ERR_INVALID_SYNTAX,
     ERR_TYPE_MISMATCH,
+    ERR_NO_MATCH_ARGUMENTS,
     ERR_UNDEFINED_FUNC,
+    ERR_EXPECTED_TOKEN,
   };
 
   struct ErrorContext {

@@ -7,7 +7,7 @@ namespace Metro {
   void ErrorContext::show() {
 
     alert;
-    std::cout << Utils::format("ErrorContext: err_pos = %zu", err_pos) << std::endl;
+    std::cout << Utils::format("ErrorContext: err_pos = %zu: ", err_pos) << message << std::endl;
 
   }
 

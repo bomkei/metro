@@ -2,6 +2,7 @@
 #include "Types/Object.h"
 #include "Types/Node.h"
 #include "Parser.h"
+#include "Error.h"
 #include "Utils.h"
 
 namespace Metro {
@@ -25,13 +26,15 @@ namespace Metro {
 
   void Parser::expect(std::string_view const& str) {
     if( !eat(str) ) {
-      crash;
+      Error::add_error(ERR_EXPECTED_TOKEN, cur, "expected '" + std::string(str) + "'");
+      Error::exit_app();
     }
   }
 
   void Parser::expect_ident() {
     if( cur->kind != TOK_IDENT ) {
-      crash;
+      Error::add_error(ERR_EXPECTED_TOKEN, cur, "expected identifier");
+      Error::exit_app();
     }
   }
 
@@ -72,6 +75,10 @@ namespace Metro {
 
     while( !eat("}") && check() ) {
       auto item = node->append(expr());
+
+      if( eat("}") ) {
+        break;
+      }
 
       if( is_need_semi(item) ) {
         expect_semi();

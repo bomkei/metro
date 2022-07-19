@@ -11,7 +11,9 @@ namespace Metro {
       is_weak(false)
   {
   #if METRO_DEBUG
-    if( Application::get_cur_appcontext()->_d_print._df_construct_obj ) {
+    auto app = Application::get_instance();
+
+    if( app && Application::get_cur_appcontext()->_d_print._df_construct_obj ) {
       alert;
       fprintf(stderr, "\t#Object constructing: %p\n", this);
     }
@@ -20,7 +22,9 @@ namespace Metro {
 
   Object::~Object() {
   #if METRO_DEBUG
-    if( Application::get_cur_appcontext()->_d_print._df_destruct_obj ) {
+    auto app = Application::get_instance();
+
+    if( app && Application::get_cur_appcontext()->_d_print._df_destruct_obj ) {
       alert;
       fprintf(stderr, "\t#Object destructing: %p\n", this);
     }

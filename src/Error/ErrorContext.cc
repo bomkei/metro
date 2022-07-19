@@ -2,7 +2,7 @@
 #include "Application.h"
 #include "Error.h"
 
-namespace Metro::Error {
+namespace Metro {
 
 
 }

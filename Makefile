@@ -13,6 +13,7 @@ SOURCES	= \
 	src/Application \
 	src/builtin \
 	src/Debug \
+	src/Error \
 	src/Evaluator \
 	src/Evaluator/parts \
 	src/GC \
@@ -23,7 +24,6 @@ SOURCES	= \
 	src/Utils
 
 BASEFLAGS		:= -O2
-DEBUGFLAGS		:= -DMETRO_DEBUG=0
 CFLAGS			:= $(BASEFLAGS) $(DEBUGFLAGS) $(INCLUDES) -Wno-switch
 CXXFLAGS		:= $(CFLAGS) -std=c++20
 LDFLAGS			:= -Wl,--gc-sections

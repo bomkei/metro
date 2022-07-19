@@ -20,14 +20,18 @@ namespace Metro {
       case ND_VARIABLE:
       case ND_EXPR:
       case ND_SCOPE:
+        alert;
         ret = eval_expr(node);
         break;
 
       case ND_CALLFUNC:
+        alert;
         ret = eval_callfunc(node);
         break;
 
       case ND_FUNCTION:
+      case ND_BUILTIN_FUNC:
+        alert;
         break;
 
       default:
