@@ -43,7 +43,9 @@ namespace Metro {
 
   #if METRO_DEBUG
     #define  _dfn_check_step(__n) \
-      if( ctx->_d_max_step_to < __n ) return nullptr;
+      if( ctx->_d_max_step_to < __n ) return nullptr
+  #else
+    #define  _dfn_check_step(n)  0
   #endif
 
   _dfn_check_step(1);

@@ -1,8 +1,31 @@
+#include "Application.h"
 #include "Types/Object.h"
 #include "Utils.h"
 
 namespace Metro {
   Object* Object::none = new Object(TYPE_NONE);
+
+  Object::Object(TypeInfo type)
+    : type(type),
+      ref_count(0),
+      is_weak(false)
+  {
+  #if METRO_DEBUG
+    if( Application::get_cur_appcontext()->_d_print._df_construct_obj ) {
+      alert;
+      fprintf(stderr, "\t#Object constructing: %p\n", this);
+    }
+  #endif
+  }
+
+  Object::~Object() {
+  #if METRO_DEBUG
+    if( Application::get_cur_appcontext()->_d_print._df_destruct_obj ) {
+      alert;
+      fprintf(stderr, "\t#Object destructing: %p\n", this);
+    }
+  #endif
+  }
 
   std::string Object::to_string() const {
     switch( type.kind ) {

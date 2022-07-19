@@ -47,7 +47,7 @@ namespace Metro {
 
   int Application::main(int argc, char** argv) {
     for( auto&& script : ctx.scripts ) {
-      if( !ctx.no_print_filenames ) {
+      if( !ctx.no_print_filenames && ctx.scripts.size() > 1 ) {
         std::cout
           << script.path << std::endl;
       }

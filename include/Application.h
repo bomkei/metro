@@ -35,6 +35,8 @@ namespace Metro {
       bool _df_nodes         : 1; // w
       bool _df_sema_result   : 1; // e
       bool _df_evaluated_obj : 1; // r
+      bool _df_construct_obj : 1; // t
+      bool _df_destruct_obj  : 1; // y
     };
 
     union {

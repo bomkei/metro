@@ -7,7 +7,7 @@
   #define  crash  { alert; fprintf(stderr,"\n\n# application has been crashed.\n"); exit(1); }
 #else
   #define  alert  0
-  #define  crash  exit(1);
+  #define  crash  { fprintf(stderr,"\t#crash: %s:%d\n",__FILE__,__LINE__); exit(1); }
 #endif
 
 #define  TODO_IMPL  { alert; fprintf(stderr,"\n\n# Not implemented error.\n"); exit(1); }

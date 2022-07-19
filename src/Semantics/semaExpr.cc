@@ -2,6 +2,7 @@
 #include "Types/Object.h"
 #include "Types/Node.h"
 #include "Sema/Analyzer.h"
+#include "Error.h"
 #include "Utils.h"
 
 namespace Metro::Sema {
@@ -82,8 +83,8 @@ namespace Metro::Sema {
               }
             }
           }
-          else {
-            crash;
+          else { // no match args count
+            Error::add_error(node->token, "no match arguments in call " + std::string(name));
           }
 
           ret = check(find->nd_ret_type);

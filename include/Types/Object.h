@@ -21,17 +21,8 @@ namespace Metro {
 
     static Object* none;
 
-    Object(TypeInfo type = TYPE_NONE)
-      : type(type),
-        ref_count(0),
-        is_weak(false)
-    {
-      alert;
-    }
-
-    ~Object() {
-      alert;
-    }
+    Object(TypeInfo type = TYPE_NONE);
+    ~Object();
 
     std::string to_string() const;
   };

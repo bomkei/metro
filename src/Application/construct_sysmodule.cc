@@ -12,31 +12,12 @@
 #include "Types/Object.h"
 #include "Types/Node.h"
 
-#define define_builtin_func(_Name,ret,_Args,fn) \
+#define define_builtin_func(_Name,ret,_Args,__fn_) \
   static BuiltinFunc const _Name {.name=#_Name,.ret_type=ret, \
-    .arg_types=_Args,.func=[](std::vector<Object*>const&args)->Object*fn};
+    .arg_types=_Args,.func=[](std::vector<Object*>const&args)->Object* __fn_};
 
 namespace Metro {
-  define_builtin_func(print, TYPE_INT, { TYPE_ARGS }, {
-    auto ret = gcnew(TYPE_INT);
-
-    for( auto&& arg : args ) {
-      auto&& s = arg->to_string();
-      
-      ret->v_int += s.length();
-      std::cout << s;
-    }
-
-    return ret;
-  })
-
-  define_builtin_func(println, TYPE_INT, { TYPE_ARGS }, {
-    auto ret = print.func(args);
-
-    std::cout << std::endl;
-    ret->v_int += 1;
-    return ret;
-  })
+  #include "builtin_defines.h"
   
   static Token* create_name_token(std::string_view const& s) {
     auto tok = new Token(TOK_IDENT);
@@ -63,12 +44,18 @@ namespace Metro {
     return node;
   }
 
+  static Node* ndscope(std::vector<Node*>&& elems) {
+    auto node = new Node(ND_SCOPE, nullptr);
+
+    node->list = std::move(elems);
+
+    return node;
+  }
+
   Node* Application::construct_sysmodule() {
-    auto node = ndnamespace("System", {
-      ndnamespace("Console", {
-        ndmodfunc(print),
-        ndmodfunc(println),
-      })
+    auto node = ndscope({
+      ndmodfunc(print),
+      ndmodfunc(println),
     });
 
     return node;

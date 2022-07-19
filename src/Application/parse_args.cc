@@ -66,6 +66,8 @@ namespace Metro {
             case 'w': ctx._d_print._df_nodes = 1; break;
             case 'e': ctx._d_print._df_sema_result = 1; break;
             case 'r': ctx._d_print._df_evaluated_obj = 1; break;
+            case 't': ctx._d_print._df_construct_obj = 1; break;
+            case 'y': ctx._d_print._df_destruct_obj = 1; break;
           }
         }
 

@@ -10,6 +10,7 @@ namespace Metro {
     TYPE_CHAR,
     TYPE_STRING,
     TYPE_ARGS,
+    TYPE_OBJECT,
     TYPE_NONE
   };
 
