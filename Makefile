@@ -12,7 +12,7 @@ SOURCES	= \
 	src \
 	src/Application \
 	src/builtin \
-	src/builtin/std \
+	src/Debug \
 	src/Evaluator \
 	src/Evaluator/parts \
 	src/GC \
