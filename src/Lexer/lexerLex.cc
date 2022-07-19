@@ -1,6 +1,7 @@
 #include <cstring>
 #include "Types/Token.h"
 #include "Lexer.h"
+#include "Error.h"
 #include "Utils.h"
 
 static constexpr char const operators[] =
@@ -97,6 +98,8 @@ namespace Metro {
             goto found_op;
           }
         }
+
+        Error::add_error(ERR_INVALID_TOKEN, position, "invalid token");
 
       found_op:
         pass_space();

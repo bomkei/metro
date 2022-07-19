@@ -2,6 +2,7 @@
 #include "Types/Object.h"
 #include "Types/Node.h"
 #include "Parser.h"
+#include "Error.h"
 #include "Utils.h"
 
 namespace Metro {
@@ -26,7 +27,7 @@ namespace Metro {
       case TOK_CHAR:
       case TOK_STRING:
         next();
-        return node;
+        break;
       
       case TOK_IDENT: {
         alert;
@@ -52,7 +53,8 @@ namespace Metro {
       }
 
       default: {
-        crash;
+        Error::add_error(ERR_INVALID_SYNTAX, node->token, "invalid syntax");
+        Error::exit_app();
       }
     }
 

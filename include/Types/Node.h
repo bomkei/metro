@@ -4,22 +4,22 @@
 #include <cstring>
 
 #define   nd_name           uni.tok
-#define   nd_builtin_func   uni.bifun
-#define   nd_callee_builtin uni.bifun
+#define   nd_builtin_func   uni.s1.bifun
+#define   nd_callee_builtin uni.s1.bifun
 #define   nd_object         uni.s0.obj
 #define   nd_is_ref         uni.s0.bval[0]
 #define   nd_is_const       uni.s0.bval[1]
-#define   nd_type           uni.s0.ndval[0]
-#define   nd_callee         uni.s0.ndval[0]
-#define   nd_item           uni.s0.ndval[0]
-#define   nd_if_true        uni.s0.ndval[0]
-#define   nd_cond           uni.s0.ndval[0]
-#define   nd_ret_type       uni.s0.ndval[0]
-#define   nd_expr           uni.s0.ndval[1]
-#define   nd_code           uni.s0.ndval[1]
-#define   nd_init           uni.s0.ndval[2]
-#define   nd_if_false       uni.s0.ndval[2]
-#define   nd_inclement      uni.s0.ndval[3]
+#define   nd_type           uni.s1.ndval[0]
+#define   nd_callee         uni.s1.ndval[0]
+#define   nd_item           uni.s1.ndval[0]
+#define   nd_if_true        uni.s1.ndval[0]
+#define   nd_cond           uni.s1.ndval[0]
+#define   nd_ret_type       uni.s1.ndval[0]
+#define   nd_expr           uni.s1.ndval[1]
+#define   nd_code           uni.s1.ndval[1]
+#define   nd_init           uni.s1.ndval[2]
+#define   nd_if_false       uni.s1.ndval[2]
+#define   nd_inclement      uni.s1.ndval[3]
 
 namespace Metro {
   enum NodeKind {
@@ -65,12 +65,16 @@ namespace Metro {
       struct _uni_struct_t {
         Object* obj;
         bool    bval[2];
-        Node*   ndval[4];
       };
 
-      Token*  tok;
-      BuiltinFunc const* bifun;
-      _uni_struct_t  s0;
+      struct _uni_struct2_t {
+        BuiltinFunc const*  bifun;
+        Node*               ndval[4];
+      };
+
+      Token*          tok;
+      _uni_struct_t   s0;
+      _uni_struct2_t  s1;
     };
 
     struct ExprItem {
@@ -84,10 +88,10 @@ namespace Metro {
       }
     };
 
-    NodeKind    kind;
-    Token*      token;
-    Node*       owner;
-    _nodeunion_t   uni;
+    NodeKind      kind;
+    Token*        token;
+    Node*         owner;
+    _nodeunion_t  uni;
 
     std::vector<Node*> list;
     std::vector<ExprItem> expr;

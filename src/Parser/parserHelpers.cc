@@ -35,6 +35,21 @@ namespace Metro {
     }
   }
 
+  bool Parser::is_need_semi(Node* node) {
+    switch( node->kind ) {
+      case ND_FUNCTION:
+      case ND_SCOPE:
+      case ND_FOR:
+      case ND_FOREACH:
+      case ND_IF:
+      case ND_LOOP:
+      case ND_WHILE:
+        return false;
+    }
+
+    return true;
+  }
+
   void Parser::expect_semi() {
     expect(";");
   }
@@ -55,24 +70,15 @@ namespace Metro {
 
     expect("{");
 
-    if( eat("}") ) {
-      return nullptr;
-    }
+    while( !eat("}") && check() ) {
+      auto item = node->append(expr());
 
-    while( check() ) {
-      node->append(expr());
-
-      if( eat(";") ) {
-        if( eat("}") ) {
-          node->append(nullptr);
-          break;
-        }
-
-        continue;
+      if( is_need_semi(item) ) {
+        expect_semi();
       }
-
-      expect("}");
-      break;
+      else if( eat(";") ) {
+        node->append(nullptr);
+      }
     }
 
     return node;
