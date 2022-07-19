@@ -51,7 +51,7 @@ namespace Metro {
 
   void GC::stop() {
     is_running = false;
-    thread->join();
+    thread->detach();
 
     for( auto&& obj : objects ) {
       delete obj;

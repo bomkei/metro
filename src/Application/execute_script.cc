@@ -6,6 +6,7 @@
 #include "Sema/Analyzer.h"
 #include "Evaluator.h"
 #include "Application.h"
+#include "Error.h"
 #include "Debug.h"
 
 #include "Types/Token.h"
@@ -53,6 +54,8 @@ namespace Metro {
 
     auto token = lexer.lex();
 
+    Error::check();
+
   #if METRO_DEBUG
     if( ctx->_d_print._df_tokens ) {
       alert;
@@ -68,6 +71,8 @@ namespace Metro {
     auto node = parser.parse();
     script.node = node;
 
+    Error::check();
+
   #if METRO_DEBUG
     if( ctx->_d_print._df_nodes ) {
       alert;
@@ -81,6 +86,8 @@ namespace Metro {
     Sema::Analyzer analyzer;
     auto type = analyzer.check(node);
     alert;
+
+    Error::check();
 
   #if METRO_DEBUG
     if( ctx->_d_print._df_sema_result ) {
@@ -97,7 +104,7 @@ namespace Metro {
     alert;
 
   #if METRO_DEBUG
-    if( ctx->_d_print._df_evaluated_obj ) {
+    if( obj && ctx->_d_print._df_evaluated_obj ) {
       alert;
       std::cerr << obj->to_string() << std::endl;
     }

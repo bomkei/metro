@@ -1,6 +1,7 @@
 #include "Types/Token.h"
 #include "Types/Object.h"
 #include "Types/Node.h"
+#include "Types/BuiltinFunc.h"
 #include "Sema/Analyzer.h"
 #include "Error.h"
 #include "Utils.h"
@@ -77,23 +78,50 @@ namespace Metro::Sema {
 
         // check args
         if( find->kind == ND_FUNCTION ) {
+          ret = check(find->nd_ret_type);
+
           if( find->list.size() == arg_types.size() ) {
-            for( auto callee_arg = find->list.begin(), arg = node->list.begin(); arg != node->list.end(); callee_arg++, arg++ ) {
-              if( !check(*callee_arg).equals(check(*arg)) ) {
-                crash;
+            for( auto x = find->list.begin(), y = node->list.begin(); auto&& z : arg_types ) {
+              auto&& xx = check(*x);
+
+              if( xx.kind == TYPE_ARGS ) {
+                break;
+              }
+
+              if( !xx.equals(z) ) {
+                Error::add_error(ERR_TYPE_MISMATCH, (*y++)->token, "type mismatch");
               }
             }
           }
           else { // no match args count
-            Error::add_error(ERR_NO_MATCH_ARGUMENTS, node->token, "no match arguments in call " + std::string(name));
+            goto _no_match_arg_count;
           }
-
-          ret = check(find->nd_ret_type);
         }
         else {
+          BuiltinFunc const* bifun = find->nd_builtin_func;
+          
+          ret = bifun->ret_type;
 
+          if( bifun->arg_types.size() == arg_types.size() ) {
+            for( auto x = bifun->arg_types.begin(), y = arg_types.cbegin(); auto&& z : node->list ) {
+              if( x->kind == TYPE_ARGS ) {
+                break;
+              }
+
+              if( !(x++)->equals(*y++) ) {
+                Error::add_error(ERR_TYPE_MISMATCH, z, "type mismatch");
+              }
+            }
+          }
+          else {
+            goto _no_match_arg_count;
+          }
         }
 
+        break;
+
+      _no_match_arg_count:;
+        Error::add_error(ERR_NO_MATCH_ARGUMENTS, node->token, "no match arguments in call '" + std::string(name) + "'");
         break;
       }
 

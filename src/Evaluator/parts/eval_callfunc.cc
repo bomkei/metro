@@ -2,6 +2,7 @@
 #include "Types/Token.h"
 #include "Types/Object.h"
 #include "Types/Node.h"
+#include "Types/BuiltinFunc.h"
 #include "Evaluator.h"
 #include "GC.h"
 #include "Utils.h"
@@ -17,9 +18,7 @@ namespace Metro {
         args.emplace_back(eval(arg));
       }
 
-      
-
-      return nullptr;
+      return node->nd_callee->nd_builtin_func->func(args);
     }
 
     for( auto dest = node->nd_callee->objects.begin(); auto&& arg : node->list ) {
@@ -27,6 +26,7 @@ namespace Metro {
     }
 
 
-    
+    alert;
+    return nullptr;
   }
 }
