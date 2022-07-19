@@ -24,6 +24,7 @@ namespace Metro {
       node->append(item);
 
       if( cur->kind == TOK_END ) {
+        eat(";");
         break;
       }
 

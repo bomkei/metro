@@ -21,14 +21,6 @@ namespace Metro {
 
     // --- Debugs --- //
   #if METRO_DEBUG
-    // how far run app
-    //  0. Nothing
-    //  1. Lex
-    //  2. Parse
-    //  3. Semantics
-    //  4. Evaluate
-    int     _d_max_step_to = 0;
-
     // flags
     struct __attribute__((packed)) _dt_ctrl_print_flags {
       bool _df_tokens        : 1; // q
@@ -43,6 +35,14 @@ namespace Metro {
       struct {
         _dt_ctrl_print_flags    _d_print;
       };
+
+      // how far run app
+      //  0. Nothing
+      //  1. Lex
+      //  2. Parse
+      //  3. Semantics
+      //  4. Evaluate
+      uint8_t     _d_max_step_to;
 
       uint32_t __dbg_all_flag_bits = 0;
     };

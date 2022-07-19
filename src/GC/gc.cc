@@ -24,9 +24,11 @@ namespace Metro {
       for( size_t i = 0; i < objects.size(); ) {
         auto& obj = objects[i];
 
-        if( (clock() - objclock[obj]) >= 1000000 && obj->ref_count == 0 && !obj->is_weak ) {
-          delete obj;
-          objects.erase(objects.begin() + i);
+        if( (clock() - objclock[obj]) >= 1000000 ) {
+          if( obj->ref_count == 0 ) {
+            delete obj;
+            objects.erase(objects.begin() + i);
+          }
         }
         else {
           i++;
