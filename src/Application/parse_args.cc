@@ -11,8 +11,9 @@ namespace Metro {
   template <size_t Len>
   static inline bool startswith(char const* s, char const (&cmp) [Len]) {
     for( size_t i = 0; auto&& c : cmp ) {
-      if( s[i] == 0 ) break;
+      if( i >= Len - 1 || s[i] == 0 ) break;
       else if( s[i] != c ) return false;
+      i++;
     }
 
     return true;
@@ -45,6 +46,8 @@ namespace Metro {
     #if METRO_DEBUG
       else if( arg == "--EXTRADEBUG" ) {
         ctx.__dbg_all_flag_bits = (uint32_t)-1;
+        i++;
+        continue;
       }
       else if( i <= argc - 2 && argv[i] == "--d_appstep"_view ) {
         ctx._d_max_step_to = atoi(argv[i + 1]);
@@ -57,11 +60,17 @@ namespace Metro {
           _Invalid_arg
         }
 
-        for( size_t i = 10; i < arg.length(); i++ ) {
-          switch( arg[i] ) {
-            case 'N':
+        for( size_t j = 10; j < arg.length(); j++ ) {
+          switch( arg[j] ) {
+            case 'q': ctx._d_print._df_tokens = 1; break;
+            case 'w': ctx._d_print._df_nodes = 1; break;
+            case 'e': ctx._d_print._df_sema_result = 1; break;
+            case 'r': ctx._d_print._df_evaluated_obj = 1; break;
           }
         }
+
+        i++;
+        continue;
       }
     #endif
       else if( *argraw == '-' ) {

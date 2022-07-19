@@ -6,6 +6,7 @@
 #include "Sema/Analyzer.h"
 #include "Evaluator.h"
 #include "Application.h"
+#include "Debug.h"
 
 #include "Types/Token.h"
 #include "Types/Object.h"
@@ -15,7 +16,7 @@ namespace Metro {
 
   static void _print_token(Token* token) {
     for( ; token->kind != TOK_END; token = token->next ) {
-      std::cout << token->str << std::endl;
+      std::cerr << token->str << std::endl;
     }
   }
 
@@ -50,6 +51,13 @@ namespace Metro {
 
     auto token = lexer.lex();
 
+  #if METRO_DEBUG
+    if( ctx->_d_print._df_tokens ) {
+      alert;
+      _print_token(token);
+    }
+  #endif
+
     alert;
 
   _dfn_check_step(2);
@@ -59,7 +67,10 @@ namespace Metro {
     script.node = node;
 
   #if METRO_DEBUG
-    
+    if( ctx->_d_print._df_nodes ) {
+      alert;
+      std::cerr << Debug::node2s(node) << std::endl;
+    }
   #endif
 
     alert;
@@ -69,13 +80,27 @@ namespace Metro {
     auto type = analyzer.check(node);
     alert;
 
+  #if METRO_DEBUG
+    if( ctx->_d_print._df_sema_result ) {
+      alert;
+      std::cerr << type.to_string() << std::endl;
+    }
+  #endif
+
   _dfn_check_step(4);
     Evaluator eval;
     alert;
 
     auto obj = eval.eval(node);
     alert;
- 
+
+  #if METRO_DEBUG
+    if( ctx->_d_print._df_evaluated_obj ) {
+      alert;
+      std::cerr << obj->to_string() << std::endl;
+    }
+  #endif
+
     return obj;
   }
 }
