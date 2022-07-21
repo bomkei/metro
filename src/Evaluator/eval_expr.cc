@@ -19,6 +19,8 @@ namespace Metro {
       }
 
       case ND_EXPR: {
+        alert;
+
         auto obj = eval(node->expr[0].node);
 
         for( auto it = node->expr.begin() + 1; it != node->expr.end(); it++ ) {
@@ -26,14 +28,6 @@ namespace Metro {
         }
 
         return obj;
-      }
-
-      case ND_SCOPE: {
-        for( auto&& node : node->list ) {
-          eval(node);
-        }
-
-        break;
       }
     }
 

@@ -104,32 +104,39 @@ namespace Metro::Sema {
 
         // check arguments
         for( ; ; arg_iter++, arg_iter_func++ ) {
+          alert;
+
           if( arg_iter_func == func_args.end() ) {
+            alert;
             if( arg_iter != args.end() ) {
               Error::add_error(ERR_NO_MATCH_ARGUMENTS, node->token, "too many arguments");
             }
+
+            break;
           }
           else if( arg_iter == args.end() ) {
+            alert;
             if( arg_iter_func != func_args.end() && !arg_iter_func->equals(TYPE_ARGS) ) {
               Error::add_error(ERR_NO_MATCH_ARGUMENTS, node->token, "too few arguments");
             }
+
+            break;
           }
 
           // variadic arguments
           if( arg_iter_func->equals(TYPE_ARGS) ) {
+            alert;
             break;
           }
-
-          if( !arg_iter->equals(*arg_iter_func) ) {
+          else if( !arg_iter->equals(*arg_iter_func) ) {
+            alert;
             Error::add_error(ERR_TYPE_MISMATCH, (*arg_nd)->token, "type mismatch");
             break;
           }
         }
 
         if( !is_builtin ) {
-          check(func_node->nd_code);
-
-          
+          check(func_node);
         }
 
         break;
