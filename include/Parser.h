@@ -8,8 +8,9 @@ namespace Metro {
     explicit Parser(Token* token);
 
     Node* factor();
-    Node* add();
     Node* mul();
+    Node* add();
+    Node* compare();
     Node* expr();
 
     Node* func();

@@ -88,6 +88,14 @@ namespace Metro::Sema {
         return TYPE_NONE;
       }
 
+      case ND_IF: {
+        auto cond = check(node->nd_expr);
+
+        if( !cond.equals(TYPE_BOOL) ) {
+          
+        }
+      }
+
       case ND_FUNCTION: {
         // args
         for( auto&& i : node->list ) {

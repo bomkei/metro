@@ -83,17 +83,26 @@ namespace Metro {
     auto x = mul();
 
     while( check() ) {
-      if( eat("+") || eat("-") ) {
-        x = makeexpr(x);
-        if( ate->str == "+" ) x->expr_append(EX_ADD, mul());
-        else if( ate->str == "-" ) x->expr_append(EX_SUB, mul());
-      }
-      else {
-        break;
-      }
+      if( eat("+") ) makeexpr(x)->expr_append(EX_ADD, mul());
+      else if( eat("-") ) makeexpr(x)->expr_append(EX_SUB, mul());
+      else break;
     }
 
     return x;
+  }
+
+  Node* Parser::compare() {
+    auto x = add();
+
+    while( check() ) {
+      if( eat("<") ) makeexpr(x)->expr_append(EX_BIG_R, add());
+      else if( eat(">") ) makeexpr(x)->expr_append(EX_BIG_L, add());
+      else if( eat("<=") ) makeexpr(x)->expr_append(EX_BIG_OR_EQ_R, add());
+      else if( eat(">=") ) makeexpr(x)->expr_append(EX_BIG_OR_EQ_L, add());
+      else if( eat("==") ) makeexpr(x)->expr_append(EX_EQUAL, add());
+      else if( eat("!=") ) makeexpr(x)->expr_append(EX_NOT_EQUAL, add());
+      else break;
+    }
   }
 
   Node* Parser::expr() {
@@ -130,6 +139,6 @@ namespace Metro {
       return node;
     }
 
-    return add();
+    return compare();
   }
 }

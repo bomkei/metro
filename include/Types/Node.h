@@ -58,6 +58,13 @@ namespace Metro {
     EX_SUB,
     EX_MUL,
     EX_DIV,
+    EX_BIG_L,
+    EX_BIG_R,
+    EX_BIG_OR_EQ_L,
+    EX_BIG_OR_EQ_R,
+    EX_EQUAL,
+    EX_NOT_EQUAL,
+  
   };
 
   struct Token;
