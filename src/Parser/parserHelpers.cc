@@ -70,22 +70,36 @@ namespace Metro {
 
   Node* Parser::expect_scope() {
     auto node = new Node(ND_SCOPE, cur);
+    auto closed = false;
 
     expect("{");
 
-    while( !eat("}") && check() ) {
-      auto item = node->append(expr());
+    if( eat("}") ) {
+      return node;
+    }
 
-      if( eat("}") ) {
+    while( check() ) {
+      auto item = expr();
+
+      node->append(item);
+
+      if( eats(";", "}") ) {
+        node->append(nullptr);
+        closed = true;
         break;
       }
-
-      if( is_need_semi(item) ) {
+      else if( eat("}") ) {
+        closed = true;
+        break;
+      }
+      else if( is_need_semi(item) ) {
         expect_semi();
       }
-      else if( eat(";") ) {
-        node->append(nullptr);
-      }
+    }
+
+    if( !closed ) {
+      Error::add_error(ERR_INVALID_SYNTAX, node->token, "not closed scope");
+      Error::exit_app();
     }
 
     return node;

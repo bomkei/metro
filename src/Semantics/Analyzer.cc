@@ -103,7 +103,7 @@ namespace Metro::Sema {
         }
 
         scope_history.pop_front();
-        node->objects.resize(node->list.size());
+        //node->objects.resize(node->list.size());
         break;
       }
 

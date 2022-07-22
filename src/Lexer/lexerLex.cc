@@ -6,7 +6,7 @@
 
 static constexpr char const operators[] =
   "(){}[]<>"
-  "+-*/%"
+  "+-*/%="
   "&^|~"
   ":;,."
   "!?%";

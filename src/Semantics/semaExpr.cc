@@ -186,6 +186,11 @@ namespace Metro::Sema {
         }
 
         auto last = *node->list.rbegin();
+
+        if( last == nullptr ) {
+          break;
+        }
+
         ret = check(last);
 
         switch( last->kind ) {

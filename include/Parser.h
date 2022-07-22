@@ -29,6 +29,21 @@ namespace Metro {
     bool is_need_semi(Node* node);
     void expect_semi();
 
+    template <class... Args>
+    bool eats(Args&&... args) {
+      std::vector<char const*> vec{ args... };
+      auto bak = cur;
+
+      for( auto&& s : vec ) {
+        if( !eat(s) ) {
+          cur = bak;
+          return false;
+        }
+      }
+
+      return true;
+    }
+
     Token* cur;
     Token* ate;
   };
