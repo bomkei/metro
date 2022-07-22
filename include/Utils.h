@@ -4,9 +4,13 @@
 #include <vector>
 #include <locale>
 #include <codecvt>
+#include <sstream>
 #include "Debug.h"
 
 #define  BIT(n)   (1 << n)
+
+#define  inlineSS(e...) \
+  ({ std::stringstream _xss_v; _xss_v << e; _xss_v.str(); })
 
 namespace Utils {
   template <class... Args>

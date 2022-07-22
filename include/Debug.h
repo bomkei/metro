@@ -6,7 +6,6 @@
 // color in message area
 #define  COL_ALERTMSG  COL_WHITE
 
-
 #if METRO_DEBUG
   // alert
   #define  alert  \

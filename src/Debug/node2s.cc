@@ -37,10 +37,12 @@ namespace Metro::Debug {
       }
 
       case ND_BUILTIN_FUNC: {
-        return format();
+        return inlineSS(
+            
+          );
       }
     }
 
-    return format("(unknown node kind: %d)", node->kind);
+    return Utils::format("(unknown node kind: %d)", node->kind);
   }
 }
