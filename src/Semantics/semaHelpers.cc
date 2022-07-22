@@ -65,4 +65,29 @@ namespace Metro::Sema {
 
     return false;
   }
+
+  bool Analyzer::is_branchable(Node* node) {
+    switch( node->kind ) {
+      case ND_IF:
+        return true;
+    }
+
+    return false;
+  }
+
+  std::vector<Node*> Analyzer::get_last_nodes(Node* node) {
+    if( !node ) {
+      return { node };
+    }
+
+    switch( node->kind ) {
+      case ND_IF: {
+
+        TODO_IMPL
+        break;
+      }
+    }
+
+    return { node };
+  }
 }

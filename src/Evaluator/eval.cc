@@ -18,6 +18,7 @@ namespace Metro {
     auto ret = Object::none;
 
     switch( node->kind ) {
+      case ND_NONE:
       case ND_TYPE:
       case ND_ARGUMENT:
       case ND_FUNCTION:
@@ -41,7 +42,7 @@ namespace Metro {
         for( auto&& arg : node->list ) {
           args.emplace_back(eval(arg));
         }
-        
+
         if( callee->kind == ND_BUILTIN_FUNC ) {
           auto const& name = callee->nd_builtin_func->name;
 
@@ -57,11 +58,8 @@ namespace Metro {
         //auto args_bak = std::move(callee->objects);
         //callee->objects = std::move(args_bak);
 
-        for( size_t i = 0; auto&& arg : node->list ) {
-          alert;
-          args_bak.emplace_back(callee->list[i]->uni.obj);
-          callee->list[i++]->uni.obj = eval(arg);
-          //callee->objects[i++] = eval(arg);
+        for( auto it = callee->list.begin(); auto&& obj : args ) {
+          (*it++)->uni.obj = obj;
         }
 
         enter_scope(callee);
@@ -82,9 +80,15 @@ namespace Metro {
       case ND_SCOPE: {
         enter_scope(node);
 
-        for( auto&& node : node->list ) {
-          eval(node);
+        // for( auto&& node : node->list ) {
+        //   eval(node);
+        // }
+
+        for( size_t i = 0; i < node->list.size() - 1; i++ ) {
+          eval(node->list[i]);
         }
+
+        ret = eval(*node->list.rbegin());
 
         leave_scope();
         break;

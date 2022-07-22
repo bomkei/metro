@@ -32,7 +32,7 @@ namespace Metro {
       }
 
       if( eat("->") ) {
-        node->nd_type = expect_type();
+        node->nd_ret_type = expect_type();
       }
 
       node->nd_code = expect_scope();

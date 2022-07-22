@@ -1,7 +1,7 @@
 #pragma once
 
 // ----------------------- //
-//  Semantics
+//  Semantics Analyzer
 // ----------------------- //
 
 #include <map>
@@ -26,6 +26,9 @@ namespace Metro::Sema {
   private:
 
     bool isAddable(TypeInfo left, TypeInfo right);
+
+    bool is_branchable(Node* node);
+    std::vector<Node*> get_last_nodes(Node* node);
 
     std::map<Node*, TypeInfo> caches;
     std::list<Node*> scope_history;

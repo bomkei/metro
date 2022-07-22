@@ -11,7 +11,7 @@ namespace Metro {
   template <size_t Len>
   static inline bool startswith(char const* s, char const (&cmp) [Len]) {
     for( size_t i = 0; auto&& c : cmp ) {
-      if( i >= Len - 1 || s[i] == 0 ) break;
+      if( cmp[i] == 0 ) break;
       else if( s[i] != c ) return false;
       i++;
     }
@@ -49,10 +49,14 @@ namespace Metro {
         i++;
         continue;
       }
-      else if( i <= argc - 2 && argv[i] == "--d_appstep"_view ) {
-        ctx._d_max_step_to = atoi(argv[i + 1]);
-        std::cout << "@debug: max app step is " << ctx._d_max_step_to << std::endl;
-        i += 2;
+      else if( startswith(argv[i], "--d_appstep=") ) {
+        if( arg.length() == 12 ) {
+          _Invalid_arg
+        }
+
+        ctx._d_max_step_to = atoi(argv[i] + 12);
+        alertios("@debug: run " << (int)ctx._d_max_step_to << " process");
+        i++;
         continue;
       }
       else if( startswith(argv[i], "--d_print=") ) {

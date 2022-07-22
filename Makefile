@@ -23,8 +23,20 @@ SOURCES	= \
 	src/Types \
 	src/Utils
 
+USE_DEBUG			?= 0
+DEBUGFLAGS		?=
+
+ifeq ($(USE_DEBUG), 1)
+DEBUGFLAGS	:= \
+  -DMETRO_DEBUG=1 \
+	-DMETRO_DEBUG_USE_ALERT=1 \
+	-DMETRO_DEBUG_USE_DEBUGSCOPE=1 \
+	-DMETRO_DEBUG_USE_CRASH=1
+endif
+
 BASEFLAGS		:= -O2
-CFLAGS			:= $(BASEFLAGS) $(DEBUGFLAGS) $(INCLUDES) -Wno-switch
+CFLAGS			:= $(BASEFLAGS) $(DEBUGFLAGS) $(INCLUDES) \
+	-Wno-switch -Wimplicit-fallthrough
 CXXFLAGS		:= $(CFLAGS) -std=c++20
 LDFLAGS			:= -Wl,--gc-sections
 
@@ -56,17 +68,16 @@ CXXFILES		= $(notdir $(foreach dir,$(SOURCES),$(wildcard $(dir)/*.cc)))
 
 export OFILES		= $(CFILES:.c=.o) $(CXXFILES:.cc=.o)
 
-.PHONY: all debug install clean re  $(BUILD)
+.PHONY: all debug install clean re $(BUILD)
 
 all: $(BUILD)
+	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
-	@$(MAKE) --no-print-directory -C $@ -f $(CURDIR)/Makefile
 
-debug:
-	@[ -d $(BUILD) ] || mkdir -p $(BUILD)
-	@$(MAKE) --no-print-directory BASEFLAGS="-O0 -g" DEBUGFLAGS="-DMETRO_DEBUG=1" LDFLAGS="" -C $(BUILD) -f $(CURDIR)/Makefile
+debug: $(BUILD)
+	@$(MAKE) --no-print-directory BASEFLAGS="-O0 -g" USE_DEBUG="1" LDFLAGS="" -C $(BUILD) -f $(CURDIR)/Makefile
 
 install: all
 	@install $(notdir $(OUTPUT)) $(BINDIR)/$(TARGET)

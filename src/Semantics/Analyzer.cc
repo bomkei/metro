@@ -20,6 +20,9 @@ namespace Metro::Sema {
     auto& ret = caches[node];
 
     switch( node->kind ) {
+      case ND_NONE:
+        break;
+
       //
       // Type
       case ND_TYPE: {
@@ -80,12 +83,24 @@ namespace Metro::Sema {
         }
 
         // return type
-        ret = check(node->nd_type);
+        // ret = check(node->nd_type);
 
         scope_history.push_front(node);
 
         // code
-        check(node->nd_code);
+        auto code_type = check(node->nd_code);
+
+        if( node->nd_ret_type ) {
+          ret = check(node->nd_ret_type);
+
+          if( !ret.equals(code_type) ) {
+            Error::add_error(ERR_TYPE_MISMATCH, node->token, "return type");
+            Error::exit_app();
+          }
+        }
+        else {
+          ret = code_type;
+        }
 
         scope_history.pop_front();
         node->objects.resize(node->list.size());

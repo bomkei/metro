@@ -149,7 +149,7 @@ namespace Metro::Sema {
         }
 
         if( !is_builtin ) {
-          check(func_node);
+          ret = check(func_node);
         }
 
         break;
@@ -174,10 +174,41 @@ namespace Metro::Sema {
       }
 
       case ND_SCOPE: {
+        if( node->list.empty() ) {
+          node->kind = ND_NONE;
+          break;
+        }
+
         scope_history.push_front(node);
 
-        for( auto&& node : node->list ) {
-          check(node);
+        for( size_t i = 0; i < node->list.size() - 1; i++ ) {
+          check(node->list[i]);
+        }
+
+        auto last = *node->list.rbegin();
+        ret = check(last);
+
+        switch( last->kind ) {
+          case ND_IF: {
+            bool stopped_with_else = false;
+            Node* nd = last;
+
+            while( nd->nd_if_false ) {
+              nd = nd->nd_if_false;
+
+              if( nd->kind != ND_IF ) {
+                stopped_with_else = true;
+                break;
+              }
+            }
+
+            if( !stopped_with_else ) {
+              Error::add_error(ERR_INDEFINITE, last->token, "computer can't guess your choice");
+              Error::exit_app();
+            }
+
+            break;
+          }
         }
 
         scope_history.pop_front();

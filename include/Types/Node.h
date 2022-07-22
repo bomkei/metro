@@ -9,7 +9,7 @@
 #define   nd_object         uni.s0.obj
 #define   nd_is_ref         uni.s0.bval[0]
 #define   nd_is_const       uni.s0.bval[1]
-#define   nd_vardef         uni.s1.ndval[0]
+#define   nd_vardef         uni.node2
 #define   nd_type           uni.s1.ndval[0]
 #define   nd_callee         uni.s1.ndval[0]
 #define   nd_item           uni.s1.ndval[0]
@@ -24,9 +24,11 @@
 
 namespace Metro {
   enum NodeKind {
+    ND_NONE,
+
     ND_TYPE,
     ND_ARGUMENT,
-    
+
     ND_VALUE,
     ND_VARIABLE,
     ND_CALLFUNC,
@@ -68,7 +70,7 @@ namespace Metro {
         bool    bval[2];
       };
 
-      struct _uni_struct2_t {
+      struct _uni_struct1_t {
         BuiltinFunc const*  bifun;
         Node*               ndval[4];
       };
@@ -78,8 +80,12 @@ namespace Metro {
         Object*   obj;
       };
 
-      _uni_struct_t   s0;
-      _uni_struct2_t  s1;
+      struct {
+        _uni_struct_t   s0;
+        Node*           node2;
+      };
+
+      _uni_struct1_t  s1 { 0 };
     };
 
     struct ExprItem {
