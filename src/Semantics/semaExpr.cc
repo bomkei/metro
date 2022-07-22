@@ -157,20 +157,53 @@ namespace Metro::Sema {
 
       case ND_EXPR: {
         ret = check(node->expr[0].node);
+        Node* errnode;
 
         for( auto it = node->expr.begin() + 1; it != node->expr.end(); it++ ) {
-          check(it->node);
+          auto itval = check(it->node);
 
           switch( it->kind ) {
             case EX_ADD:
-              if( !isAddable(check((it - 1)->node), check(it->node)) ) {
-                crash;
+              if( !isAddable(ret, itval) ) {
+                errnode = it->node;
+                goto _typeMismatch;
               }
               break;
+            
+            case EX_SUB: {
+              if( !ret.equals(itval) ) {
+                errnode = it->node;
+                goto _typeMismatch;
+              }
+
+              break;
+            }
+
+            case EX_BIG_L:
+            case EX_BIG_R:
+              switch( ret.kind ) {
+                case TYPE_INT:
+                  break;
+
+                default:
+                  goto _typeMismatch;
+              }
+
+              if( !ret.equals(itval) ) {
+                goto _typeMismatch;
+              }
+
+              break;
           }
+
+          ret = itval;
         }
 
         break;
+
+      _typeMismatch:;
+        Error::add_error(ERR_TYPE_MISMATCH, errnode->token, "type mismatch");
+        Error::exit_app();
       }
 
       case ND_SCOPE: {
