@@ -2,14 +2,17 @@
 #include "Types/Object.h"
 #include "Types/Node.h"
 #include "Sema/Analyzer.h"
+#include "Error.h"
 #include "Utils.h"
 
 namespace Metro::Sema {
+  //
+  // Analyze a node
   TypeInfo Analyzer::check(Node* node) {
     if( !node ) {
       return { };
     }
-    
+
     if( caches.contains(node) ) {
       return caches[node];
     }
@@ -17,18 +20,27 @@ namespace Metro::Sema {
     auto& ret = caches[node];
 
     switch( node->kind ) {
+      //
+      // Type
       case ND_TYPE: {
         auto const& name = node->nd_name->str;
 
         if( name == "int" ) {
-          ret.kind = TYPE_INT;
+          ret = TYPE_INT;
         }
         else {
-          crash;
+          Error::add_error(ERR_UNKNOWN_TYPE, node->token, "unknown type name");
+          Error::exit_app();
         }
 
         break;
       }
+
+      //
+      // Argument
+      case ND_ARGUMENT:
+        ret = check(node->nd_type);
+        break;
 
       case ND_VALUE:
       case ND_VARIABLE:
@@ -38,9 +50,11 @@ namespace Metro::Sema {
         ret = expr(node);
         break;
 
-      case ND_ARGUMENT:
-        ret = check(node->nd_type);
-        break;
+      case ND_LET: {
+        if( !node->nd_type && !node->nd_expr ) {
+          Error::add_error(ERR_CANNOT_REFER
+        }
+      }
 
       case ND_FUNCTION: {
         // args

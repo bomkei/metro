@@ -6,28 +6,24 @@
 #include "Utils.h"
 
 namespace Metro::Sema {
-  Node* Analyzer::find_func_in_scope(Node* scope, std::string_view const& name) {
-    for( auto&& nd : scope->list ) {
-      switch( nd->kind ) {
-        case ND_FUNCTION:
-          if( nd->nd_name->str == name )
-            return nd;
+  Node* Analyzer::find_func(std::string_view const& name) {
+    for( auto&& scope : scope_history ) {
+      for( auto&& nd : scope->list ) {
+        if( !nd )
+          continue;
+
+        switch( nd->kind ) {
+          case ND_FUNCTION:
+            if( nd->nd_name->str == name )
+              return nd;
+            
+            break;
           
-          break;
-        
-        case ND_BUILTIN_FUNC:
-          if( nd->nd_builtin_func->name == name )
-            return nd;
+          case ND_BUILTIN_FUNC:
+            if( nd->nd_builtin_func->name == name )
+              return nd;
 
-          break;
-
-        case ND_SCOPE: {
-          auto find = find_func_in_scope(nd, name);
-
-          if( find )
-            return find;
-          
-          break;
+            break;
         }
       }
     }
@@ -35,12 +31,13 @@ namespace Metro::Sema {
     return nullptr;
   }
 
-  Node* Analyzer::find_func(std::string_view const& name) {
+  Node* Analyzer::find_let_node(std::string_view const& name) {
     for( auto&& scope : scope_history ) {
-      auto find = find_func_in_scope(scope, name);
-
-      if( find )
-        return find;
+      for( auto&& nd : scope->list ) {
+        if( nd && nd->kind == ND_LET && nd->nd_name->str == name ) {
+          return nd;
+        }
+      }
     }
 
     return nullptr;

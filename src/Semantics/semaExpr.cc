@@ -53,10 +53,20 @@ namespace Metro::Sema {
         break;
       }
 
+      //
+      // Variable
       case ND_VARIABLE: {
+        auto const& name = node->nd_name->str;
+        auto find = find_let_node(name);
 
+        // not found
+        if( !find ) {
+          Error::add_error(ERR_UNDEFINED, node->token, "undefined variable name");
+          Error::exit_app();
+        }
 
-        break;
+        ret = check(find);
+        return TYPE_NONE;
       }
 
       //
@@ -70,7 +80,7 @@ namespace Metro::Sema {
 
         // not found
         if( !func_node ) {
-          Error::add_error(ERR_UNDEFINED_FUNC, node->token, "function '" + std::string(name) + "' is not defined");
+          Error::add_error(ERR_UNDEFINED, node->token, "function '" + std::string(name) + "' is not defined");
           Error::exit_app();
         }
 

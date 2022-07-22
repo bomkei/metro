@@ -96,6 +96,25 @@ namespace Metro {
   }
 
   Node* Parser::expr() {
+    if( eat("let") ) {
+      auto node = new Node(ND_LET, ate);
+
+      expect_ident();
+      node->nd_name = cur;
+
+      next();
+
+      if( eat(":") ) {
+        node->nd_type = expect_type();
+      }
+
+      if( eat("=") ) {
+        node->nd_expr = expr();
+      }
+
+      return node;
+    }
+
     return add();
   }
 }

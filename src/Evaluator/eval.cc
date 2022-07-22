@@ -18,6 +18,13 @@ namespace Metro {
     auto ret = Object::none;
 
     switch( node->kind ) {
+      case ND_TYPE:
+      case ND_ARGUMENT:
+      case ND_FUNCTION:
+      case ND_BUILTIN_FUNC:
+        alert;
+        break;
+
       case ND_VALUE:
       case ND_VARIABLE:
       case ND_EXPR:
@@ -64,11 +71,6 @@ namespace Metro {
         leave_scope();
         break;
       }
-
-      case ND_FUNCTION:
-      case ND_BUILTIN_FUNC:
-        alert;
-        break;
 
       default:
         TODO_IMPL;

@@ -9,6 +9,7 @@
 #define   nd_object         uni.s0.obj
 #define   nd_is_ref         uni.s0.bval[0]
 #define   nd_is_const       uni.s0.bval[1]
+#define   nd_vardef         uni.s1.ndval[0]
 #define   nd_type           uni.s1.ndval[0]
 #define   nd_callee         uni.s1.ndval[0]
 #define   nd_item           uni.s1.ndval[0]
@@ -60,7 +61,7 @@ namespace Metro {
   struct Token;
   struct Object;
   struct BuiltinFunc;
-  struct Node {
+  struct __attribute__((packed)) Node {
     union __attribute__((packed)) _nodeunion_t {
       struct _uni_struct_t {
         Object* obj;

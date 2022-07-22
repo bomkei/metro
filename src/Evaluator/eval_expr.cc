@@ -14,8 +14,7 @@ namespace Metro {
       }
 
       case ND_VARIABLE: {
-
-        break;
+        return node->nd_vardef->nd_object;
       }
 
       case ND_EXPR: {
