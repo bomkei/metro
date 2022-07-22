@@ -23,7 +23,7 @@ namespace Metro {
 
     Node* get_current_scope();
 
-    
+    size_t func_call_count = 0;
     std::list<Node*> scope_history;
   };
 }

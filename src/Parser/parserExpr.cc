@@ -116,6 +116,20 @@ namespace Metro {
       return node;
     }
 
+    if( eat("if") ) {
+      auto node = new Node(ND_IF, ate);
+
+      node->nd_expr = expr();
+
+      node->nd_if_true = expect_scope();
+
+      if( eat("else") ) {
+        node->nd_if_false = expect_scope();
+      }
+
+      return node;
+    }
+
     return add();
   }
 }
