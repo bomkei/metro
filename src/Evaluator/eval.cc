@@ -35,6 +35,7 @@ namespace Metro {
       case ND_CALLFUNC: {
         std::vector<Object*> args;
         std::vector<Object*> args_bak;
+
         auto callee = node->nd_callee;
 
         for( auto&& arg : node->list ) {
@@ -42,9 +43,14 @@ namespace Metro {
         }
         
         if( callee->kind == ND_BUILTIN_FUNC ) {
-          alert
+          auto const& name = callee->nd_builtin_func->name;
+
+          alertios("called builtin func " << COL_BLUE << name);
 
           ret = callee->nd_builtin_func->func(args);
+
+          alertios("finished builtin func " << COL_BLUE << name);
+          break;
         }
 
         alert;

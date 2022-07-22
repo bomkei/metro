@@ -75,7 +75,7 @@ namespace Metro {
 
   #if METRO_DEBUG
     if( ctx->_d_print._df_nodes ) {
-      alert;
+      alertmsg();
       std::cerr << Debug::node2s(node) << std::endl;
     }
   #endif

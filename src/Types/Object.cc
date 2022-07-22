@@ -10,14 +10,14 @@ namespace Metro {
       ref_count(0),
       is_weak(false)
   {
-  #if METRO_DEBUG
+  debug(
     auto app = Application::get_instance();
 
     if( app && Application::get_cur_appcontext()->_d_print._df_construct_obj ) {
       alert;
-      fprintf(stderr, "\t#Object constructing: %p\n", this);
+      alertctor(Object);
     }
-  #endif
+  )
   }
 
   Object::~Object() {

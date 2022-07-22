@@ -8,16 +8,9 @@
 namespace Metro::Debug {
   #define strss(x) std::string(x)
 
-  template <class... Args>
-  auto format(char const* fmt, Args&&... args) -> std::string {
-    static char buf[0x1000];
-    sprintf(buf, fmt, args...);
-    return buf;
-  }
-
   std::string node2s(Node* node) {
     if( !node ) {
-      return "<null node>";
+      return "(null node)";
     }
 
     switch( node->kind ) {
@@ -28,12 +21,26 @@ namespace Metro::Debug {
         return strss(node->token->str);
       
       case ND_CALLFUNC: {
-        //auto s = strss(node->token->str);
-        
         return strss(node->token->str) + Utils::join<Node*>(", ", node->list, node2s);
+      }
+
+      case ND_EXPR: {
+        return "(expr)";
+      }
+
+      case ND_SCOPE: {
+
+      }
+
+      case ND_FUNCTION: {
+
+      }
+
+      case ND_BUILTIN_FUNC: {
+        return format();
       }
     }
 
-    return format("<unknown node: %d>", node->kind);
+    return format("(unknown node kind: %d)", node->kind);
   }
 }
