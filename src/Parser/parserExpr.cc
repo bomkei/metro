@@ -33,6 +33,7 @@ namespace Metro {
         alert;
 
         node->kind = ND_VARIABLE;
+        node->nd_name = cur;
 
         next();
 

@@ -73,7 +73,11 @@ namespace Metro {
         Node*               ndval[4];
       };
 
-      Token*          tok;
+      struct {
+        Token*    tok;
+        Object*   obj;
+      };
+
       _uni_struct_t   s0;
       _uni_struct2_t  s1;
     };

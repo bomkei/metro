@@ -84,6 +84,7 @@ namespace Metro {
 
   _dfn_check_step(3);
     Sema::Analyzer analyzer;
+    alert;
     auto type = analyzer.check(node);
     alert;
 

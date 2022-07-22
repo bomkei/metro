@@ -45,6 +45,8 @@ namespace Metro {
     static void show_all();
 
     static void check();
+
+    [[noreturn]]
     static void exit_app();
 
     static std::vector<ErrorContext> const& get_ctx_list();

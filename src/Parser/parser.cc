@@ -16,7 +16,11 @@ namespace Metro {
     auto node = new Node(ND_SCOPE, nullptr);
 
     if( Application::wasSysmoduleConstructed() ) {
-      node->append(Application::get_sysmodules_node());
+      auto const& sysmods = Application::get_sysmodules();
+
+      for( auto&& i : sysmods ) {
+        node->append(i);
+      }
     }
 
     while( check() ) {

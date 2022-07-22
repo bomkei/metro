@@ -31,11 +31,20 @@ namespace Metro::Sema {
     return nullptr;
   }
 
-  Node* Analyzer::find_let_node(std::string_view const& name) {
+  Node* Analyzer::find_var_defined_node(std::string_view const& name) {
     for( auto&& scope : scope_history ) {
-      for( auto&& nd : scope->list ) {
-        if( nd && nd->kind == ND_LET && nd->nd_name->str == name ) {
-          return nd;
+      if( scope->kind == ND_SCOPE ) {
+        for( auto&& nd : scope->list ) {
+          if( nd && nd->kind == ND_LET && nd->nd_name->str == name ) {
+            return nd;
+          }
+        }
+      }
+      else if( scope->kind == ND_FUNCTION ) {
+        for( auto&& arg : scope->list ) {
+          if( arg->nd_name->str == name ) {
+            return arg;
+          }
         }
       }
     }

@@ -13,7 +13,7 @@
 
 namespace Metro {
   static Application* _inst;
-  Node* Application::sysmodules_node;
+  std::vector<Node*> Application::sysmodules;
 
   Application::Application() {
     _inst = this;
@@ -32,16 +32,16 @@ namespace Metro {
   }
 
   bool Application::wasSysmoduleConstructed() {
-    return sysmodules_node != nullptr;
+    return !sysmodules.empty();
   }
 
-  Node* Application::get_sysmodules_node() {
-    return sysmodules_node;
+  std::vector<Node*> const& Application::get_sysmodules() {
+    return sysmodules;
   }
 
   void Application::initialize() {
     if( !wasSysmoduleConstructed() ) {
-      sysmodules_node = construct_sysmodule();
+      sysmodules = construct_sysmodule();
     }
   }
 

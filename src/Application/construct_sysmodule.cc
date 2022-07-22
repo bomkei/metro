@@ -52,12 +52,12 @@ namespace Metro {
     return node;
   }
 
-  Node* Application::construct_sysmodule() {
-    auto node = ndscope({
+  std::vector<Node*> Application::construct_sysmodule() {
+    std::vector<Node*> ret {
       ndmodfunc(print),
-      ndmodfunc(println),
-    });
+      ndmodfunc(println)
+    };
 
-    return node;
+    return ret;
   }
 }

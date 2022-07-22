@@ -34,6 +34,7 @@ namespace Metro {
 
       case ND_CALLFUNC: {
         std::vector<Object*> args;
+        std::vector<Object*> args_bak;
         auto callee = node->nd_callee;
 
         for( auto&& arg : node->list ) {
@@ -41,22 +42,33 @@ namespace Metro {
         }
         
         if( callee->kind == ND_BUILTIN_FUNC ) {
-          alert;
-          return callee->nd_builtin_func->func(args);
+          alert
+
+          ret = callee->nd_builtin_func->func(args);
         }
 
         alert;
-        auto args_bak = std::move(callee->objects);
-        callee->objects = std::move(args_bak);
+        //auto args_bak = std::move(callee->objects);
+        //callee->objects = std::move(args_bak);
 
         for( size_t i = 0; auto&& arg : node->list ) {
           alert;
-          callee->objects[i++] = eval(arg);
+          args_bak.emplace_back(callee->list[i]->uni.obj);
+          callee->list[i++]->uni.obj = eval(arg);
+          //callee->objects[i++] = eval(arg);
         }
 
-        auto retval = eval(callee->nd_code);
+        enter_scope(callee);
 
-        callee->objects = std::move(args_bak);
+        ret = eval(callee->nd_code);
+
+        //callee->objects = std::move(args_bak);
+
+        leave_scope();
+
+        for( size_t i = 0; i < args_bak.size(); i++ ) {
+          callee->list[i]->uni.obj = args_bak[i];
+        }
 
         break;
       }

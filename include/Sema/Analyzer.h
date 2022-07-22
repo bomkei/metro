@@ -21,7 +21,7 @@ namespace Metro::Sema {
     TypeInfo expr(Node* node);
 
     Node* find_func(std::string_view const& name);
-    Node* find_let_node(std::string_view const& name);
+    Node* find_var_defined_node(std::string_view const& name);
 
   private:
 

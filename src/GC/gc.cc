@@ -38,7 +38,7 @@ namespace Metro {
 
     void thread_routine() {
       while( is_running ) {
-        clean();
+        //clean();
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
       }
     }

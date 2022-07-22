@@ -50,10 +50,27 @@ namespace Metro::Sema {
         ret = expr(node);
         break;
 
+      //
+      // Let-statement
       case ND_LET: {
-        if( !node->nd_type && !node->nd_expr ) {
-          Error::add_error(ERR_CANNOT_REFER
+        auto const is_type_declared = node->nd_type != nullptr;
+
+        if( node->nd_expr ) {
+          ret = check(node->nd_expr);
+
+          if( is_type_declared && !ret.equals(check(node->nd_type)) ) {
+            Error::add_error(ERR_TYPE_MISMATCH, node, "type mismatch");
+          }
         }
+        else if( is_type_declared ) {
+          ret = check(node->nd_type);
+        }
+        else {
+          Error::add_error(ERR_CANNOT_REFER, node, "cannot refer the type of variable '" + std::string(node->nd_name->str) + "'");
+          Error::exit_app();
+        }
+
+        return TYPE_NONE;
       }
 
       case ND_FUNCTION: {
@@ -65,9 +82,12 @@ namespace Metro::Sema {
         // return type
         ret = check(node->nd_type);
 
+        scope_history.push_front(node);
+
         // code
         check(node->nd_code);
 
+        scope_history.pop_front();
         node->objects.resize(node->list.size());
         break;
       }

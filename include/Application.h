@@ -11,7 +11,7 @@ namespace Metro {
     ~Application();
 
     void initialize();
-    Node* construct_sysmodule();
+    std::vector<Node*> construct_sysmodule();
 
     AppContext::Script open_script_file(char const* path);
     Object* execute_script(AppContext::Script& script);
@@ -26,11 +26,10 @@ namespace Metro {
     static AppContext const* get_cur_appcontext();
 
     static bool wasSysmoduleConstructed();
-    static Node* get_sysmodules_node();
+    static std::vector<Node*> const& get_sysmodules();
 
   private:
-
     AppContext ctx;
-    static Node* sysmodules_node;
+    static std::vector<Node*> sysmodules;
   };
 }

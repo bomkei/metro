@@ -57,16 +57,19 @@ namespace Metro::Sema {
       // Variable
       case ND_VARIABLE: {
         auto const& name = node->nd_name->str;
-        auto find = find_let_node(name);
+        auto find = find_var_defined_node(name);
 
         // not found
         if( !find ) {
           Error::add_error(ERR_UNDEFINED, node->token, "undefined variable name");
           Error::exit_app();
         }
+        else {
+          node->nd_vardef = find;
+        }
 
         ret = check(find);
-        return TYPE_NONE;
+        break;
       }
 
       //
