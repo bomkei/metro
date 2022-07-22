@@ -23,13 +23,38 @@ namespace Metro {
     ctx.token = token;
     ctx.err_pos = token->pos;
     ctx.message = msg;
+
+    auto script = Application::get_running_script();
+
+    size_t err_view_begin = ctx.err_pos;
+    size_t err_view_end = ctx.err_pos;
+
+    while( err_view_begin > 0 ) {
+      if( script->data[err_view_begin - 1] == '\n' ) {
+        break;
+      }
+
+      err_view_begin--;
+    }
+
+    while( err_view_end < script->data.length() ) {
+      if( script->data[err_view_end] == '\n' ) {
+        break;
+      }
+
+      err_view_end++;
+    }
+
+    ctx.script = script;
+    ctx.err_begin = err_view_begin;
+    ctx.err_end = err_view_end;
+    
+    ctx.err_underline_length = token->str.length();
     
   }
 
   void Error::add_error(ErrorKind kind, Node* node, std::string const& msg) {
-    auto& ctx = contexts.emplace_back();
-
-    TODO_IMPL
+    add_error(kind, node->token, msg);
 
   }
 }

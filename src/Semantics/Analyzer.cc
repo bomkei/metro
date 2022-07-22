@@ -26,15 +26,27 @@ namespace Metro::Sema {
       //
       // Type
       case ND_TYPE: {
+        static constexpr std::pair<char const*, TypeKind> typename_list[] {
+          { "int", TYPE_INT },
+          { "float", TYPE_FLOAT },
+          { "bool", TYPE_BOOL },
+          { "char", TYPE_CHAR },
+          { "string", TYPE_STRING },
+          { "args", TYPE_ARGS },
+          { "tuple", TYPE_TUPLE },
+          { "none", TYPE_NONE }
+        };
+
         auto const& name = node->nd_name->str;
 
-        if( name == "int" ) {
-          ret = TYPE_INT;
+        for( auto&& pair : typename_list ) {
+          if( name == pair.first ) {
+            return ret = pair.second;
+          }
         }
-        else {
-          Error::add_error(ERR_UNKNOWN_TYPE, node->token, "unknown type name");
-          Error::exit_app();
-        }
+
+        Error::add_error(ERR_UNKNOWN_TYPE, node->token, "unknown type name");
+        Error::exit_app();
 
         break;
       }
@@ -62,7 +74,7 @@ namespace Metro::Sema {
           ret = check(node->nd_expr);
 
           if( is_type_declared && !ret.equals(check(node->nd_type)) ) {
-            Error::add_error(ERR_TYPE_MISMATCH, node, "type mismatch");
+            Error::add_error(ERR_TYPE_MISMATCH, node->nd_type, "type mismatch");
           }
         }
         else if( is_type_declared ) {

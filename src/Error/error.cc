@@ -5,10 +5,13 @@
 
 namespace Metro {
   void ErrorContext::show() {
-
     alert;
-    std::cout << Utils::format("ErrorContext: err_pos = %zu: ", err_pos) << message << std::endl;
 
+    auto spacec = err_pos - err_begin;
+
+    std::cerr
+      << std::string_view(script->data.data() + err_begin, err_end - err_begin) << std::endl
+      << std::string(spacec, ' ') << std::string(err_underline_length, '^') << ' ' << message << std::endl;
   }
 
   void Error::show_all() {

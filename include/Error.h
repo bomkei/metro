@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "AppContext.h"
 
 namespace Metro {
   struct Token;
@@ -32,7 +33,10 @@ namespace Metro {
     size_t  err_begin;
     size_t  err_end;
 
+    size_t  err_underline_length;
     std::string message;
+
+    AppContext::Script const* script;
 
     void show();
   };

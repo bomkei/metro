@@ -42,6 +42,8 @@ namespace Metro {
   Object* Application::execute_script(AppContext::Script& script) {
     auto const* ctx = Application::get_cur_appcontext();
 
+    running_script.push_front(&script);
+
   #if METRO_DEBUG
     #define  _dfn_check_step(__n) \
       if( ctx->_d_max_step_to < __n ) return nullptr
@@ -110,6 +112,8 @@ namespace Metro {
       std::cerr << obj->to_string() << std::endl;
     }
   #endif
+
+    running_script.pop_front();
 
     return obj;
   }

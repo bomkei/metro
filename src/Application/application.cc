@@ -13,6 +13,8 @@
 
 namespace Metro {
   static Application* _inst;
+
+  std::list<AppContext::Script*> Application::running_script;
   std::vector<Node*> Application::sysmodules;
 
   Application::Application() {
@@ -29,6 +31,10 @@ namespace Metro {
 
   AppContext const* Application::get_cur_appcontext() {
     return const_cast<AppContext const*>(&_inst->ctx);
+  }
+
+  AppContext::Script const* Application::get_running_script() {
+    return *running_script.begin();
   }
 
   bool Application::wasSysmoduleConstructed() {
