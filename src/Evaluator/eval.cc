@@ -77,6 +77,14 @@ namespace Metro {
         break;
       }
 
+      case ND_LET: {
+        if( node->nd_expr ) {
+          node->uni.obj = eval(node->nd_expr);
+        }
+
+        break;
+      }
+
       case ND_SCOPE: {
         enter_scope(node);
 
