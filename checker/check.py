@@ -1,6 +1,42 @@
 import os
+import sys
 import glob
-import collections
+from duplicate_checker import *
+
+try:
+  i = 0
+
+  COMMAND_DICT = {
+    'COM_CHECK_DUPLICATE': '-dup',
+    'COM_LINE_COUNT': '-lcount',
+  }
+
+  while i < len(sys.argv):
+    arg = sys.argv[i]
+
+    if arg.startswith(COMMAND_DICT['COM_CHECK_DUPLICATE']):
+      arg = sys.argv[i][4:].split(',')
+
+      for folder in arg:
+        res = check_duplication(folder)
+
+        if len(res) != 0:
+          print('\e[32mfile name duplicated in folder "' + folder + '":\n  ' + '\n'.join(['\n  '.join(v) for v in res]))
+
+      print()
+    elif arg.startswith(COMMAND_DICT['COM_LINE_COUNT']):
+      arg = arg[0]
+
+    i += 1
+
+except IndexError as e:
+  print('invalid arguments')
+  exit(1)
+
+'''
+for arg in sys.argv:
+  if arg == "-duplicate":
+    dup = check_duplication(
 
 source = 'src'
 total_lines  = 0
@@ -34,3 +70,6 @@ if len(src_files) != len(list(set(src_files))):
   exit(1)
 else:
   print('no duplicated files.')
+
+'''
+

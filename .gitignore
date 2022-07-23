@@ -1,6 +1,7 @@
 /build
 /.vscode
 /doc
+__pycache__/
 
 *.lnk
 desktop.ini
