@@ -43,6 +43,16 @@ namespace Metro {
         }
         break;
 
+      case EX_BIG_R: {
+        switch( left->type.kind ) {
+          case TYPE_INT:
+            left->v_bool = left->v_int < right->v_int;
+            break;
+        }
+        left->type = TYPE_BOOL;
+        break;
+      }
+
       default:
         TODO_IMPL;
     }

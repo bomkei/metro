@@ -193,6 +193,7 @@ namespace Metro::Sema {
                 goto _typeMismatch;
               }
 
+              itval = TYPE_BOOL;
               break;
           }
 
