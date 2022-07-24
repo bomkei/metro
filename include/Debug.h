@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cstdio>
+#include <iostream>
 #include "colors.h"
 
 // color in message area

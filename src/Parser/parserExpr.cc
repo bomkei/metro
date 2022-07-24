@@ -103,6 +103,8 @@ namespace Metro {
       else if( eat("!=") ) makeexpr(x)->expr_append(EX_NOT_EQUAL, add());
       else break;
     }
+
+    return x;
   }
 
   Node* Parser::expr() {
@@ -128,12 +130,17 @@ namespace Metro {
     if( eat("if") ) {
       auto node = new Node(ND_IF, ate);
 
-      node->nd_expr = expr();
+      node->nd_cond = expr();
 
       node->nd_if_true = expect_scope();
 
       if( eat("else") ) {
-        node->nd_if_false = expect_scope();
+        if( cur->str == "if" ) {
+          node->nd_if_false = expr();
+        }
+        else {
+          node->nd_if_false = expect_scope();
+        }
       }
 
       return node;

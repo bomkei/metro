@@ -7,9 +7,12 @@ define_builtin_func(print, TYPE_INT, { TYPE_ARGS }, {
     auto&& s = arg->to_string();
     
     ret->v_int += s.length();
+
+    alert;
     std::cout << s;
   }
 
+  alert;
   return ret;
 })
 

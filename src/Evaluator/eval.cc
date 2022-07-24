@@ -34,6 +34,16 @@ namespace Metro {
         ret = eval_expr(node);
         break;
 
+      case ND_IF: {
+        auto cond = eval(node->nd_cond);
+
+        if( cond->v_bool ) {
+          return eval(node->nd_if_true);
+        }
+        
+        return eval(node->nd_if_false);
+      }
+
       case ND_LET: {
         if( node->nd_expr ) {
           node->uni.obj = eval(node->nd_expr);
@@ -60,7 +70,8 @@ namespace Metro {
       }
 
       default:
-        TODO_IMPL;
+        alertios("eval: not implemented node kind: " << node->kind);
+        crash;
     }
 
     return ret;

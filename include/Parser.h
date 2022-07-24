@@ -25,7 +25,7 @@ namespace Metro {
     void expect_ident();
     Node* expect_type();
     Node* expect_scope();
-    Node* makeexpr(Node* node);
+    Node* makeexpr(Node*& node);
 
     bool is_need_semi(Node* node);
     void expect_semi();

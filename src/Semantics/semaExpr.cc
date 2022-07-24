@@ -27,6 +27,8 @@ namespace Metro::Sema {
           
           case TOK_CHAR:
           case TOK_STRING: {
+            alert;
+
             std::u16string s = Utils::Strings::to_u16string(std::string(node->token->str));
 
             if( node->token->kind == TOK_CHAR ) {
@@ -38,6 +40,7 @@ namespace Metro::Sema {
               obj->v_char = s[0];
             }
             else {
+              alert;
               obj->type = TYPE_STRING;
               obj->v_str = std::move(s);
             }
@@ -48,6 +51,10 @@ namespace Metro::Sema {
           default:
             crash;
         }
+
+        debug(
+          alertios(obj->to_string());
+        )
 
         ret = obj->type;
         break;
@@ -149,7 +156,8 @@ namespace Metro::Sema {
         }
 
         if( !is_builtin ) {
-          ret = check(func_node);
+          //ret = check(func_node);
+          ret = check(func_node->nd_ret_type);
         }
 
         break;
@@ -162,6 +170,12 @@ namespace Metro::Sema {
         for( auto it = node->expr.begin() + 1; it != node->expr.end(); it++ ) {
           auto itval = check(it->node);
 
+          if( !ret.equals(itval) ) {
+            //  TODO: 特殊ケースを実装 ( string * int など )
+
+            Error::add_error(ERR_TYPE_MISMATCH, it->node, "type mismatch");
+          }
+
           switch( it->kind ) {
             case EX_ADD:
               if( !isAddable(ret, itval) ) {
@@ -169,7 +183,7 @@ namespace Metro::Sema {
                 goto _typeMismatch;
               }
               break;
-            
+
             case EX_SUB: {
               if( !ret.equals(itval) ) {
                 errnode = it->node;
@@ -181,6 +195,8 @@ namespace Metro::Sema {
 
             case EX_BIG_L:
             case EX_BIG_R:
+              alert;
+
               switch( ret.kind ) {
                 case TYPE_INT:
                   break;
@@ -207,52 +223,6 @@ namespace Metro::Sema {
         Error::exit_app();
       }
 
-      case ND_SCOPE: {
-        if( node->list.empty() ) {
-          node->kind = ND_NONE;
-          break;
-        }
-
-        scope_history.push_front(node);
-
-        for( size_t i = 0; i < node->list.size() - 1; i++ ) {
-          check(node->list[i]);
-        }
-
-        auto last = *node->list.rbegin();
-
-        if( last == nullptr ) {
-          break;
-        }
-
-        ret = check(last);
-
-        switch( last->kind ) {
-          case ND_IF: {
-            bool stopped_with_else = false;
-            Node* nd = last;
-
-            while( nd->nd_if_false ) {
-              nd = nd->nd_if_false;
-
-              if( nd->kind != ND_IF ) {
-                stopped_with_else = true;
-                break;
-              }
-            }
-
-            if( !stopped_with_else ) {
-              Error::add_error(ERR_INDEFINITE, last->token, "computer can't guess your choice");
-              Error::exit_app();
-            }
-
-            break;
-          }
-        }
-
-        scope_history.pop_front();
-        break;
-      }
     }
 
     return ret;

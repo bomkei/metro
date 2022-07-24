@@ -41,13 +41,13 @@ namespace Metro {
 
       case TYPE_BOOL:
         return v_bool ? "true" : "false";
-      
+
       case TYPE_CHAR:
         return Utils::Strings::to_string(std::u16string(v_char, 1));
-      
+
       case TYPE_STRING:
         return Utils::Strings::to_string(v_str);
-      
+
       case TYPE_NONE:
         return "none";
     }

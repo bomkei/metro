@@ -6,6 +6,7 @@
 
 #include <map>
 #include <list>
+#include <vector>
 #include "Types/TypeInfo.h"
 
 namespace Metro {
@@ -29,6 +30,8 @@ namespace Metro::Sema {
 
     bool is_branchable(Node* node);
     std::vector<Node*> get_last_nodes(Node* node);
+
+    bool is_let_allowed = false;
 
     std::map<Node*, TypeInfo> caches;
     std::list<Node*> scope_history;

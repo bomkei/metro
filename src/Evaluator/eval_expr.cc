@@ -7,9 +7,12 @@
 
 namespace Metro {
   Object* Evaluator::eval_expr(Node* node) {
+    Object* ret = Object::none;
+
     switch( node->kind ) {
       case ND_VALUE: {
-        return clone(node->nd_object);
+        //return clone(node->nd_object);
+        return node->nd_object;
       }
 
       case ND_VARIABLE: {
@@ -19,22 +22,22 @@ namespace Metro {
       case ND_CALLFUNC: {
         std::vector<Object*> args;
         std::vector<Object*> args_bak;
-        Object* ret;
 
         auto callee = node->nd_callee;
 
         for( auto&& arg : node->list ) {
+          alert;
           args.emplace_back(eval(arg));
         }
 
         if( callee->kind == ND_BUILTIN_FUNC ) {
           auto const& name = callee->nd_builtin_func->name;
 
-          alertios("called builtin func " << COL_BLUE << name);
+          alertios("called builtin func " << COL_CYAN << name);
 
           ret = callee->nd_builtin_func->func(args);
 
-          alertios("finished builtin func " << COL_BLUE << name);
+          alertios("finished builtin func " << COL_CYAN << name);
           break;
         }
 
@@ -76,13 +79,13 @@ namespace Metro {
         auto obj = eval(node->expr[0].node);
 
         for( auto it = node->expr.begin() + 1; it != node->expr.end(); it++ ) {
-          calcObj(it->kind, obj, eval(it->node));
+          obj = calcObj(it->kind, clone(obj), clone(eval(it->node)));
         }
 
         return obj;
       }
     }
 
-    return Object::none;
+    return ret;
   }
 }

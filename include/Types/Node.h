@@ -13,7 +13,7 @@
 #define   nd_type           uni.s1.ndval[0]
 #define   nd_callee         uni.s1.ndval[0]
 #define   nd_item           uni.s1.ndval[0]
-#define   nd_if_true        uni.s1.ndval[0]
+#define   nd_if_true        uni.s1.ndval[1]
 #define   nd_cond           uni.s1.ndval[0]
 #define   nd_ret_type       uni.s1.ndval[0]
 #define   nd_expr           uni.s1.ndval[1]

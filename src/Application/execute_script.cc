@@ -92,12 +92,11 @@ namespace Metro {
 
     Error::check();
 
-  #if METRO_DEBUG
+  debug(
     if( ctx->_d_print._df_sema_result ) {
-      alert;
-      std::cerr << type.to_string() << std::endl;
+      alertios("program was evaluated as: " << COL_CYAN << type.to_string() << COL_DEFAULT);
     }
-  #endif
+  )
 
   _dfn_check_step(4);
     Evaluator eval;
