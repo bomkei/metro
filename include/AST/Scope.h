@@ -4,8 +4,9 @@ namespace Metro::AST {
   struct Scope : Base {
     std::vector<Base*>  elems;
 
-    Scope() {
-      this->kind = Kind::Scope;
+    Scope(Token* tok)
+      : Base(Kind::Scope, tok)
+    {
     }
   };
 }

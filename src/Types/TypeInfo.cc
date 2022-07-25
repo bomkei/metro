@@ -1,4 +1,5 @@
 #include "Types/TypeInfo.h"
+#include "Debug.h"
 
 namespace Metro {
   bool TypeInfo::equals(TypeKind kind) const {
@@ -13,14 +14,30 @@ namespace Metro {
   }
 
   std::string TypeInfo::to_string() const {
+    auto ret = std::string{ };
+
     switch( kind ) {
-      case TYPE_INT:
-        return "int";
-      
-      case TYPE_NONE:
-        return "none";
+      case TypeKind::Int:
+        ret = "int";
+        break;
+
+      case TypeKind::None:
+        ret = "none";
+        break;
+
+      default: {
+        TODO_IMPL
+      }
     }
 
-    return "(unknown type)";
+    if( is_constant ) {
+      ret += " const";
+    }
+
+    if( is_reference ) {
+      ret += "&";
+    }
+
+    return ret;
   }
 }

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "Utils.h"
+#include "Types.h"
 #include "Lexer.h"
 #include "Parser.h"
 #include "Sema/Analyzer.h"
@@ -9,14 +10,10 @@
 #include "Error.h"
 #include "Debug.h"
 
-#include "Types/Token.h"
-#include "Types/Object.h"
-#include "Types/Node.h"
-
 namespace Metro {
 
   static void _print_token(Token* token) {
-    for( ; token->kind != TOK_END; token = token->next ) {
+    for( ; token->kind != TokenKind::End; token = token->next ) {
       std::cerr << token->str << std::endl;
     }
   }
@@ -53,11 +50,13 @@ namespace Metro {
     Parser parser{ token };
 
     auto ast = parser.parse();
+
     script.ast = ast;
 
     Error::check();
 
     Sema::Analyzer analyzer;
+    
     auto type = analyzer.analyze(ast);
 
     Error::check();
@@ -65,6 +64,11 @@ namespace Metro {
     Evaluator evaluator;
 
     auto obj = evaluator.eval(ast);
+
+    debug(
+      alert;
+      std::cout << obj->to_string() << std::endl;
+    )
 
     running_script.pop_front();
 

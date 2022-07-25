@@ -38,13 +38,22 @@ namespace Metro {
   }
 
   int Application::main(int argc, char** argv) {
-    for( auto&& script : ctx.scripts ) {
-      if( !ctx.no_print_filenames && ctx.scripts.size() > 1 ) {
-        std::cout
-          << script.path << std::endl;
-      }
+    try {
+      for( auto&& script : ctx.scripts ) {
+        if( !ctx.no_print_filenames && ctx.scripts.size() > 1 ) {
+          std::cout
+            << script.path << std::endl;
+        }
 
-      execute_script(script);
+        execute_script(script);
+      }
+    }
+    catch( ... ) {
+      std::cerr
+        << std::endl
+        << "unhandled exception has been occurred." << std::endl;
+
+      return -1;
     }
 
     return 0;

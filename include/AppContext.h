@@ -4,6 +4,7 @@
 #include <vector>
 
 namespace Metro {
+  struct Token;
   namespace AST {
     struct Base;
   }

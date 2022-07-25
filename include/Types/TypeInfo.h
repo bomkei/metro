@@ -3,22 +3,27 @@
 #include <string>
 
 namespace Metro {
-  enum TypeKind {
-    TYPE_INT,
-    TYPE_FLOAT,
-    TYPE_BOOL,
-    TYPE_CHAR,
-    TYPE_STRING,
-    TYPE_ARGS,
-    TYPE_TUPLE,
-    TYPE_NONE
+  enum class TypeKind {
+    Int,
+    Float,
+    Bool,
+    Char,
+    String,
+    Tuple,
+    Vec,
+    Args,
+    None
   };
 
   struct TypeInfo {
-    TypeKind kind;
+    TypeKind  kind;
+    bool      is_constant;
+    bool      is_reference;
 
-    TypeInfo(TypeKind kind = TYPE_NONE)
-      : kind(kind)
+    TypeInfo(TypeKind kind = TypeKind::None)
+      : kind(kind),
+        is_constant(false),
+        is_reference(false)
     {
     }
 

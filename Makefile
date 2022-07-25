@@ -19,7 +19,7 @@ SOURCES	= \
 	src/GC \
 	src/Lexer \
 	src/Parser \
-	src/Semantics \
+	src/Sema \
 	src/Types \
 	src/Utils
 
@@ -71,6 +71,7 @@ export OFILES		= $(CFILES:.c=.o) $(CXXFILES:.cc=.o)
 .PHONY: all debug install clean re $(BUILD)
 
 all: $(BUILD)
+	clear
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
 $(BUILD):

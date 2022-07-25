@@ -7,11 +7,11 @@ namespace Metro::AST {
     bool  is_reference;
     bool  is_constant;
 
-    Type()
-      : is_reference(false),
+    Type(Token* tok)
+      : Base(Kind::Type, tok),
+        is_reference(false),
         is_constant(false)
     {
-      this->kind = Kind::Type;
     }
   };
 }

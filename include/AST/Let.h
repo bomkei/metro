@@ -5,7 +5,9 @@ namespace Metro::AST {
   struct Let : Variable {
     Type*   type;
 
-    Let() {
+    Let(Token* token)
+      : Variable(token)
+    {
       this->kind = Kind::Let;
     }
   };

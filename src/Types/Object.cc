@@ -1,9 +1,10 @@
 #include "Application.h"
 #include "Types/Object.h"
 #include "Utils.h"
+#include "Debug.h"
 
 namespace Metro {
-  Object* Object::none = new Object(TYPE_NONE);
+  Object* Object::none = new Object(TypeKind::None);
 
   Object::Object(TypeInfo type)
     : type(type),
@@ -11,47 +12,50 @@ namespace Metro {
       is_weak(false)
   {
   debug(
-    auto app = Application::get_instance();
-
-    if( app && Application::get_cur_appcontext()->_d_print._df_construct_obj ) {
-      alert;
-      alertctor(Object);
-    }
+    alert;
+    alertctor(Object);
   )
   }
 
   Object::~Object() {
   debug(
-    auto app = Application::get_instance();
-
-    if( app && Application::get_cur_appcontext()->_d_print._df_destruct_obj ) {
-      alert;
-      fprintf(stderr, "\t#Object destructing: %p\n", this);
-    }
+    alert;
+    fprintf(stderr, "\t#Object destructing: %p\n", this);
   )
   }
 
   std::string Object::to_string() const {
+    auto ret = std::string{ };
+
     switch( type.kind ) {
-      case TYPE_INT:
-        return std::to_string(v_int);
+      case TypeKind::Int:
+        ret = std::to_string(v_int);
+        break;
 
-      case TYPE_FLOAT:
-        return std::to_string(v_float);
+      case TypeKind::Float:
+        ret = std::to_string(v_float);
+        break;
 
-      case TYPE_BOOL:
-        return v_bool ? "true" : "false";
+      case TypeKind::Bool:
+        ret = v_bool ? "true" : "false";
+        break;
 
-      case TYPE_CHAR:
-        return Utils::Strings::to_string(std::u16string(v_char, 1));
+      case TypeKind::Char:
+        ret = Utils::Strings::to_string(std::u16string(v_char, 1));
+        break;
 
-      case TYPE_STRING:
-        return Utils::Strings::to_string(v_str);
+      case TypeKind::String:
+        ret = Utils::Strings::to_string(v_str);
+        break;
 
-      case TYPE_NONE:
-        return "none";
+      case TypeKind::None:
+        ret = "none";
+        break;
+      
+      default:
+        TODO_IMPL
     }
 
-    return "(unknown type object)";
+    return ret;
   }
 }

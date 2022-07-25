@@ -43,42 +43,6 @@ namespace Metro {
         i++;
         continue;
       }
-    #if METRO_DEBUG
-      else if( arg == "--EXTRADEBUG" ) {
-        ctx.__dbg_all_flag_bits = (uint32_t)-1;
-        i++;
-        continue;
-      }
-      else if( startswith(argv[i], "--d_appstep=") ) {
-        if( arg.length() == 12 ) {
-          _Invalid_arg
-        }
-
-        ctx._d_max_step_to = atoi(argv[i] + 12);
-        alertios("@debug: run " << (int)ctx._d_max_step_to << " process");
-        i++;
-        continue;
-      }
-      else if( startswith(argv[i], "--d_print=") ) {
-        if( arg.length() == 10 ) {
-          _Invalid_arg
-        }
-
-        for( size_t j = 10; j < arg.length(); j++ ) {
-          switch( arg[j] ) {
-            case 'q': ctx._d_print._df_tokens = 1; break;
-            case 'w': ctx._d_print._df_nodes = 1; break;
-            case 'e': ctx._d_print._df_sema_result = 1; break;
-            case 'r': ctx._d_print._df_evaluated_obj = 1; break;
-            case 't': ctx._d_print._df_construct_obj = 1; break;
-            case 'y': ctx._d_print._df_destruct_obj = 1; break;
-          }
-        }
-
-        i++;
-        continue;
-      }
-    #endif
       else if( *argraw == '-' ) {
         std::cerr << "unknown argument" << std::endl;
         return 0;

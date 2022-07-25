@@ -8,7 +8,7 @@ namespace Metro {
   }
 
   void Parser::next() {
-    this->cur = cur;
+    this->cur = this->cur->next;
   }
 
   bool Parser::eat(std::string_view str) {

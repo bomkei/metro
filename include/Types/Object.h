@@ -21,7 +21,7 @@ namespace Metro {
 
     static Object* none;
 
-    Object(TypeInfo type = TYPE_NONE);
+    Object(TypeInfo type = TypeKind::None);
     ~Object();
 
     std::string to_string() const;

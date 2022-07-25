@@ -1,9 +1,7 @@
 #include <thread>
 #include <mutex>
 #include <map>
-#include "Types/Token.h"
-#include "Types/Object.h"
-#include "Types/Node.h"
+#include "Types.h"
 #include "GC.h"
 #include "Utils.h"
 
