@@ -5,26 +5,28 @@
 
 namespace Metro {
   struct Token;
-  struct Node;
-  
-  enum ErrorKind {
-    ERR_INVALID_TOKEN,
-    ERR_INVALID_SYNTAX,
-    ERR_EXPECTED_TOKEN,
-    ERR_UNDEFINED,
-    ERR_INDEFINITE_TYPE,
-    ERR_CANNOT_REFER,
-    ERR_UNKNOWN_TYPE,
-    ERR_TYPE_MISMATCH,
-    ERR_NO_MATCH_ARGUMENTS,
-    ERR_STACK_OVERFLOW,
+  namespace AST {
+    struct Base;
+  }
+
+  enum class ErrorKind {
+    InvalidToken,
+    InvalidSyntax,
+    UnexpectedToken,
+    Undefined,
+    IndefiniteType,
+    UnknownTypeName,
+    CannotRefer,
+    TypeMismatch,
+    InvalidArguments,
+    StackOverflow
   };
 
   struct ErrorContext {
     ErrorKind kind;
 
-    Token*  token;
-    Node*   node;
+    Token*      token;
+    AST::Base*  node;
 
     size_t  view_begin;
     size_t  view_end;
@@ -46,7 +48,7 @@ namespace Metro {
   public:
     static void add_error(ErrorKind kind, size_t pos, std::string const& msg);
     static void add_error(ErrorKind kind, Token* token, std::string const& msg);
-    static void add_error(ErrorKind kind, Node* node, std::string const& msg);
+    static void add_error(ErrorKind kind, AST::Base* ast, std::string const& msg);
 
     static void show_all();
 

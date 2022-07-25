@@ -1,6 +1,5 @@
 #include <vector>
-#include "Types/Token.h"
-#include "Types/Node.h"
+#include "Types.h"
 #include "Application.h"
 #include "Error.h"
 
@@ -53,8 +52,7 @@ namespace Metro {
     
   }
 
-  void Error::add_error(ErrorKind kind, Node* node, std::string const& msg) {
-    add_error(kind, node->token, msg);
-
+  void Error::add_error(ErrorKind kind, AST::Base* ast, std::string const& msg) {
+    add_error(kind, ast->token, msg);
   }
 }

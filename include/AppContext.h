@@ -4,56 +4,40 @@
 #include <vector>
 
 namespace Metro {
-  struct Node;
-  struct Object;
+  namespace AST {
+    struct Base;
+  }
 
   struct AppContext {
     struct Script {
       char const*     path;
       std::string     data;
 
-      Node*   node = nullptr;
+      Token*          token;
+      AST::Base*      ast;
+
+      Script()
+        : path(nullptr),
+          token(nullptr),
+          ast(nullptr)
+      {
+      }
     };
 
     int     argc;
     char**  argv;
     std::string_view  app_name;
 
-    // --- Debugs --- //
-  #if METRO_DEBUG
-    // flags
-    struct __attribute__((packed)) _dt_ctrl_print_flags {
-      bool _df_tokens        : 1; // q
-      bool _df_nodes         : 1; // w
-      bool _df_sema_result   : 1; // e
-      bool _df_evaluated_obj : 1; // r
-      bool _df_construct_obj : 1; // t
-      bool _df_destruct_obj  : 1; // y
-    };
-
-    union {
-      struct {
-        _dt_ctrl_print_flags    _d_print;
-      };
-
-      // how far run app
-      //  0. Nothing
-      //  1. Lex
-      //  2. Parse
-      //  3. Semantics
-      //  4. Evaluate
-      uint8_t     _d_max_step_to;
-
-      uint32_t __dbg_all_flag_bits = 0;
-    };
-
-  #endif
-    // -------------- //
-
     // --- Flags --- //
-    bool    is_debug_enabled      = 0;
-    bool    no_print_filenames    = 0; // don't print script path while running multiple script files
+    bool    no_print_filenames; // don't print script path while running multiple script files
 
     std::vector<Script>   scripts;
+
+    AppContext()
+      : argc(0),
+        argv(nullptr),
+        no_print_filenames(false)
+    {
+    }
   };
 }

@@ -12,8 +12,9 @@ namespace Metro {
     AST::Base* add();
     AST::Base* expr();
 
-    
     AST::Function* func();
+
+    AST::Base* parse();
 
   private:
 

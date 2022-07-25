@@ -36,9 +36,6 @@
 #define  TODO_IMPL  { alert; fprintf(stderr,"\n\n# Not implemented error.\n"); exit(1); }
 
 namespace Metro {
-  struct Node;
-
   namespace Debug {
-    std::string node2s(Node* node);
   }
 }

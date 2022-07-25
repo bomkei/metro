@@ -44,73 +44,27 @@ namespace Metro {
 
     running_script.push_front(&script);
 
-  #if METRO_DEBUG
-    #define  _dfn_check_step(__n) \
-      if( ctx->_d_max_step_to < __n ) return nullptr
-  #else
-    #define  _dfn_check_step(n)  0
-  #endif
-
-  _dfn_check_step(1);
     Lexer lexer{ script.data };
 
     auto token = lexer.lex();
 
     Error::check();
 
-  #if METRO_DEBUG
-    if( ctx->_d_print._df_tokens ) {
-      alert;
-      _print_token(token);
-    }
-  #endif
-
-    alert;
-
-  _dfn_check_step(2);
     Parser parser{ token };
 
-    auto node = parser.parse();
-    script.node = node;
+    auto ast = parser.parse();
+    script.ast = ast;
 
     Error::check();
 
-  #if METRO_DEBUG
-    if( ctx->_d_print._df_nodes ) {
-      alertmsg(print parsed node);
-      std::cerr << Debug::node2s(node) << std::endl;
-    }
-  #endif
-
-    alert;
-
-  _dfn_check_step(3);
     Sema::Analyzer analyzer;
-    alert;
-    auto type = analyzer.check(node);
-    alert;
+    auto type = analyzer.analyze(ast);
 
     Error::check();
 
-  debug(
-    if( ctx->_d_print._df_sema_result ) {
-      alertios("type of program is analyzed as: " << COL_CYAN << type.to_string() << COL_DEFAULT);
-    }
-  )
+    Evaluator evaluator;
 
-  _dfn_check_step(4);
-    Evaluator eval;
-    alert;
-
-    auto obj = eval.eval(node);
-    alert;
-
-  #if METRO_DEBUG
-    if( obj && ctx->_d_print._df_evaluated_obj ) {
-      alert;
-      std::cerr << obj->to_string() << std::endl;
-    }
-  #endif
+    auto obj = evaluator.eval(ast);
 
     running_script.pop_front();
 
