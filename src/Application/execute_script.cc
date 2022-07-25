@@ -94,7 +94,7 @@ namespace Metro {
 
   debug(
     if( ctx->_d_print._df_sema_result ) {
-      alertios("program was evaluated as: " << COL_CYAN << type.to_string() << COL_DEFAULT);
+      alertios("type of program is analyzed as: " << COL_CYAN << type.to_string() << COL_DEFAULT);
     }
   )
 

@@ -33,11 +33,11 @@ namespace Metro {
         if( callee->kind == ND_BUILTIN_FUNC ) {
           auto const& name = callee->nd_builtin_func->name;
 
-          alertios("called builtin func " << COL_CYAN << name);
+          alertios(COL_GREEN "call builtin func " COL_WHITE << name);
 
           ret = callee->nd_builtin_func->func(args);
 
-          alertios("finished builtin func " << COL_CYAN << name);
+          alertios(COL_GREEN "finished builtin func " COL_WHITE << name);
           break;
         }
 
@@ -71,18 +71,6 @@ namespace Metro {
         }
 
         break;
-      }
-
-      case ND_EXPR: {
-        alert;
-
-        auto obj = eval(node->expr[0].node);
-
-        for( auto it = node->expr.begin() + 1; it != node->expr.end(); it++ ) {
-          obj = calcObj(it->kind, clone(obj), clone(eval(it->node)));
-        }
-
-        return obj;
       }
     }
 

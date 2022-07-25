@@ -7,15 +7,13 @@
 #include "Evaluator.h"
 #include "Application.h"
 
-#include "Types/Token.h"
-#include "Types/Object.h"
-#include "Types/Node.h"
+#include "Types.h"
 
 namespace Metro {
   static Application* _inst;
 
   std::list<AppContext::Script*> Application::running_script;
-  std::vector<Node*> Application::sysmodules;
+  std::vector<AST::> Application::sysmodules;
 
   Application::Application() {
     _inst = this;

@@ -35,6 +35,12 @@ namespace Metro {
 
     ND_ADDR,
 
+    ND_MUL,
+    ND_DIV,
+    ND_ADD,
+    ND_SUB,
+    ND_BIGGER,
+
     ND_LET,
     ND_IF,
     ND_FOR,
@@ -43,28 +49,12 @@ namespace Metro {
     ND_WHILE,
     ND_DO_WHILE,
     ND_SCOPE,
-    ND_EXPR,
 
     ND_FUNCTION,
     ND_BUILTIN_FUNC,
     ND_CLASS,
 
     ND_NAMESPACE,
-  };
-
-  enum ExprKind {
-    EX_BEGIN,
-    EX_ADD,
-    EX_SUB,
-    EX_MUL,
-    EX_DIV,
-    EX_BIG_L,
-    EX_BIG_R,
-    EX_BIG_OR_EQ_L,
-    EX_BIG_OR_EQ_R,
-    EX_EQUAL,
-    EX_NOT_EQUAL,
-  
   };
 
   struct Token;
@@ -89,41 +79,40 @@ namespace Metro {
 
       struct {
         _uni_struct_t   s0;
-        Node*           node2;
       };
 
       _uni_struct1_t  s1 { 0 };
     };
 
-    struct ExprItem {
-      ExprKind kind;
-      Node*    node;
-
-      explicit ExprItem(ExprKind kind, Node* node)
-        : kind(kind),
-          node(node)
-      {
-      }
-    };
-
     NodeKind      kind;
+    Node*         lhs;
+    Node*         rhs;
     Token*        token;
     Node*         owner;
     _nodeunion_t  uni;
 
     std::vector<Node*> list;
-    std::vector<ExprItem> expr;
     std::vector<Object*> objects;
 
     Node(NodeKind kind, Token* token)
       : kind(kind),
+        lhs(nullptr),
+        rhs(nullptr),
         token(token),
         owner(nullptr)
     {
       memset(&uni, 0, sizeof(_nodeunion_t));
     }
 
-    Node* append(Node* node);
-    ExprItem& expr_append(ExprKind kind, Node* node);
+    Node(NodeKind kind, Node* lhs, Node* rhs, Token* token)
+      : Node(kind, token)
+    {
+      this->lhs = lhs;
+      this->rhs = rhs;
+    }
+
+    Node* append(Node* node) {
+      return list.emplace_back(node);
+    }
   };
 }

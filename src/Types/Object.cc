@@ -21,14 +21,14 @@ namespace Metro {
   }
 
   Object::~Object() {
-  #if METRO_DEBUG
+  debug(
     auto app = Application::get_instance();
 
     if( app && Application::get_cur_appcontext()->_d_print._df_destruct_obj ) {
       alert;
       fprintf(stderr, "\t#Object destructing: %p\n", this);
     }
-  #endif
+  )
   }
 
   std::string Object::to_string() const {

@@ -66,14 +66,7 @@ namespace Metro {
     auto x = factor();
 
     while( check() ) {
-      if( eat("*") || eat("/") ) {
-        x = makeexpr(x);
-        if( ate->str == "*" ) x->expr_append(EX_MUL, factor());
-        else if( ate->str == "/" ) x->expr_append(EX_DIV, factor());
-      }
-      else {
-        break;
-      }
+      if( eat("+
     }
 
     return x;
@@ -83,9 +76,7 @@ namespace Metro {
     auto x = mul();
 
     while( check() ) {
-      if( eat("+") ) makeexpr(x)->expr_append(EX_ADD, mul());
-      else if( eat("-") ) makeexpr(x)->expr_append(EX_SUB, mul());
-      else break;
+      if( eat
     }
 
     return x;
@@ -95,13 +86,7 @@ namespace Metro {
     auto x = add();
 
     while( check() ) {
-      if( eat("<") ) makeexpr(x)->expr_append(EX_BIG_R, add());
-      else if( eat(">") ) makeexpr(x)->expr_append(EX_BIG_L, add());
-      else if( eat("<=") ) makeexpr(x)->expr_append(EX_BIG_OR_EQ_R, add());
-      else if( eat(">=") ) makeexpr(x)->expr_append(EX_BIG_OR_EQ_L, add());
-      else if( eat("==") ) makeexpr(x)->expr_append(EX_EQUAL, add());
-      else if( eat("!=") ) makeexpr(x)->expr_append(EX_NOT_EQUAL, add());
-      else break;
+      if( eat("<") ) x = new Node(
     }
 
     return x;

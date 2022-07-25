@@ -29,7 +29,6 @@ namespace Metro {
       case ND_VALUE:
       case ND_VARIABLE:
       case ND_CALLFUNC:
-      case ND_EXPR:
         alert;
         ret = eval_expr(node);
         break;
@@ -40,7 +39,7 @@ namespace Metro {
         if( cond->v_bool ) {
           return eval(node->nd_if_true);
         }
-        
+
         return eval(node->nd_if_false);
       }
 

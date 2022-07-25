@@ -106,12 +106,8 @@ namespace Metro {
   }
 
   Node* Parser::makeexpr(Node*& node) {
-    if( node->kind == ND_EXPR )
-      return node;
+    
 
-    auto x = new Node(ND_EXPR, node->token);
-    x->expr_append(EX_BEGIN, node);
-
-    return node = x;
+    return nullptr;
   }
 }
