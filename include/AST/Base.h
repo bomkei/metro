@@ -8,5 +8,9 @@ namespace Metro::AST {
   struct Base {
     Kind    kind;
     Token*  token;
+
+  protected:
+    Base() { }
+    virtual ~Base() { }
   };
 }
