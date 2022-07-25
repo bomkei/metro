@@ -1,8 +1,5 @@
 #pragma once
 
-#include <string_view>
-#include <vector>
-
 namespace Metro::AST {
   struct Type : Base {
     std::string_view    name;

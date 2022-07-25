@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <vector>
+
 #include "AST/Kind.h"
 #include "AST/Base.h"
 #include "AST/Type.h"

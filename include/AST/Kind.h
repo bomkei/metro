@@ -3,6 +3,8 @@
 namespace Metro::AST {
   enum class Kind {
     None,
+    Type,
+    
     Value,
     Variable,
     Callfunc,

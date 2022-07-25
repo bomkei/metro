@@ -6,8 +6,8 @@ namespace Metro::AST {
     Base*   rhs;
 
     explicit Expr(Kind kind, Base* lhs, Base* rhs)
-      lhs(lhs),
-      rhs(rhs)
+      : lhs(lhs),
+        rhs(rhs)
     {
       this->kind = kind;
     }
