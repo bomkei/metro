@@ -12,6 +12,7 @@ namespace Metro {
   enum class ErrorKind {
     InvalidToken,
     InvalidSyntax,
+    ExpectedToken,
     UnexpectedToken,
     Undefined,
     IndefiniteType,

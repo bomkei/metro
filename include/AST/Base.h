@@ -10,7 +10,18 @@ namespace Metro::AST {
     Token*  token;
 
   protected:
-    Base() { }
+    Base()
+      : kind(Kind::None),
+        token(nullptr)
+    {
+    }
+
+    Base(Kind kind, Token* token)
+      : kind(kind),
+        token(token)
+    {
+    }
+
     virtual ~Base() { }
   };
 }

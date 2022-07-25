@@ -8,8 +8,9 @@ namespace Metro::AST {
   struct Value : Base {
     Object*   object;
 
-    Value() {
-      this->kind = Kind::Value;
+    Value(Token* tok)
+      : Base(Kind::Value, tok)
+    {
     }
   };
 }

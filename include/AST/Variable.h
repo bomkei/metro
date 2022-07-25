@@ -9,10 +9,10 @@ namespace Metro::AST {
     std::string_view  name;
     Base*             defined;
 
-    Variable()
-      : defined(nullptr)
+    Variable(Token* tok)
+      : Base(Kind::Variable, tok),
+        defined(nullptr)
     {
-      this->kind = Kind::Variable;
     }
   };
 }
