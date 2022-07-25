@@ -1,12 +1,20 @@
-#pragma once
+#include "Types.h"
+#include "Evaluator.h"
 
 namespace Metro {
-  class Evaluator {
-  public:
-    Evaluator() { }
+  Object* Evaluator::eval(AST::Base* ast) {
+    if( !ast ) {
+      return Object::none;
+    }
 
-    
+    Object* ret = Object::none;
 
-  private:
-  };
+    switch( ast->kind ) {
+      case AST::Kind::Value: {
+        return ((AST::Value*)ast)->object;
+      }
+    }
+
+    return ret;
+  }
 }

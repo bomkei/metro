@@ -17,6 +17,13 @@ namespace Metro {
     AST::Base* parse();
 
   private:
+    bool check();
+    void next();
+    bool eat(std::string_view str);
+    void expect(std::string_view str);
+    AST::Scope* 
 
+    Token*  cur;
+    Token*  ate;
   };
 }
