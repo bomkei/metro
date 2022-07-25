@@ -9,7 +9,7 @@ namespace Metro {
   }
 
   AST::Base* Parser::factor() {
-    
+
   }
 
   AST::Base* Parser::mul() {
@@ -24,7 +24,7 @@ namespace Metro {
 
   }
 
-  AST::Function* Parser::func() {
+  AST::Base* Parser::func() {
 
   }
 

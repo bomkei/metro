@@ -12,7 +12,7 @@ namespace Metro {
     AST::Base* add();
     AST::Base* expr();
 
-    AST::Function* func();
+    AST::Base* func();
 
     AST::Base* parse();
 
@@ -21,7 +21,8 @@ namespace Metro {
     void next();
     bool eat(std::string_view str);
     void expect(std::string_view str);
-    AST::Scope* 
+    AST::Scope* expect_scope();
+    AST::Type* expect_type();
 
     Token*  cur;
     Token*  ate;

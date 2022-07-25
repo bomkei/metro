@@ -42,7 +42,7 @@ namespace Metro {
       auto pos = position;
       auto str = source.data() + pos;
 
-      cur = new Token(TOK_INT, cur, pos);
+      cur = new Token(TokenKind::Int, cur, pos);
 
       // digits
       if( isdigit(ch) ) {
@@ -52,7 +52,7 @@ namespace Metro {
           position++;
 
           if( peek() <= ' ' ) {
-            cur->kind = TOK_FLOAT;
+            cur->kind = TokenKind::Float;
           }
           else if( isalpha(ch == peek()) || ch == '_' ) {
             position--;
@@ -62,7 +62,7 @@ namespace Metro {
 
       // ident
       else if( isalpha(ch) || ch == '_' ) {
-        cur->kind = TOK_IDENT;
+        cur->kind = TokenKind::Ident;
         while( isalnum(ch = peek()) || ch == '_' ) position++;
       }
 
@@ -70,7 +70,7 @@ namespace Metro {
       else if( ch == '"' || ch == '\'' ) {
         auto begin = ch;
 
-        cur->kind = begin == '"' ? TOK_STRING : TOK_CHAR;
+        cur->kind = begin == '"' ? TokenKind::String : TokenKind::Char;
 
         for( position++; (ch = peek()) != begin; position++ );
         position++;
@@ -81,7 +81,7 @@ namespace Metro {
       }
       
       else {
-        cur->kind = TOK_PUNCTUATER;
+        cur->kind = TokenKind::Punctuator;
 
         for( std::string_view s : long_operators ) {
           if( match(s) ) {
@@ -99,7 +99,7 @@ namespace Metro {
           }
         }
 
-        Error::add_error(ERR_INVALID_TOKEN, position, "invalid token");
+        Error::add_error(ErrorKind::InvalidToken, position, "invalid token");
 
       found_op:
         pass_space();
@@ -110,7 +110,7 @@ namespace Metro {
       pass_space();
     }
 
-    cur = new Token(TOK_END, cur, position);
+    cur = new Token(TokenKind::End, cur, position);
     return top.next;
   }
 }
