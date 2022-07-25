@@ -88,15 +88,15 @@ namespace Metro {
 
       if( !eat(")") ) {
         do {
+          auto& arg = ast->args.emplace_back();
+
           expect_ident();
-          auto name = cur->str;
+          arg.name = cur->str;
 
           next();
           expect(":");
 
-          auto type = expect_type();
-
-          ast->args.emplace_back(name, type);
+          arg.type = expect_type();
         } while( eat(",") );
 
         expect(")");

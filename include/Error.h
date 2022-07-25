@@ -13,6 +13,7 @@ namespace Metro {
     InvalidToken,
     InvalidSyntax,
     ExpectedToken,
+    NotAllowed,
     Undefined,
     IndefiniteType,
     UnknownTypeName,

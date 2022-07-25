@@ -19,7 +19,10 @@ namespace Metro::Sema {
     TypeInfo  analyze(AST::Base* ast);
 
   private:
+    AST::Base* find_var_definition(std::string_view name, AST::Base* cur);
+
+    bool is_let_allowed = false;
     std::map<AST::Base*, TypeInfo> caches;
-    std::list<AST::Base*> scope_history;
+    std::list<std::pair<AST::Base*, size_t>> scope_history;
   };
 }

@@ -44,9 +44,16 @@ namespace Metro::Sema {
       }
 
       case Kind::Variable: {
-        
+        auto x = (AST::Variable*)ast;
+        auto defined = find_var_definition(x->name, ast);
 
-        break;
+        if( !defined ) {
+          Error::add_error(ErrorKind::Undefined, x->token, "undefined variable name");
+          Error::exit_app();
+        }
+
+        x->defined = defined;
+        ret = defined->
       }
 
       case Kind::Callfunc: {
@@ -55,13 +62,24 @@ namespace Metro::Sema {
         break;
       }
 
+      case Kind::Let: {
+        if( !is_let_allowed ) {
+          Error::add_error(ErrorKind::NotAllowed, ast->token, "let-statement is not allowed here");
+        }
+        else {
+          is_let_allowed = false;
+        }
+
+        ret = eval
+      }
+
       case Kind::Scope: {
         auto x = (AST::Scope*)ast;
         auto it = x->elems.begin();
 
-        scope_history.push_front(ast);
+        auto& pair = scope_history.emplace_front(ast, 0);
 
-        for( ; it != x->elems.end() - 1; it++ ) {
+        for( ; it != x->elems.end() - 1; it++, pair.second++ ) {
           analyze(*it);
         }
 
