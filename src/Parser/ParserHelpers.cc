@@ -4,17 +4,17 @@
 
 namespace Metro {
   bool Parser::check() {
-    return this->cur->kind != TokenKind::End;
+    return cur->kind != TokenKind::End;
   }
 
   void Parser::next() {
-    this->cur = this->cur->next;
+    cur = cur->next;
   }
 
   bool Parser::eat(std::string_view str) {
-    if( this->cur->str == str ) {
-      this->ate = cur;
-      this->next();
+    if( cur->str == str ) {
+      ate = cur;
+      next();
       return true;
     }
 
@@ -22,9 +22,15 @@ namespace Metro {
   }
 
   void Parser::expect(std::string_view str) {
-    if( !this->eat(str) ) {
-      Error::add_error(ErrorKind::ExpectedToken, this->cur, "expected '" + std::string(str) + "' before this token");
+    if( !eat(str) ) {
+      Error::add_error(ErrorKind::ExpectedToken, cur, "expected '" + std::string(str) + "' before this token");
       Error::exit_app();
+    }
+  }
+
+  void Parser::expect_ident() {
+    if( cur->kind != TokenKind::Ident ) {
+      Error::add_error(ErrorKind::ExpectedToken, cur, "expected identifier");
     }
   }
 
@@ -35,8 +41,14 @@ namespace Metro {
   }
 
   AST::Type* Parser::expect_type() {
+    expect_ident();
 
+    auto ast = new AST::Type(cur);
 
-    return nullptr;
+    ast->name = cur->str;
+
+    next();
+
+    return ast;
   }
 }

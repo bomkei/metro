@@ -21,6 +21,7 @@ namespace Metro {
     void next();
     bool eat(std::string_view str);
     void expect(std::string_view str);
+    void expect_ident();
     AST::Scope* expect_scope();
     AST::Type* expect_type();
 

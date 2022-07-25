@@ -37,6 +37,10 @@ namespace Metro::Sema {
         break;
       }
 
+      case Kind::Scope: {
+        
+      }
+
       default: {
         auto x = (AST::Expr*)ast;
 
@@ -45,9 +49,12 @@ namespace Metro::Sema {
 
         switch( x->kind ) {
           case Kind::Add: {
-            
+
             break;
           }
+
+          default:
+            TODO_IMPL
         }
 
         break;

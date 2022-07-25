@@ -58,4 +58,8 @@ namespace Metro {
 
     return ret;
   }
+
+  Object* Object::clone() const {
+    return new Object(*this);
+  }
 }

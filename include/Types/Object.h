@@ -25,5 +25,7 @@ namespace Metro {
     ~Object();
 
     std::string to_string() const;
+
+    Object* clone() const;
   };
 }

@@ -5,6 +5,12 @@ namespace Metro::AST {
     struct Argument {
       std::string_view  name;
       Type*             type;
+
+      explicit Argument(std::string_view name, Type* type)
+        : name(name),
+          type(type)
+      {
+      }
     };
 
     std::string_view        name;
@@ -12,11 +18,11 @@ namespace Metro::AST {
     Type*                   return_type;
     Scope*                  code;
 
-    Function()
-      : return_type(nullptr),
+    Function(Token* token)
+      : Base(Kind::Function, token),
+        return_type(nullptr),
         code(nullptr)
     {
-      this->kind = Kind::Function;
     }
   };
 }
