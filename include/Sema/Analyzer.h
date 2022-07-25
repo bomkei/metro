@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <list>
 
 namespace Metro {
   struct TypeInfo;
@@ -19,5 +20,6 @@ namespace Metro::Sema {
 
   private:
     std::map<AST::Base*, TypeInfo> caches;
+    std::list<AST::Base*> scope_history;
   };
 }

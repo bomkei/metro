@@ -12,6 +12,5 @@ namespace Metro {
 
     Object* eval(AST::Base* ast);
 
-
   };
 }

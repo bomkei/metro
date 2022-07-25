@@ -35,9 +35,36 @@ namespace Metro {
   }
 
   AST::Scope* Parser::expect_scope() {
+    auto ast = new AST::Scope(cur);
 
+    expect("{");
 
-    return nullptr;
+    if( eat("}") ) {
+      return ast;
+    }
+
+    while( check() ) {
+      auto item = expr();
+
+      ast->append(item);
+
+      if( eat(";") ) {
+        if( eat("}") ) {
+          ast->append(nullptr);
+          break;
+        }
+      }
+      else if( is_need_semi(item) ) {
+        if( !eat("}") ) {
+          expect_semi();
+        }
+        else {
+          break;
+        }
+      }
+    }
+
+    return ast;
   }
 
   AST::Type* Parser::expect_type() {
@@ -50,5 +77,21 @@ namespace Metro {
     next();
 
     return ast;
+  }
+
+  bool Parser::is_need_semi(AST::Base* ast) {
+    using AST::Kind;
+
+    switch( ast->kind ) {
+      case Kind::If:
+      case Kind::Let:
+        return false;
+    }
+
+    return true;
+  }
+
+  void Parser::expect_semi() {
+    expect(";");
   }
 }

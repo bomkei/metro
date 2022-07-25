@@ -20,10 +20,14 @@ namespace Metro {
     bool check();
     void next();
     bool eat(std::string_view str);
+
     void expect(std::string_view str);
     void expect_ident();
     AST::Scope* expect_scope();
     AST::Type* expect_type();
+
+    bool is_need_semi(AST::Base* ast);
+    void expect_semi();
 
     Token*  cur;
     Token*  ate;

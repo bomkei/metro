@@ -61,7 +61,7 @@ namespace Metro {
   }
 
   AST::Base* Parser::add() {
-    auto x = factor();
+    auto x = mul();
 
     while( check() ) {
       if( eat("+") ) x = new AST::Expr(AST::Kind::Add, x, mul());
@@ -101,6 +101,14 @@ namespace Metro {
 
         expect(")");
       }
+
+      if( eat("->") ) {
+        ast->return_type = expect_type();
+      }
+
+      ast->code = expect_scope();
+
+      return ast;
     }
 
     return expr();

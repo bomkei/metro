@@ -1,5 +1,6 @@
 #include "Types.h"
 #include "Sema/Analyzer.h"
+#include "Error.h"
 
 namespace Metro::Sema {
   TypeInfo Analyzer::analyze(AST::Base* ast) {
@@ -15,6 +16,16 @@ namespace Metro::Sema {
     auto& ret = caches[ast];
 
     switch( ast->kind ) {
+      case Kind::Type: {
+        auto x = (AST::Type*)ast;
+
+        if( x->name == "int" ) {
+          ret = TypeKind::Int;
+        }
+
+        break;
+      }
+
       case Kind::Value: {
         auto x = (AST::Value*)ast;
         auto val = new Object;
@@ -33,12 +44,47 @@ namespace Metro::Sema {
       }
 
       case Kind::Variable: {
+        
+
+        break;
+      }
+
+      case Kind::Callfunc: {
+
 
         break;
       }
 
       case Kind::Scope: {
+        auto x = (AST::Scope*)ast;
+        auto it = x->elems.begin();
+
+        scope_history.push_front(ast);
+
+        for( ; it != x->elems.end() - 1; it++ ) {
+          analyze(*it);
+        }
+
+        ret = analyze(*it);
+        scope_history.pop_front();
         
+        break;
+      }
+
+      case Kind::Function: {
+        auto x = (AST::Function*)ast;
+
+        for( auto&& arg : x->args ) {
+          analyze(arg.type);
+        }
+
+        ret = analyze(x->return_type);
+
+        if( !ret.equals(analyze(x->code)) ) {
+          Error::add_error(ErrorKind::TypeMismatch, x->code, "type mismatch");
+        }
+
+        break;
       }
 
       default: {
@@ -52,9 +98,6 @@ namespace Metro::Sema {
 
             break;
           }
-
-          default:
-            TODO_IMPL
         }
 
         break;
