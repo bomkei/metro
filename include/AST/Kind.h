@@ -24,6 +24,5 @@ namespace Metro::AST {
     Scope,
 
     Function,
-    BuiltinFunction,
   };
 }

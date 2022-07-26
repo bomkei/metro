@@ -13,7 +13,6 @@ namespace Metro {
 
     switch( ast->kind ) {
       case Kind::Function:
-      case Kind::BuiltinFunction:
         break;
 
       case Kind::Value: {
@@ -37,6 +36,38 @@ namespace Metro {
         break;
       }
 
+      case Kind::Callfunc: {
+        std::vector<Object*> args_bak;
+
+        auto x = (AST::CallFunc*)ast;
+        auto callee = x->callee;
+
+        alert;
+
+        for( size_t i = 0; i < x->args.size(); i++ ) {
+          args_bak.emplace_back(callee->args[i].value);
+          callee->args[i].value = eval(x->args[i]);
+        }
+
+        ret = eval(callee->code);
+
+        for( size_t i = 0; i < x->args.size(); i++ ) {
+          callee->args[i].value = args_bak[i];
+        }
+
+        break;
+      }
+
+      case Kind::Scope: {
+        auto x = (AST::Scope*)ast;
+
+        for( auto&& item : x->elems ) {
+          ret = eval(item);
+        }
+
+        break;
+      }
+
       default: {
         auto x = (AST::Expr*)ast;
 
@@ -52,6 +83,13 @@ namespace Metro {
             }
 
             break;
+
+          case Kind::Mul:
+            switch( ret->type.kind ) {
+              case TypeKind::Int:
+                ret->v_int *= rhs->v_int;
+                break;
+            }
         }
 
         break;

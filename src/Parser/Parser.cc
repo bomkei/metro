@@ -22,6 +22,7 @@ namespace Metro {
       case TokenKind::Ident: {
         if( cur->next->str == "(" ) {
           auto ast = new AST::CallFunc(cur);
+          ast->name = cur->str;
 
           next();
           next();
@@ -116,8 +117,16 @@ namespace Metro {
   }
 
   AST::Base* Parser::parse() {
+    auto scope = new AST::Scope(nullptr);
 
+    while( check() ) {
+      auto x = scope->append(func());
 
-    return func();
+      if( is_need_semi(x) && cur->kind != TokenKind::End ) {
+        expect_semi();
+      }
+    }
+
+    return scope;
   }
 }

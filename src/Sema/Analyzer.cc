@@ -68,6 +68,8 @@ namespace Metro::Sema {
         auto x = (AST::CallFunc*)ast;
         auto find = find_function(x->name);
 
+        x->callee = find;
+
         if( !find ) {
           Error::add_error(ErrorKind::Undefined, ast->token, "undefined function name");
           Error::exit_app();
