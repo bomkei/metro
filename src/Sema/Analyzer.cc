@@ -1,6 +1,7 @@
 #include "Types.h"
 #include "Sema/Analyzer.h"
 #include "Error.h"
+#include "Utils.h"
 
 namespace Metro::Sema {
   TypeInfo Analyzer::analyze(AST::Base* ast) {
@@ -49,6 +50,12 @@ namespace Metro::Sema {
           case TokenKind::Int: {
             val->type = TypeKind::Int;
             val->v_int = atoi(ast->token->str.data());
+            break;
+          }
+
+          case TokenKind::String: {
+            val->type = TypeKind::String;
+            val->v_str = Utils::Strings::to_u16string(std::string(ast->token->str));
             break;
           }
         }

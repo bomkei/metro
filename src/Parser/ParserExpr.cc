@@ -6,12 +6,12 @@ namespace Metro {
   AST::Base* Parser::factor() {
 
     switch( cur->kind ) {
-      case TokenKind::Int: {
-        auto ast = new AST::Value(cur);;
-
+      case TokenKind::Int:
+      case TokenKind::Float:
+      case TokenKind::Char:
+      case TokenKind::String:
         next();
-        return ast;
-      }
+        return new AST::Value(cur->prev);
 
       case TokenKind::Ident: {
         if( cur->next->str == "(" ) {
