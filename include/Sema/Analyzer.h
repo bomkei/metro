@@ -5,6 +5,7 @@
 
 namespace Metro {
   struct TypeInfo;
+  struct BuiltinFunc;
 }
 
 namespace Metro::AST {
@@ -25,5 +26,7 @@ namespace Metro::Sema {
     bool is_let_allowed = false;
     std::map<AST::Base*, TypeInfo> caches;
     std::list<std::pair<AST::Base*, size_t>> scope_history;
+
+    static std::vector<BuiltinFunc const> builtinfunc_list;
   };
 }

@@ -1,5 +1,6 @@
 #include "Types.h"
 #include "Evaluator.h"
+#include "GC.h"
 
 namespace Metro {
   Object* Evaluator::eval(AST::Base* ast) {
@@ -54,18 +55,56 @@ namespace Metro {
         for( size_t i = 0; i < x->args.size(); i++ ) {
           callee->args[i].value = args_bak[i];
         }
-
+        
         break;
       }
 
       case Kind::Compare: {
-        
+        using CmpKind = AST::Compare::Item::Kind;
 
+        ret = gcnew(TypeKind::Bool);
+
+        auto x = (AST::Compare*)ast;
+        bool res = false;
+
+        Object const* lhs = eval(x->first);
+        Object const* rhs = nullptr;
+
+        for( auto it = x->list.begin(); it != x->list.end(); it++, lhs = rhs ) {
+          rhs = eval(it->ast);
+
+          switch( it->kind ) {
+            case CmpKind::BiggerLeft:
+              break;
+
+            case CmpKind::BiggerRight:
+              switch( lhs->type.kind ) {
+                case TypeKind::Int:
+                  res = lhs->v_int < rhs->v_int;
+                  break;
+              }
+              break;
+          }
+
+          if( !res ) {
+            break;
+          }
+        }
+
+        ret->v_bool = res;
         break;
       }
 
       case Kind::If: {
+        auto x = (AST::If*)ast;
+        auto cond = eval(x->cond);
 
+        if( cond->v_bool ) {
+          ret = eval(x->if_true);
+        }
+        else if( x->if_false ) {
+          ret = eval(x->if_false);
+        }
 
         break;
       }
@@ -93,7 +132,14 @@ namespace Metro {
                 ret->v_int += rhs->v_int;
                 break;
             }
+            break;
 
+          case Kind::Sub:
+            switch( ret->type.kind ) {
+              case TypeKind::Int:
+                ret->v_int -= rhs->v_int;
+                break;
+            }
             break;
 
           case Kind::Mul:
@@ -102,6 +148,7 @@ namespace Metro {
                 ret->v_int *= rhs->v_int;
                 break;
             }
+            break;
         }
 
         break;

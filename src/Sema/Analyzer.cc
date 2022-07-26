@@ -53,8 +53,8 @@ namespace Metro::Sema {
           }
         }
 
-        ret = val->type;
         x->object = val;
+        ret = val->type;
         break;
       }
 
@@ -75,11 +75,29 @@ namespace Metro::Sema {
 
       case Kind::Callfunc: {
         auto x = (AST::CallFunc*)ast;
-        auto find = find_function(x->name);
+        auto const& name = x->name;
 
+        auto find = find_function(x->name);
         x->callee = find;
 
+        std::vector<TypeInfo>   call_arg_types, func_arg_types;
+
+        for( auto&& arg : x->args ) {
+          call_arg_types.emplace_back(analyze(arg));
+        }
+
         if( !find ) {
+          for( auto&& builtin : builtinfunc_list ) {
+            if( builtin.name == name ) {
+              if( x->args.size() !=  ) {
+
+              }
+
+              x->callee_builtin = &builtin;
+              return ret = builtin.ret_type;
+            }
+          }
+
           Error::add_error(ErrorKind::Undefined, ast->token, "undefined function name");
           Error::exit_app();
         }
@@ -167,7 +185,7 @@ namespace Metro::Sema {
 
         scope_history.pop_front();
 
-        alertios("scope: " << ret.to_string());
+        alertios("last value in scope = " << ret.to_string());
         break;
       }
 

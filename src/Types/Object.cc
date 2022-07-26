@@ -9,7 +9,8 @@ namespace Metro {
   Object::Object(TypeInfo type)
     : type(type),
       ref_count(0),
-      is_weak(false)
+      is_weak(false),
+      v_int(0)
   {
   debug(
     alert;
