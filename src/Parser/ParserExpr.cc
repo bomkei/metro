@@ -68,6 +68,20 @@ namespace Metro {
     return x;
   }
 
+  AST::Base* Parser::compare() {
+    using ItemKind = AST::Compare::Item::Kind;
+
+    auto x = add();
+
+    while( check() ) {
+      if( eat(">") ) AST::Compare::create(x)->append(ItemKind::BiggerLeft, ate, add());
+      else if( eat("<") ) AST::Compare::create(x)->append(ItemKind::BiggerRight, ate, add());
+      else break;
+    }
+
+    return x;
+  }
+
   AST::Base* Parser::expr() {
     auto ast = stmt();
 

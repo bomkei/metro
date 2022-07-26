@@ -9,6 +9,7 @@
 #include "AST/Value.h"
 #include "AST/Variable.h"
 #include "AST/Callfunc.h"
+#include "AST/Compare.h"
 
 #include "AST/If.h"
 #include "AST/Let.h"

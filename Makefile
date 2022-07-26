@@ -11,7 +11,7 @@ INCLUDE	= include
 SOURCES	= \
 	src \
 	src/Application \
-	src/builtin \
+	src/AST \
 	src/Debug \
 	src/Error \
 	src/Evaluator \
