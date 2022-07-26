@@ -10,7 +10,9 @@ namespace Metro {
     AST::Base* factor();
     AST::Base* mul();
     AST::Base* add();
+    
     AST::Base* expr();
+    AST::Base* stmt();
 
     AST::Base* func();
 
