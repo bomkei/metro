@@ -15,5 +15,4 @@
 
 #include "AST/Argument.h"
 #include "AST/Function.h"
-#include "AST/BuiltinFunction.h"
 #include "AST/Expr.h"

@@ -65,8 +65,26 @@ namespace Metro::Sema {
       }
 
       case Kind::Callfunc: {
+        auto x = (AST::CallFunc*)ast;
+        auto find = find_function(x->name);
 
+        if( !find ) {
+          Error::add_error(ErrorKind::Undefined, ast->token, "undefined function name");
+          Error::exit_app();
+        }
 
+        if( x->args.size() != find->args.size() ) {
+          Error::add_error(ErrorKind::InvalidArguments, ast->token, "invalid arguments");
+        }
+        else {
+          for( size_t i = 0; i < x->args.size(); i++ ) {
+            if( !analyze(x->args[i]).equals(analyze(find->args[i].type)) ) {
+              Error::add_error(ErrorKind::TypeMismatch, ast->token, "argument type mismatch");
+            }
+          }
+        }
+
+        ret = analyze(find->return_type);
         break;
       }
 

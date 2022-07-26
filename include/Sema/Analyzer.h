@@ -20,6 +20,7 @@ namespace Metro::Sema {
 
   private:
     AST::Base* find_var_definition(std::string_view name, AST::Base* cur);
+    AST::Function* find_function(std::string_view name);
 
     bool is_let_allowed = false;
     std::map<AST::Base*, TypeInfo> caches;

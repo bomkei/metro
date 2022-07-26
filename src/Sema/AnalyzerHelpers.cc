@@ -38,4 +38,21 @@ namespace Metro::Sema {
 
     return nullptr;
   }
+
+  AST::Function* Analyzer::find_function(std::string_view name) {
+    for( auto&& pair : scope_history ) {
+      if( pair.first->kind == AST::Kind::Scope ) {
+        auto scope = (AST::Scope*)pair.first;
+
+        for( auto&& elem : scope->elems ) {
+          if( elem && elem->kind == AST::Kind::Function
+            && ((AST::Function*)elem)->name == name ) {
+            return (AST::Function*)elem;
+          }
+        }
+      }
+    }
+
+    return nullptr;
+  }
 }
