@@ -18,6 +18,8 @@ namespace Metro::Sema {
     Analyzer() { }
 
     TypeInfo  analyze(AST::Base* ast);
+    TypeInfo  analyze_expr(AST::Base* ast);
+    TypeInfo  analyze_stmt(AST::Base* ast);
 
   private:
     AST::Base* find_var_definition(std::string_view name, AST::Base* cur);
