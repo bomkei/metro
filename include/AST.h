@@ -10,6 +10,7 @@
 #include "AST/Variable.h"
 #include "AST/Callfunc.h"
 
+#include "AST/If.h"
 #include "AST/Let.h"
 #include "AST/Scope.h"
 
