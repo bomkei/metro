@@ -20,6 +20,8 @@ namespace Metro {
     UnknownTypeName,
     CannotRefer,
     TypeMismatch,
+    TooFewArguments,
+    TooManyArguments,
     InvalidArguments,
     StackOverflow
   };

@@ -27,6 +27,6 @@ namespace Metro::Sema {
     std::map<AST::Base*, TypeInfo> caches;
     std::list<std::pair<AST::Base*, size_t>> scope_history;
 
-    static std::vector<BuiltinFunc const> builtinfunc_list;
+    static std::vector<BuiltinFunc> builtinfunc_list;
   };
 }

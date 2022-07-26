@@ -89,38 +89,42 @@ namespace Metro::Sema {
         if( !find ) {
           for( auto&& builtin : builtinfunc_list ) {
             if( builtin.name == name ) {
-              if( x->args.size() !=  ) {
-
-              }
-
+              func_arg_types = builtin.arg_types;
+              ret = builtin.ret_type;
               x->callee_builtin = &builtin;
-              return ret = builtin.ret_type;
+              goto _found_builtin;
             }
           }
 
           Error::add_error(ErrorKind::Undefined, ast->token, "undefined function name");
           Error::exit_app();
-        }
-
-        if( x->args.size() != find->args.size() ) {
-          Error::add_error(ErrorKind::InvalidArguments, ast->token, "invalid arguments");
+        _found_builtin:;
         }
         else {
-          for( size_t i = 0; i < x->args.size(); i++ ) {
-            debug(
-              auto aa = analyze(x->args[i]);
-              auto bb = analyze(find->args[i].type);
+          for( auto&& arg : find->args ) {
+            func_arg_types.emplace_back(analyze(arg.type));
+          }
 
-              alertios(aa.to_string() << ", " << bb.to_string());
-            )
+          ret = analyze(find->return_type);
+        }
 
-            if( !analyze(x->args[i]).equals(analyze(find->args[i].type)) ) {
-              Error::add_error(ErrorKind::TypeMismatch, x->args[i]->token, "argument type mismatch");
-            }
+        for( auto callarg_it = call_arg_types.begin(), callarg_end = call_arg_types.end();
+          auto&& func_arg : func_arg_types ) {
+          if( func_arg.equals_kind(TypeKind::Args) ) {
+            break;
+          }
+
+          if( callarg_it == callarg_end ) {
+            Error::add_error(ErrorKind::TooFewArguments, x->token, "too few arguments");
+            goto _done_check_args;
+          }
+
+          if( !callarg_it->equals(func_arg) ) {
+            Error::add_error(ErrorKind::TypeMismatch, x->token, "type mismatch");
           }
         }
 
-        ret = analyze(find->return_type);
+      _done_check_args:;
         break;
       }
 

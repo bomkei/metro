@@ -38,9 +38,20 @@ namespace Metro {
       }
 
       case Kind::Callfunc: {
-        std::vector<Object*> args_bak;
-
         auto x = (AST::CallFunc*)ast;
+
+        if( x->callee_builtin ) {
+          std::vector<Object*> args;
+
+          for( auto&& arg : x->args ) {
+            args.emplace_back(eval(arg));
+          }
+
+          ret = x->callee_builtin->func(args);
+          break;
+        }
+
+        std::vector<Object*> args_bak;
         auto callee = x->callee;
 
         alert;
