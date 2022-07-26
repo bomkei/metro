@@ -19,6 +19,7 @@ namespace Metro {
 
           expect_ident();
           arg.name = cur->str;
+          arg.token = cur;
 
           next();
           expect(":");

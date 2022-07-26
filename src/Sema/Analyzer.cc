@@ -22,7 +22,9 @@ namespace Metro::Sema {
       case Kind::Argument: {
         auto x = (AST::Argument*)ast;
 
-        return analyze(x->type);
+        ret = analyze(x->type);
+
+        break;
       }
 
       case Kind::Type: {
@@ -30,6 +32,10 @@ namespace Metro::Sema {
 
         if( x->name == "int" ) {
           ret = TypeKind::Int;
+        }
+        else {
+          Error::add_error(ErrorKind::UnknownTypeName, x->token, "unknown type name");
+          Error::exit_app();
         }
 
         break;
@@ -83,8 +89,15 @@ namespace Metro::Sema {
         }
         else {
           for( size_t i = 0; i < x->args.size(); i++ ) {
+            debug(
+              auto aa = analyze(x->args[i]);
+              auto bb = analyze(find->args[i].type);
+
+              alertios(aa.to_string() << ", " << bb.to_string());
+            )
+
             if( !analyze(x->args[i]).equals(analyze(find->args[i].type)) ) {
-              Error::add_error(ErrorKind::TypeMismatch, ast->token, "argument type mismatch");
+              Error::add_error(ErrorKind::TypeMismatch, x->args[i]->token, "argument type mismatch");
             }
           }
         }

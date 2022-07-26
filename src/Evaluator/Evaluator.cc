@@ -58,7 +58,14 @@ namespace Metro {
         break;
       }
 
+      case Kind::Compare: {
+        
+
+        break;
+      }
+
       case Kind::If: {
+
 
         break;
       }
