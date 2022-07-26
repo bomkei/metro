@@ -16,6 +16,9 @@ namespace Metro::Sema {
     auto& ret = caches[ast];
 
     switch( ast->kind ) {
+      case Kind::None:
+        break;
+
       case Kind::Argument: {
         auto x = (AST::Argument*)ast;
 
@@ -90,8 +93,32 @@ namespace Metro::Sema {
         break;
       }
 
-      case Kind::If: {
+      case Kind::Compare: {
+        auto x = (AST::Compare*)ast;
+        ret = analyze(x->first);
 
+        for( auto&& item : x->list ) {
+          analyze(item.ast);
+        }
+
+        ret = TypeKind::Bool;
+        break;
+      }
+
+      case Kind::If: {
+        auto x = (AST::If*)ast;
+        auto cond = analyze(x->cond);
+
+        if( !cond.equals_kind(TypeKind::Bool) ) {
+          Error::add_error(ErrorKind::TypeMismatch, x->cond, "expected boolean expression as condition in if-statement");
+        }
+
+        ret = analyze(x->if_true);
+
+        if( x->if_false && !ret.equals(analyze(x->if_false)) ) {
+          Error::add_error(ErrorKind::TypeMismatch, ast->token,
+            "type mismatch between true-case and false-case in if-statement.");
+        }
 
         break;
       }

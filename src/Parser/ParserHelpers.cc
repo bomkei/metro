@@ -54,13 +54,11 @@ namespace Metro {
           break;
         }
       }
-      else if( is_need_semi(item) ) {
-        if( !eat("}") ) {
-          expect_semi();
-        }
-        else {
-          break;
-        }
+      else if( !eat("}") ) {
+        expect_semi();
+      }
+      else {
+        break;
       }
     }
 

@@ -16,9 +16,10 @@ namespace Metro {
       case TokenKind::Ident: {
         if( cur->next->str == "(" ) {
           auto ast = new AST::CallFunc(cur);
-          ast->name = cur->str;
 
+          ast->name = cur->str;
           next();
+
           next();
 
           if( !eat(")") ) {
@@ -89,6 +90,6 @@ namespace Metro {
       return ast;
     }
 
-    return add();
+    return compare();
   }
 }

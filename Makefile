@@ -36,7 +36,7 @@ endif
 
 BASEFLAGS		:= -O2
 CFLAGS			:= $(BASEFLAGS) $(DEBUGFLAGS) $(INCLUDES) \
-	-Wno-switch -Wimplicit-fallthrough
+	-Wno-switch -Wimplicit-fallthrough -Wuninitialized
 CXXFLAGS		:= $(CFLAGS) -std=c++20
 LDFLAGS			:= -Wl,--gc-sections
 

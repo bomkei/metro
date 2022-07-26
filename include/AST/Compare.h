@@ -38,7 +38,7 @@ namespace Metro::AST {
     }
 
     explicit Compare(Base* first)
-      : Base(Kind::Compare, nullptr),
+      : Base(Kind::Compare, first->token),
         first(first)
     {
     }
