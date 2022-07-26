@@ -21,8 +21,14 @@ namespace Metro::Sema {
         }
 
         case AST::Kind::Function: {
+          alert;
           for( auto&& arg : ((AST::Function*)scope.first)->args ) {
+            debug(
+              alertios("arg.name = " << arg.name);
+            )
+
             if( arg.name == name ) {
+              alert;
               return &arg;
             }
           }

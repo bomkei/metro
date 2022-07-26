@@ -22,6 +22,17 @@ namespace Metro {
       }
 
       case Kind::Variable: {
+        auto x = (AST::Variable*)ast;
+
+        switch( x->defined->kind ) {
+          case Kind::Let:
+            ret = ((AST::Let*)x->defined)->value;
+            break;
+
+          case Kind::Argument:
+            ret = ((AST::Argument*)x->defined)->value;
+            break;
+        }
 
         break;
       }

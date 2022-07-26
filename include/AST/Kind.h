@@ -4,6 +4,7 @@ namespace Metro::AST {
   enum class Kind {
     None,
     Type,
+    Argument,
     
     Value,
     Variable,

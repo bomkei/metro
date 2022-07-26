@@ -16,6 +16,12 @@ namespace Metro::Sema {
     auto& ret = caches[ast];
 
     switch( ast->kind ) {
+      case Kind::Argument: {
+        auto x = (AST::Argument*)ast;
+
+        return analyze(x->type);
+      }
+
       case Kind::Type: {
         auto x = (AST::Type*)ast;
 
@@ -53,7 +59,9 @@ namespace Metro::Sema {
         }
 
         x->defined = defined;
-        ret = defined->
+        ret = analyze(defined);
+
+        break;
       }
 
       case Kind::Callfunc: {
@@ -63,6 +71,8 @@ namespace Metro::Sema {
       }
 
       case Kind::Let: {
+        auto x = (AST::Let*)ast;
+
         if( !is_let_allowed ) {
           Error::add_error(ErrorKind::NotAllowed, ast->token, "let-statement is not allowed here");
         }
@@ -70,7 +80,8 @@ namespace Metro::Sema {
           is_let_allowed = false;
         }
 
-        ret = eval
+        ret = analyze(x->type);
+        break;
       }
 
       case Kind::Scope: {
@@ -80,17 +91,24 @@ namespace Metro::Sema {
         auto& pair = scope_history.emplace_front(ast, 0);
 
         for( ; it != x->elems.end() - 1; it++, pair.second++ ) {
+          alert;
           analyze(*it);
         }
 
+        alert;
         ret = analyze(*it);
+        pair.second++;
+
         scope_history.pop_front();
-        
+
+        alertios("scope: " << ret.to_string());
         break;
       }
 
       case Kind::Function: {
         auto x = (AST::Function*)ast;
+
+        scope_history.emplace_back(ast, 0);
 
         for( auto&& arg : x->args ) {
           analyze(arg.type);
@@ -102,6 +120,7 @@ namespace Metro::Sema {
           Error::add_error(ErrorKind::TypeMismatch, x->code, "type mismatch");
         }
 
+        scope_history.pop_back();
         break;
       }
 

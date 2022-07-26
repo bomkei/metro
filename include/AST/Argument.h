@@ -1,12 +1,13 @@
 #pragma once
 
 namespace Metro::AST {
-  struct Argument : Variable {
-    Type*     type;
-    Object*   value;
+  struct Argument : Base {
+    std::string_view    name;
+    Type*               type;
+    Object*             value;
 
     Argument(Token* tok)
-      : Variable(tok),
+      : Base(Kind::Argument, tok),
         type(nullptr),
         value(nullptr)
     {

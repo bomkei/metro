@@ -38,6 +38,7 @@ namespace Metro {
         }
 
         auto ast = new AST::Variable(cur);
+        ast->name = cur->str;
 
         next();
         return ast;
@@ -88,7 +89,7 @@ namespace Metro {
 
       if( !eat(")") ) {
         do {
-          auto& arg = ast->args.emplace_back();
+          auto& arg = ast->args.emplace_back(cur);
 
           expect_ident();
           arg.name = cur->str;

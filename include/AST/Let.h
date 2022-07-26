@@ -1,14 +1,20 @@
 #pragma once
 
+namespace Metro {
+  struct Object;
+}
+
 namespace Metro::AST {
   struct Type;
-  struct Let : Variable {
-    Type*   type;
+  struct Let : Base {
+    std::string_view  name;
+    Type*             type;
+    Base*             init;
+    Object*           value;
 
     Let(Token* token)
-      : Variable(token)
+      : Base(Kind::Let, token)
     {
-      this->kind = Kind::Let;
     }
   };
 }
