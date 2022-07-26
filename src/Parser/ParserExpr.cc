@@ -83,6 +83,16 @@ namespace Metro {
     return x;
   }
 
+  AST::Base* Parser::assign() {
+    auto x = compare();
+
+    if( eat("=") ) {
+      x = new AST::Expr(AST::Kind::Assign, x, assign());
+    }
+
+    return x;
+  }
+
   AST::Base* Parser::expr() {
     auto ast = stmt();
 
@@ -90,6 +100,6 @@ namespace Metro {
       return ast;
     }
 
-    return compare();
+    return assign();
   }
 }

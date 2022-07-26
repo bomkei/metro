@@ -3,12 +3,21 @@
 #include "Error.h"
 
 namespace Metro::Sema {
+  bool Analyzer::is_lvalue(AST::Base* ast) {
+    switch( ast->kind ) {
+      case AST::Kind::Variable:
+        return true;
+    }
+
+    return false;
+  }
+
   AST::Base* Analyzer::find_var_definition(std::string_view name, AST::Base* cur) {
-    for( auto&& scope : scope_history ) {
-      switch( scope.first->kind ) {
+    for( auto&& ctx : scope_history ) {
+      switch( ctx.scope->kind ) {
         case AST::Kind::Scope: {
-          for( size_t i = 0; auto&& elem : ((AST::Scope*)scope.first)->elems ) {
-            if( i++ == scope.second ) {
+          for( size_t i = 0; auto&& elem : ((AST::Scope*)ctx.scope)->elems ) {
+            if( i++ == ctx.cur_index ) {
               break;
             }
 
@@ -21,14 +30,8 @@ namespace Metro::Sema {
         }
 
         case AST::Kind::Function: {
-          alert;
-          for( auto&& arg : ((AST::Function*)scope.first)->args ) {
-            debug(
-              alertios("arg.name = " << arg.name);
-            )
-
+          for( auto&& arg : ((AST::Function*)ctx.scope)->args ) {
             if( arg.name == name ) {
-              alert;
               return &arg;
             }
           }
@@ -40,16 +43,12 @@ namespace Metro::Sema {
   }
 
   AST::Function* Analyzer::find_function(std::string_view name) {
-    for( auto&& pair : scope_history ) {
-      if( pair.first->kind == AST::Kind::Scope ) {
-        alert;
-        auto scope = (AST::Scope*)pair.first;
+    for( auto&& ctx : scope_history ) {
+      if( ctx.scope->kind == AST::Kind::Scope ) {
+        auto scope = (AST::Scope*)ctx.scope;
 
         for( auto&& elem : scope->elems ) {
-          alert;
-
           if( elem && elem->kind == AST::Kind::Function && ((AST::Function*)elem)->name == name ) {
-            alert;
             return (AST::Function*)elem;
           }
         }
@@ -57,5 +56,19 @@ namespace Metro::Sema {
     }
 
     return nullptr;
+  }
+
+  Analyzer::ScopeContext& Analyzer::get_cur_scope() {
+    return *scope_history.begin();
+  }
+
+  Analyzer::ScopeContext& Analyzer::enter_scope(AST::Base* ast) {
+    auto& ctx = scope_history.emplace_front(ast);
+
+    return ctx;
+  }
+
+  void Analyzer::leave_scope() {
+    scope_history.pop_front();
   }
 }

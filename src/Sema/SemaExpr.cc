@@ -36,9 +36,14 @@ namespace Metro::Sema {
       case Kind::Variable: {
         auto x = (AST::Variable*)ast;
         auto defined = find_var_definition(x->name, ast);
+        auto& ctx = get_cur_scope();
 
         if( !defined ) {
           Error::add_error(ErrorKind::Undefined, x->token, "undefined variable name");
+          Error::exit_app();
+        }
+        else if( ctx.var_initialized_map[x->name].empty() ) {
+          Error::add_error(ErrorKind::UninitializedValue, x->token, "uninitialized value");
           Error::exit_app();
         }
 
@@ -112,6 +117,22 @@ namespace Metro::Sema {
         }
 
         ret = TypeKind::Bool;
+        break;
+      }
+
+      case Kind::Assign: {
+        auto x = (AST::Expr*)ast;
+
+        if( !is_lvalue(x->lhs) ) {
+          Error::add_error(ErrorKind::ValueType, x->token, "lvalue required at left side");
+          Error::exit_app();
+        }
+
+        if( !(ret = analyze(x->lhs)).equals(analyze(x->rhs)) ) {
+          Error::add_error(ErrorKind::TypeMismatch, x->token, "type mismatch");
+          Error::exit_app();
+        }
+
         break;
       }
 

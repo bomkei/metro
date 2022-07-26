@@ -38,7 +38,22 @@ namespace Metro::Sema {
           is_let_allowed = false;
         }
 
-        ret = analyze(x->type);
+        if( x->init ) {
+          if( x->type ) {
+            ret = analyze(x->type);
+
+            if( !ret.equals(analyze(x->init)) ) {
+              Error::add_error(ErrorKind::TypeMismatch, ast->token, "type mismatch");
+              Error::exit_app();
+            }
+          }
+          else {
+            ret = analyze(x->init);
+          }
+
+          get_cur_scope().var_initialized_map[x->name].emplace_back(ret);
+        }
+
         break;
       }
 
@@ -46,18 +61,18 @@ namespace Metro::Sema {
         auto x = (AST::Scope*)ast;
         auto it = x->elems.begin();
 
-        auto& pair = scope_history.emplace_front(ast, 0);
+        auto& scopeCtx = enter_scope(ast);
 
-        for( ; it != x->elems.end() - 1; it++, pair.second++ ) {
+        for( ; it != x->elems.end() - 1; it++, scopeCtx.cur_index++ ) {
           alert;
           analyze(*it);
         }
 
         alert;
         ret = analyze(*it);
-        pair.second++;
+        scopeCtx.cur_index++;
 
-        scope_history.pop_front();
+        leave_scope();
 
         alertios("last value in scope = " << ret.to_string());
         break;
@@ -66,7 +81,7 @@ namespace Metro::Sema {
       case Kind::Function: {
         auto x = (AST::Function*)ast;
 
-        scope_history.emplace_back(ast, 0);
+        enter_scope(ast);
 
         for( auto&& arg : x->args ) {
           analyze(arg.type);
@@ -78,7 +93,7 @@ namespace Metro::Sema {
           Error::add_error(ErrorKind::TypeMismatch, x->code, "type mismatch");
         }
 
-        scope_history.pop_back();
+        leave_scope();
         break;
       }
     }

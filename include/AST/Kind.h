@@ -15,6 +15,7 @@ namespace Metro::AST {
     Add,
     Sub,
     Compare,
+    Assign,
 
     If,
     Let,
