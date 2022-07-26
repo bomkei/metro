@@ -73,7 +73,7 @@ namespace Metro {
       case Kind::Compare: {
         using CmpKind = AST::Compare::Item::Kind;
 
-        ret = gcnew(TypeKind::Bool);
+        ret = gcnew(ValueType::Kind::Bool);
 
         auto x = (AST::Compare*)ast;
         bool res = false;
@@ -90,7 +90,7 @@ namespace Metro {
 
             case CmpKind::BiggerRight:
               switch( lhs->type.kind ) {
-                case TypeKind::Int:
+                case ValueType::Kind::Int:
                   res = lhs->v_int < rhs->v_int;
                   break;
               }
@@ -106,6 +106,18 @@ namespace Metro {
         break;
       }
 
+      case Kind::Assign: {
+        auto x = (AST::Expr*)ast;
+
+        auto obj = eval_lvalue(x->lhs);
+        auto rhs = eval(x->rhs);
+
+        //(*obj)->ref_count--;
+        *obj = rhs;
+
+        return rhs;
+      }
+
       case Kind::If: {
         auto x = (AST::If*)ast;
         auto cond = eval(x->cond);
@@ -115,6 +127,27 @@ namespace Metro {
         }
         else if( x->if_false ) {
           ret = eval(x->if_false);
+        }
+
+        break;
+      }
+
+      case Kind::Let: {
+        auto x = (AST::Let*)ast;
+
+        if( !x->init ) {
+          break;
+        }
+
+        auto val = eval(x->init);
+
+        if( x->value != val ) {
+          // if( x->value ) {
+          //   x->value->ref_count--;
+          //   val->ref_count++;
+          // }
+
+          x->value = val;
         }
 
         break;
@@ -139,7 +172,7 @@ namespace Metro {
         switch( x->kind ) {
           case Kind::Add:
             switch( ret->type.kind ) {
-              case TypeKind::Int:
+              case ValueType::Kind::Int:
                 ret->v_int += rhs->v_int;
                 break;
             }
@@ -147,7 +180,7 @@ namespace Metro {
 
           case Kind::Sub:
             switch( ret->type.kind ) {
-              case TypeKind::Int:
+              case ValueType::Kind::Int:
                 ret->v_int -= rhs->v_int;
                 break;
             }
@@ -155,7 +188,7 @@ namespace Metro {
 
           case Kind::Mul:
             switch( ret->type.kind ) {
-              case TypeKind::Int:
+              case ValueType::Kind::Int:
                 ret->v_int *= rhs->v_int;
                 break;
             }

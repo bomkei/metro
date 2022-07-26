@@ -57,7 +57,7 @@ namespace Metro {
 
     Sema::Analyzer analyzer;
     
-    auto type = analyzer.analyze(ast);
+    auto type = analyzer.walk(ast);
 
     Error::check();
 

@@ -3,9 +3,12 @@
 #include <string>
 #include <vector>
 
+#include "Types/Token.h"
+
 #include "AST/Kind.h"
 #include "AST/Base.h"
 #include "AST/Type.h"
+#include "AST/Boolean.h"
 #include "AST/Value.h"
 #include "AST/Variable.h"
 #include "AST/Callfunc.h"

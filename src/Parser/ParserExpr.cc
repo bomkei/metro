@@ -5,6 +5,10 @@
 namespace Metro {
   AST::Base* Parser::factor() {
 
+    if( eat("true") || eat("false") ) {
+      return new AST::Boolean(ate);
+    }
+
     switch( cur->kind ) {
       case TokenKind::Int:
       case TokenKind::Float:

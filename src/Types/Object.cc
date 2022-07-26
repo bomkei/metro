@@ -4,9 +4,9 @@
 #include "Debug.h"
 
 namespace Metro {
-  Object* Object::none = new Object(TypeKind::None);
+  Object* Object::none = new Object(ValueType::Kind::None);
 
-  Object::Object(TypeInfo type)
+  Object::Object(ValueType type)
     : type(type),
       ref_count(0),
       is_weak(false),
@@ -29,27 +29,27 @@ namespace Metro {
     auto ret = std::string{ };
 
     switch( type.kind ) {
-      case TypeKind::Int:
+      case ValueType::Kind::Int:
         ret = std::to_string(v_int);
         break;
 
-      case TypeKind::Float:
+      case ValueType::Kind::Float:
         ret = std::to_string(v_float);
         break;
 
-      case TypeKind::Bool:
+      case ValueType::Kind::Bool:
         ret = v_bool ? "true" : "false";
         break;
 
-      case TypeKind::Char:
+      case ValueType::Kind::Char:
         ret = Utils::Strings::to_string(std::u16string(v_char, 1));
         break;
 
-      case TypeKind::String:
+      case ValueType::Kind::String:
         ret = Utils::Strings::to_string(v_str);
         break;
 
-      case TypeKind::None:
+      case ValueType::Kind::None:
         ret = "none";
         break;
       

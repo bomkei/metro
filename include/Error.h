@@ -10,6 +10,8 @@ namespace Metro {
   }
 
   enum class ErrorKind {
+    Note,
+    Warning,
     InvalidToken,
     InvalidSyntax,
     UninitializedValue,
@@ -52,9 +54,9 @@ namespace Metro {
 
   class Error {
   public:
-    static void add_error(ErrorKind kind, size_t pos, std::string const& msg);
-    static void add_error(ErrorKind kind, Token* token, std::string const& msg);
-    static void add_error(ErrorKind kind, AST::Base* ast, std::string const& msg);
+    static ErrorContext& add_error(ErrorKind kind, size_t pos, std::string const& msg);
+    static ErrorContext& add_error(ErrorKind kind, Token* token, std::string const& msg);
+    static ErrorContext& add_error(ErrorKind kind, AST::Base* ast, std::string const& msg);
 
     static void show_all();
 

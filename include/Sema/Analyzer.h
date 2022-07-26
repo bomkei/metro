@@ -2,9 +2,9 @@
 
 #include <map>
 #include <list>
+#include "Types/ValueType.h"
 
 namespace Metro {
-  struct TypeInfo;
   struct BuiltinFunc;
 }
 
@@ -13,41 +13,52 @@ namespace Metro::AST {
 }
 
 namespace Metro::Sema {
-  class Analyzer {
-  public:
-    Analyzer() { }
-
-    TypeInfo  analyze(AST::Base* ast);
-    TypeInfo  analyze_expr(AST::Base* ast);
-    TypeInfo  analyze_stmt(AST::Base* ast);
-
-  private:
-    struct ScopeContext {
-      AST::Base*  scope;
-      size_t      cur_index;
-
-      std::map<std::string_view, std::vector<TypeInfo>> var_initialized_map;
-
-      explicit ScopeContext(AST::Base* scope)
-        : scope(scope),
-          cur_index(0)
-      {
-      }
+  struct TypeContext {
+    enum class Condition {
+      NotAnalyzed,
+      Unknown,    // unknown type name
+      Inferred,
     };
 
-    bool is_lvalue(AST::Base* ast);
+    AST::Base*  ast;
+    Condition   cond;
+    ValueType   type;
 
-    AST::Base* find_var_definition(std::string_view name, AST::Base* cur);
-    AST::Function* find_function(std::string_view name);
+    std::vector<AST::Base*> inferred;
+    std::vector<AST::Base*> canbe_last;
+
+    TypeContext(ValueType::Kind kind = ValueType::Kind::None)
+      : ast(nullptr),
+        cond(Condition::NotAnalyzed),
+        type(kind)
+    {
+    }
+  };
+
+  struct ScopeContext {
+    AST::Base*  ast;
+    size_t      cur_index = 0;
+
+    std::map<std::string_view, TypeContext>  variable_types;
+  };
+
+  class Analyzer {
+  public:
+    TypeContext walk(AST::Base* ast);
+
+    void check_symbols();
+
+  
+
+  private:
+
+    std::pair<ScopeContext*, AST::Base*> find_var(std::string_view name);
 
     ScopeContext& get_cur_scope();
-    ScopeContext& enter_scope(AST::Base* ast);
-    void leave_scope();
 
-    bool is_let_allowed = false;
-    std::map<AST::Base*, TypeInfo> caches;
+    std::map<AST::Base*, TypeContext> caches;
+
+    std::list<AST::Base*> walking;
     std::list<ScopeContext> scope_history;
-
-    static std::vector<BuiltinFunc> builtinfunc_list;
   };
 }
