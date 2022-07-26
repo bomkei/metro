@@ -90,6 +90,12 @@ namespace Metro::Sema {
         break;
       }
 
+      case Kind::If: {
+
+
+        break;
+      }
+
       case Kind::Let: {
         auto x = (AST::Let*)ast;
 

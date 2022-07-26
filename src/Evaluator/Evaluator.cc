@@ -58,6 +58,11 @@ namespace Metro {
         break;
       }
 
+      case Kind::If: {
+
+        break;
+      }
+
       case Kind::Scope: {
         auto x = (AST::Scope*)ast;
 
