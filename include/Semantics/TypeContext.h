@@ -21,6 +21,8 @@ namespace Metro::Semantics {
     bool  is_reference;
     std::vector<TypeContext> elems;
 
+    bool  maybe_not_evaluated = false;
+
     AST::Base*  ast;
     Condition   cond;
 

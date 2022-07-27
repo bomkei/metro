@@ -55,6 +55,13 @@ namespace Metro::Semantics {
         break;
       }
 
+      case ASTKind::Callfunc: {
+
+        
+
+        break;
+      }
+
       //
       // assign
       //
@@ -87,10 +94,14 @@ namespace Metro::Semantics {
 
         if( x->if_false ) {
           auto ctx_false = walk(x->if_false);
+          ret.maybe_not_evaluated = ctx_false.maybe_not_evaluated;
 
           for( auto&& last : ctx_false.canbe_last ) {
             ret.canbe_last.emplace_back(last);
           }
+        }
+        else {
+          ret.maybe_not_evaluated = true;
         }
 
         break;
@@ -132,6 +143,9 @@ namespace Metro::Semantics {
         break;
       }
 
+      //
+      // scope
+      //
       case ASTKind::Scope: {
         auto x = (AST::Scope*)ast;
 
@@ -140,9 +154,16 @@ namespace Metro::Semantics {
         auto& scope = get_cur_scope();
         scope.ast = ast;
 
-        for( auto&& elem : x->elems ) {
-          walk(elem);
-          scope.cur_index++;
+        auto it = x->elems.begin();
+
+        for( ; it != x->elems.end() - 1; it++, scope.cur_index++ ) {
+          walk(*it);
+        }
+
+        ret = walk(*it);
+
+        if( ret.maybe_not_evaluated ) {
+          Error::add_error(ErrorKind::MayNotbeEvaluated, ret.ast, "used the value that may not be evaluated for return value");
         }
 
         scopelist.pop_front();
