@@ -6,6 +6,7 @@ namespace Metro::AST {
     Type,
     Argument,
     
+    Boolean,
     Value,
     Variable,
     Callfunc,
@@ -15,6 +16,7 @@ namespace Metro::AST {
     Add,
     Sub,
     Compare,
+    Assign,
 
     If,
     Let,

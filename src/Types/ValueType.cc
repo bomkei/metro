@@ -1,27 +1,27 @@
-#include "Types/TypeInfo.h"
+#include "Types.h"
 #include "Debug.h"
 
 namespace Metro {
-  bool TypeInfo::equals(TypeKind kind) const {
+  bool ValueType::equals(ValueType::Kind kind) const {
     return this->kind == kind;
   }
 
-  bool TypeInfo::equals(TypeInfo const& type) const {
+  bool ValueType::equals(ValueType const& type) const {
     if( kind != type.kind )
       return false;
     
     return true;
   }
 
-  std::string TypeInfo::to_string() const {
+  std::string ValueType::to_string() const {
     auto ret = std::string{ };
 
     switch( kind ) {
-      case TypeKind::Int:
+      case Kind::Int:
         ret = "int";
         break;
 
-      case TypeKind::None:
+      case Kind::None:
         ret = "none";
         break;
 

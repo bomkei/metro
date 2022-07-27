@@ -19,7 +19,7 @@ SOURCES	= \
 	src/GC \
 	src/Lexer \
 	src/Parser \
-	src/Sema \
+	src/Semantics \
 	src/Types \
 	src/Utils
 

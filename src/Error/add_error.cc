@@ -6,16 +6,17 @@
 namespace Metro {
   std::vector<ErrorContext> Error::contexts;
 
-  void Error::add_error(ErrorKind kind, size_t pos, std::string const& msg) {
+  ErrorContext& Error::add_error(ErrorKind kind, size_t pos, std::string const& msg) {
     auto& ctx = contexts.emplace_back();
 
     ctx.kind = kind;
     ctx.err_pos = pos;
     ctx.message = msg;
 
+    return ctx;
   }
 
-  void Error::add_error(ErrorKind kind, Token* token, std::string const& msg) {
+  ErrorContext& Error::add_error(ErrorKind kind, Token* token, std::string const& msg) {
     auto& ctx = contexts.emplace_back();
 
     ctx.kind = kind;
@@ -50,9 +51,14 @@ namespace Metro {
     
     ctx.err_underline_length = token->str.length();
     
+    return ctx;
   }
 
-  void Error::add_error(ErrorKind kind, AST::Base* ast, std::string const& msg) {
-    add_error(kind, ast->token, msg);
+  ErrorContext& Error::add_error(ErrorKind kind, AST::Base* ast, std::string const& msg) {
+    auto& ctx = add_error(kind, ast->token, msg);
+
+    
+
+    return ctx;
   }
 }

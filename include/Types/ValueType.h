@@ -4,25 +4,24 @@
 #include <vector>
 
 namespace Metro {
-  enum class TypeKind {
-    Int,
-    Float,
-    Bool,
-    Char,
-    String,
-    Tuple,
-    Vec,
-    Args,
-    None
-  };
+  struct ValueType {
+    enum class Kind {
+      Int,
+      Float,
+      Bool,
+      Char,
+      String,
+      Tuple,
+      Array,
+      None
+    };
 
-  struct TypeInfo {
-    TypeKind  kind;
+    Kind      kind;
     bool      is_constant;
     bool      is_reference;
-    std::vector<TypeInfo>   elems;
+    std::vector<ValueType>   elems;
 
-    TypeInfo(TypeKind kind = TypeKind::None)
+    ValueType(Kind kind = Kind::None)
       : kind(kind),
         is_constant(false),
         is_reference(false)
@@ -36,12 +35,12 @@ namespace Metro {
         elems.size() != 0;
     }
 
-    bool equals_kind(TypeKind kind) const {
+    bool equals_kind(Kind kind) const {
       return !have_extensions() && this->kind == kind;
     }
 
-    bool equals(TypeKind kind) const;
-    bool equals(TypeInfo const& type) const;
+    bool equals(Kind kind) const;
+    bool equals(ValueType const& type) const;
 
     std::string to_string() const;
   };

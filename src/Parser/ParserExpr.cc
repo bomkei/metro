@@ -5,13 +5,17 @@
 namespace Metro {
   AST::Base* Parser::factor() {
 
-    switch( cur->kind ) {
-      case TokenKind::Int: {
-        auto ast = new AST::Value(cur);;
+    if( eat("true") || eat("false") ) {
+      return new AST::Boolean(ate);
+    }
 
+    switch( cur->kind ) {
+      case TokenKind::Int:
+      case TokenKind::Float:
+      case TokenKind::Char:
+      case TokenKind::String:
         next();
-        return ast;
-      }
+        return new AST::Value(cur->prev);
 
       case TokenKind::Ident: {
         if( cur->next->str == "(" ) {
@@ -49,8 +53,8 @@ namespace Metro {
     auto x = factor();
 
     while( check() ) {
-      if( eat("*") ) x = new AST::Expr(AST::Kind::Mul, x, factor());
-      else if( eat("/") ) x = new AST::Expr(AST::Kind::Div, x, factor());
+      if( eat("*") ) x = new AST::Expr(AST::Kind::Mul, x, factor(), ate);
+      else if( eat("/") ) x = new AST::Expr(AST::Kind::Div, x, factor(), ate);
       else break;
     }
 
@@ -61,8 +65,8 @@ namespace Metro {
     auto x = mul();
 
     while( check() ) {
-      if( eat("+") ) x = new AST::Expr(AST::Kind::Add, x, mul());
-      else if( eat("-") ) x = new AST::Expr(AST::Kind::Sub, x, mul());
+      if( eat("+") ) x = new AST::Expr(AST::Kind::Add, x, mul(), ate);
+      else if( eat("-") ) x = new AST::Expr(AST::Kind::Sub, x, mul(), ate);
       else break;
     }
 
@@ -83,6 +87,16 @@ namespace Metro {
     return x;
   }
 
+  AST::Base* Parser::assign() {
+    auto x = compare();
+
+    if( eat("=") ) {
+      x = new AST::Expr(AST::Kind::Assign, x, assign(), ate);
+    }
+
+    return x;
+  }
+
   AST::Base* Parser::expr() {
     auto ast = stmt();
 
@@ -90,6 +104,6 @@ namespace Metro {
       return ast;
     }
 
-    return compare();
+    return assign();
   }
 }

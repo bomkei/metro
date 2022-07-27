@@ -6,6 +6,10 @@ namespace Metro::AST {
     Type*               type;
     Object*             value;
 
+    std::pair<size_t, size_t> get_range_on_source() {
+      return { token->pos, type->get_range_on_source().second };
+    }
+
     Argument(Token* tok)
       : Base(Kind::Argument, tok),
         type(nullptr),

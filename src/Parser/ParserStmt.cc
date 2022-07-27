@@ -22,6 +22,25 @@ namespace Metro {
       return ast;
     }
 
+    if( eat("let") ) {
+      auto ast = new AST::Let(ate);
+
+      expect_ident();
+      ast->name = cur->str;
+
+      next();
+
+      if( eat(":") ) {
+        ast->type = expect_type();
+      }
+
+      if( eat("=") ) {
+        ast->init = expr();
+      }
+
+      return ast;
+    }
+
     return nullptr;
   }
 }

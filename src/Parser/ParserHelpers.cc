@@ -82,7 +82,6 @@ namespace Metro {
 
     switch( ast->kind ) {
       case Kind::If:
-      case Kind::Let:
       case Kind::Function:
         return false;
     }

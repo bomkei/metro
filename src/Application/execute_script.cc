@@ -4,7 +4,7 @@
 #include "Types.h"
 #include "Lexer.h"
 #include "Parser.h"
-#include "Sema/Analyzer.h"
+#include "Semantics/Analyzer.h"
 #include "Evaluator.h"
 #include "Application.h"
 #include "Error.h"
@@ -55,9 +55,9 @@ namespace Metro {
 
     Error::check();
 
-    Sema::Analyzer analyzer;
+    Semantics::Analyzer analyzer;
     
-    auto type = analyzer.analyze(ast);
+    auto type = analyzer.walk(ast);
 
     Error::check();
 
