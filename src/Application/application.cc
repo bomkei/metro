@@ -3,7 +3,7 @@
 #include "Utils.h"
 #include "Lexer.h"
 #include "Parser.h"
-#include "Sema/Analyzer.h"
+#include "Semantics/Analyzer.h"
 #include "Evaluator.h"
 #include "Application.h"
 

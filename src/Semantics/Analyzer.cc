@@ -1,25 +1,25 @@
 #include "AST.h"
 #include "Types.h"
-#include "Sema/Analyzer.h"
+#include "Semantics/Analyzer.h"
 #include "GC.h"
 #include "Error.h"
 
-namespace Metro::Sema {
+namespace Metro::Semantics {
   using ASTKind = AST::Kind;
+  using TypeCon = TypeContext;
 
-  TypeContext Analyzer::walk(AST::Base* ast) {
-
-    if( !ast ) {
+  TypeCon Analyzer::walk(AST::Base* ast) {
+    if( !ast ) { // null-pointer
       return { };
     }
-    else if( caches.contains(ast) ) {
+    else if( caches.contains(ast) ) { // already walked
       return caches[ast];
     }
 
     auto& ret = caches[ast];
 
     ret.ast = ast;
-    ret.cond = TypeContext::Condition::Inferred;
+    ret.cond = TypeCon::Condition::Inferred;
 
     switch( ast->kind ) {
       case ASTKind::Boolean: {
@@ -46,7 +46,7 @@ namespace Metro::Sema {
       case ASTKind::Variable: {
         auto& type = walk_lval(ast);
 
-        if( type.cond == TypeContext::Condition::None ) {
+        if( type.cond == TypeCon::Condition::None ) {
           Error::add_error(ErrorKind::UninitializedValue, ast->token, "uninitialized value");
           Error::exit_app();
         }
@@ -61,7 +61,7 @@ namespace Metro::Sema {
         auto& dest = walk_lval(x->lhs);
 
         append_assign(dest, x->rhs);
-        dest.cond = TypeContext::Condition::Inferred;
+        dest.cond = TypeCon::Condition::Inferred;
 
         ret = dest;
         break;
@@ -94,26 +94,24 @@ namespace Metro::Sema {
 
         walk(x->type);
 
-        //walk(x->init);
+        // walk(x->init);
 
-        auto scope = get_cur_scope();
+        // auto& ctx = scope.variable_types[x->name];
+        auto [var_scope, var_typecon] = find_var(x->name);
 
-        auto& ctx = scope.variable_types[x->name];
-        auto [scope, typectx] = find_var(x->name);
-
-        if( typectx && typectx->cond != TypeContext::Condition::None ) {
+        if( var_typecon != nullptr && var_typecon->cond != TypeCon::Condition::None ) {
           Error::add_error(ErrorKind::MultipleDefinition, x->token, "multiple definition");
           break;
         }
 
-        ctx.defined = ast;
+        // ctx.defined = ast;
 
         if( x->init ) {
           alert;
           walk(x->init);
 
-          append_assign(ctx, x->init);
-          ctx.cond = TypeContext::Condition::Inferred;
+          append_assign(*var_typecon, x->init);
+          var_typecon->cond = TypeCon::Condition::Inferred;
         }
 
         break;
@@ -150,7 +148,7 @@ namespace Metro::Sema {
     return ret;
   }
 
-  TypeContext& Analyzer::walk_lval(AST::Base* ast) {
+  TypeCon& Analyzer::walk_lval(AST::Base* ast) {
     switch( ast->kind ) {
       case ASTKind::Variable: {
         auto x = (AST::Variable*)ast;
@@ -175,7 +173,7 @@ namespace Metro::Sema {
 
   }
 
-  std::tuple<ScopeContext*, TypeContext*> Analyzer::find_var(std::string_view name) {
+  std::tuple<ScopeContext*, TypeCon*> Analyzer::find_var(std::string_view name) {
     for( auto&& scope_ast : scopelist ) {
       auto& scopeContext = scopemap[scope_ast];
 
@@ -207,7 +205,7 @@ namespace Metro::Sema {
     return { };
   }
 
-  void Analyzer::append_assign(TypeContext& type, AST::Base* ast) {
+  void Analyzer::append_assign(TypeCon& type, AST::Base* ast) {
     auto ctx = walk(ast);
 
     for( auto&& i : type.assignmented ) {

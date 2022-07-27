@@ -12,7 +12,7 @@ namespace Metro::AST {
   struct Base;
 }
 
-namespace Metro::Sema {
+namespace Metro::Semantics {
   struct TypeContext {
     enum class Condition {
       None,
