@@ -53,8 +53,8 @@ namespace Metro {
     auto x = factor();
 
     while( check() ) {
-      if( eat("*") ) x = new AST::Expr(AST::Kind::Mul, x, factor());
-      else if( eat("/") ) x = new AST::Expr(AST::Kind::Div, x, factor());
+      if( eat("*") ) x = new AST::Expr(AST::Kind::Mul, x, factor(), ate);
+      else if( eat("/") ) x = new AST::Expr(AST::Kind::Div, x, factor(), ate);
       else break;
     }
 
@@ -65,8 +65,8 @@ namespace Metro {
     auto x = mul();
 
     while( check() ) {
-      if( eat("+") ) x = new AST::Expr(AST::Kind::Add, x, mul());
-      else if( eat("-") ) x = new AST::Expr(AST::Kind::Sub, x, mul());
+      if( eat("+") ) x = new AST::Expr(AST::Kind::Add, x, mul(), ate);
+      else if( eat("-") ) x = new AST::Expr(AST::Kind::Sub, x, mul(), ate);
       else break;
     }
 
@@ -91,7 +91,7 @@ namespace Metro {
     auto x = compare();
 
     if( eat("=") ) {
-      x = new AST::Expr(AST::Kind::Assign, x, assign());
+      x = new AST::Expr(AST::Kind::Assign, x, assign(), ate);
     }
 
     return x;

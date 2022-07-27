@@ -3,6 +3,7 @@
 #include "Semantics/Analyzer.h"
 #include "GC.h"
 #include "Error.h"
+#include "Debug.h"
 
 namespace Metro::Semantics {
   using ASTKind   = AST::Kind;
@@ -54,6 +55,9 @@ namespace Metro::Semantics {
         break;
       }
 
+      //
+      // assign
+      //
       case ASTKind::Assign: {
         auto x = (AST::Expr*)ast;
         auto init = walk(x->rhs);
@@ -67,6 +71,9 @@ namespace Metro::Semantics {
         break;
       }
 
+      //
+      // if
+      //
       case ASTKind::If: {
         auto x = (AST::If*)ast;
 
@@ -89,11 +96,25 @@ namespace Metro::Semantics {
         break;
       }
 
+      //
+      // let
+      //
       case ASTKind::Let: {
         auto x = (AST::Let*)ast;
-        auto [var_scope, var_typecon] = find_var(x->name);
 
-        walk(x->type);
+        //auto [var_scope, var_typecon] = find_var(x->name);
+
+        auto var_scope = &get_cur_scope();
+        auto var_typecon = &var_scope->variable_types[x->name];
+
+        debug(
+          alert;
+          fprintf(stderr, "%p %p\n", var_scope, var_typecon);
+        )
+
+        if( x->type != nullptr ) {
+          walk(x->type);
+        }
 
         if( var_typecon != nullptr && var_typecon->cond != TypeCon::Condition::None ) {
           Error::add_error(ErrorKind::MultipleDefinition, x->token, "multiple definition");

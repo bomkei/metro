@@ -13,7 +13,10 @@ namespace Metro::AST {
     Object*           value;
 
     Let(Token* token)
-      : Base(Kind::Let, token)
+      : Base(Kind::Let, token),
+        type(nullptr),
+        init(nullptr),
+        value(nullptr)
     {
     }
   };

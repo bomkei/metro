@@ -5,6 +5,9 @@
 #include "Error.h"
 
 namespace Metro::Semantics {
+  using ASTKind   = AST::Kind;
+  using TypeCon   = TypeContext;
+
   TypeCon& Analyzer::walk_lval(AST::Base* ast) {
     switch( ast->kind ) {
       case ASTKind::Variable: {
