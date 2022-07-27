@@ -13,6 +13,8 @@ SOURCES	= \
 	src/Application \
 	src/AST \
 	src/Debug \
+	src/Driver \
+	src/Driver/Compiler \
 	src/Error \
 	src/Evaluator \
 	src/Evaluator/parts \
