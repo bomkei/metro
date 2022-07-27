@@ -17,19 +17,19 @@ namespace Metro::Semantics {
     };
 
     ValueType::Kind   kind;
-    bool  is_constant;
-    bool  is_reference;
+    bool  is_constant   = false;
+    bool  is_reference  = false;
     std::vector<TypeContext> elems;
 
     bool  may_notbe_evaluated = false;
 
-    AST::Base*  ast;
-    Condition   cond;
+    AST::Base*  ast   = nullptr;
+    Condition   cond  = Condition::None;
 
     std::vector<AST::Base*> inferred;
-    std::vector<AST::Base*> canbe_last;
+    std::vector<AST::Base*> lastval;
 
-    AST::Base* defined;
+    AST::Base* defined = nullptr;
     std::vector<AST::Base*> assignmented;
 
     bool equals_kind(ValueType::Kind kind) const {
@@ -49,20 +49,20 @@ namespace Metro::Semantics {
     }
 
     TypeContext& operator = (ValueType::Kind kind) {
-      this->kind = kind;
-      this->is_constant = false;
-      this->is_reference = false;
-
-      return *this;
+      return *this = TypeContext{ ValueType{ kind } };
     }
 
     TypeContext(ValueType const& valtype = ValueType::Kind::None)
       : kind(valtype.kind),
         is_constant(valtype.is_constant),
-        is_reference(valtype.is_reference),
-        ast(nullptr),
-        cond(Condition::None),
-        defined(nullptr)
+        is_reference(valtype.is_reference)
+    {
+    }
+
+    TypeContext(ValueType::Kind kind)
+      : kind(kind),
+        is_constant(false),
+        is_reference(false)
     {
     }
   };

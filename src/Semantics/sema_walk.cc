@@ -16,7 +16,13 @@ namespace Metro::Semantics {
       return { };
     }
     else if( caches.contains(ast) ) { // already walked
-      return caches[ast];
+      switch( ast->kind ) {
+        case ASTKind::Function:
+          break;
+
+        default:
+          return caches[ast];
+      }
     }
 
     auto& ret = caches[ast];
@@ -95,7 +101,12 @@ namespace Metro::Semantics {
         }
 
         x->callee = find;
+
         ret = walk(find->return_type);
+
+        if( !ret.equals(walk(find->code)) ) {
+          Error::add_error(ErrorKind::TypeMismatch, find->token, "type mismatch");
+        }
 
         break;
       }
@@ -118,14 +129,17 @@ namespace Metro::Semantics {
       //
       case ASTKind::Assign: {
         auto x = (AST::Expr*)ast;
-        auto val = must_evaluated(x->rhs);
 
         auto& dest = walk_lval(x->lhs);
+        ret = mustbe_evaluated(x->rhs);
 
-        append_assign(dest, x->rhs);
+        dest.kind = ret.kind;
+        dest.is_constant = ret.is_constant;
+        dest.is_reference = ret.is_reference;
+
         dest.cond = TypeCon::Condition::Inferred;
+        append_assign(dest, x->rhs);
 
-        ret = dest;
         break;
       }
 
@@ -137,18 +151,20 @@ namespace Metro::Semantics {
 
         auto cond = walk(x->cond);
 
-        if( !cond.equals_kind(ValueType::Kind::Bool) ) {
+        if( !cond.equals(ValueType::Kind::Bool) ) {
           Error::add_error(ErrorKind::TypeMismatch, x->cond, "condition must be boolean expression");
         }
 
         ret = walk(x->if_true);
 
+        ret.lastval.emplace_back(x->if_true);
+
         if( x->if_false ) {
           auto ctx_false = walk(x->if_false);
           ret.may_notbe_evaluated = ctx_false.may_notbe_evaluated;
 
-          for( auto&& last : ctx_false.canbe_last ) {
-            ret.canbe_last.emplace_back(last);
+          for( auto&& last : ctx_false.lastval ) {
+            ret.lastval.emplace_back(last);
           }
         }
         else {
@@ -167,28 +183,21 @@ namespace Metro::Semantics {
         //auto [var_scope, var_typecon] = find_var(x->name);
 
         auto var_scope = &get_cur_scope();
-        auto var_typecon = &var_scope->variable_types[x->name];
 
-        debug(
-          alert;
-          fprintf(stderr, "%p %p\n", var_scope, var_typecon);
-        )
-
-        if( x->type != nullptr ) {
-          walk(x->type);
-        }
-
-        if( var_typecon != nullptr && var_typecon->cond != TypeCon::Condition::None ) {
+        if( var_scope->variable_types.contains(x->name) ) {
           Error::add_error(ErrorKind::MultipleDefinition, x->token, "multiple definition");
           break;
         }
 
-        if( x->init ) {
-          alert;
-          must_evaluated(x->init);
+        auto& var_typecon = var_scope->variable_types[x->name];
 
-          append_assign(*var_typecon, x->init);
-          var_typecon->cond = TypeCon::Condition::Inferred;
+        walk(x->type);
+
+        if( x->init ) {
+          mustbe_evaluated(x->init);
+
+          append_assign(var_typecon, x->init);
+          var_typecon.cond = TypeCon::Condition::Inferred;
         }
 
         break;
@@ -235,9 +244,9 @@ namespace Metro::Semantics {
 
         ret = walk(x->return_type);
 
-        if( !ret.equals(walk(x->code)) ) {
-          Error::add_error(ErrorKind::TypeMismatch, ast->token, "type mismatch");
-        }
+        // if( !ret.equals(walk(x->code)) ) {
+        //   Error::add_error(ErrorKind::TypeMismatch, ast->token, "type mismatch");
+        // }
 
         scopelist.pop_front();
         break;

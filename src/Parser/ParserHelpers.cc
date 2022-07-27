@@ -55,7 +55,9 @@ namespace Metro {
         }
       }
       else if( !eat("}") ) {
-        expect_semi();
+        if( is_need_semi(item) ) {
+          expect_semi();
+        }
       }
       else {
         break;

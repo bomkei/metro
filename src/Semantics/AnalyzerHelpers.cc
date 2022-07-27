@@ -8,7 +8,7 @@ namespace Metro::Semantics {
   using ASTKind   = AST::Kind;
   using TypeCon   = TypeContext;
 
-  TypeCon Analyzer::must_evaluated(AST::Base* ast) {
+  TypeCon Analyzer::mustbe_evaluated(AST::Base* ast) {
     auto type = walk(ast);
 
     if( type.may_notbe_evaluated ) {
