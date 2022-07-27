@@ -23,6 +23,8 @@ namespace Metro::Semantics {
     TypeCon walk(AST::Base* ast);
     TypeCon& walk_lval(AST::Base* ast);
 
+    TypeCon must_evaluated(AST::Base* ast);
+
     bool is_valid_operator(AST::Kind op_kind, TypeCon const& left, TypeCon const& right);
 
     void check_symbols();

@@ -5,6 +5,7 @@
 #include "GC.h"
 #include "Error.h"
 #include "Debug.h"
+#include "Utils.h"
 
 namespace Metro::Semantics {
   using ASTKind   = AST::Kind;
@@ -24,6 +25,15 @@ namespace Metro::Semantics {
     ret.cond = TypeCon::Condition::Inferred;
 
     switch( ast->kind ) {
+      case ASTKind::Type: {
+        auto x = (AST::Type*)ast;
+
+        if( x->name == "int" ) ret = ValueType::Kind::Int;
+        else Error::add_error(ErrorKind::UnknownTypeName, x->token, "unknown type name");
+
+        break;
+      }
+
       case ASTKind::Boolean: {
         ret = ValueType::Kind::Bool;
         break;
@@ -37,6 +47,11 @@ namespace Metro::Semantics {
           case TokenKind::Int:
             obj->type = ValueType::Kind::Int;
             obj->v_int = atoi(ast->token->str.data());
+            break;
+
+          case TokenKind::String:
+            obj->type = ValueType::Kind::String;
+            obj->v_str = Utils::Strings::to_u16string(std::string(ast->token->str));
             break;
         }
 
@@ -80,7 +95,21 @@ namespace Metro::Semantics {
         }
 
         x->callee = find;
+        ret = walk(find->return_type);
 
+        break;
+      }
+
+      case ASTKind::Compare: {
+        auto x = (AST::Compare*)ast;
+
+        walk(x->first);
+
+        for( auto&& item : x->list ) {
+          walk(item.ast);
+        }
+
+        ret = ValueType::Kind::Bool;
         break;
       }
 
@@ -89,7 +118,7 @@ namespace Metro::Semantics {
       //
       case ASTKind::Assign: {
         auto x = (AST::Expr*)ast;
-        auto init = walk(x->rhs);
+        auto val = must_evaluated(x->rhs);
 
         auto& dest = walk_lval(x->lhs);
 
@@ -116,14 +145,14 @@ namespace Metro::Semantics {
 
         if( x->if_false ) {
           auto ctx_false = walk(x->if_false);
-          ret.maybe_not_evaluated = ctx_false.maybe_not_evaluated;
+          ret.may_notbe_evaluated = ctx_false.may_notbe_evaluated;
 
           for( auto&& last : ctx_false.canbe_last ) {
             ret.canbe_last.emplace_back(last);
           }
         }
         else {
-          ret.maybe_not_evaluated = true;
+          ret.may_notbe_evaluated = true;
         }
 
         break;
@@ -156,7 +185,7 @@ namespace Metro::Semantics {
 
         if( x->init ) {
           alert;
-          walk(x->init);
+          must_evaluated(x->init);
 
           append_assign(*var_typecon, x->init);
           var_typecon->cond = TypeCon::Condition::Inferred;
@@ -184,8 +213,30 @@ namespace Metro::Semantics {
 
         ret = walk(*it);
 
-        if( ret.maybe_not_evaluated ) {
+        if( ret.may_notbe_evaluated ) {
           Error::add_error(ErrorKind::MayNotbeEvaluated, ret.ast, "used the value that may not be evaluated for return value");
+        }
+
+        scopelist.pop_front();
+        break;
+      }
+
+      case ASTKind::Function: {
+        auto x = (AST::Function*)ast;
+
+        scopelist.push_front(ast);
+
+        auto& scope = get_cur_scope();
+        scope.ast = ast;
+
+        for( auto&& arg : x->args ) {
+          walk(arg.type);
+        }
+
+        ret = walk(x->return_type);
+
+        if( !ret.equals(walk(x->code)) ) {
+          Error::add_error(ErrorKind::TypeMismatch, ast->token, "type mismatch");
         }
 
         scopelist.pop_front();

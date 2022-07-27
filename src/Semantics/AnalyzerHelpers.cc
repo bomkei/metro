@@ -8,6 +8,16 @@ namespace Metro::Semantics {
   using ASTKind   = AST::Kind;
   using TypeCon   = TypeContext;
 
+  TypeCon Analyzer::must_evaluated(AST::Base* ast) {
+    auto type = walk(ast);
+
+    if( type.may_notbe_evaluated ) {
+      Error::add_error(ErrorKind::MayNotbeEvaluated, ast, "expression may not be evaluated.");
+    }
+
+    return type;
+  }
+
   void Analyzer::check_symbols() {
 
   }
@@ -31,6 +41,24 @@ namespace Metro::Semantics {
               auto& type = scopeContext.variable_types[name];
 
               type.defined = elem;
+
+              return { &scopeContext, &type };
+            }
+          }
+
+          break;
+        }
+
+        case ASTKind::Function: {
+          auto func = (AST::Function*)scopeContext.ast;
+
+          for( auto&& arg : func->args ) {
+            if( arg.name == name ) {
+              auto& type = scopeContext.variable_types[name];
+
+              type = walk(arg.type);
+              type.defined = &arg;
+              type.cond = TypeCon::Condition::Inferred;
 
               return { &scopeContext, &type };
             }
