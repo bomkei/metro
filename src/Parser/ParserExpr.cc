@@ -5,6 +5,12 @@
 namespace Metro {
   AST::Base* Parser::factor() {
 
+    auto stmt_ast = stmt();
+
+    if( stmt_ast != nullptr ) {
+      return stmt_ast;
+    }
+
     if( eat("true") || eat("false") ) {
       return new AST::Boolean(ate);
     }
@@ -98,12 +104,6 @@ namespace Metro {
   }
 
   AST::Base* Parser::expr() {
-    auto ast = stmt();
-
-    if( ast ) {
-      return ast;
-    }
-
     return assign();
   }
 }

@@ -13,6 +13,14 @@ namespace Metro {
     Object* ret = Object::none;
 
     switch( ast->kind ) {
+      case Kind::Boolean: {
+        ret = gcnew(ValueType::Kind::Bool);
+
+        ret->v_bool = ((AST::Boolean*)ast)->val;
+
+        break;
+      }
+
       case Kind::Function:
         break;
 
