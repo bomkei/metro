@@ -1,6 +1,7 @@
 #include "AST.h"
 #include "Types.h"
 #include "Semantics/Analyzer.h"
+#include "Evaluator.h"
 #include "GC.h"
 #include "Error.h"
 #include "Debug.h"
@@ -57,7 +58,28 @@ namespace Metro::Semantics {
 
       case ASTKind::Callfunc: {
 
-        
+        auto x = (AST::CallFunc*)ast;
+        auto find = find_func(x->name);
+
+        for( auto&& arg : x->args ) {
+          ret.elems.emplace_back(walk(arg));
+        }
+
+        if( find == nullptr ) {
+          auto const& bifunvec = Evaluator::get_builtin_functions();
+
+          for( auto&& bifun : bifunvec ) {
+            if( bifun.name == x->name ) {
+              x->callee_builtin = &bifun;
+              return bifun.ret_type;
+            }
+          }
+
+          Error::add_error(ErrorKind::Undefined, x->token, "undefined function name");
+          Error::exit_app();
+        }
+
+        x->callee = find;
 
         break;
       }

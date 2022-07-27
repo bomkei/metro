@@ -32,6 +32,7 @@ namespace Metro::Semantics {
     void append_assign(TypeCon& type, AST::Base* ast);
 
     std::tuple<ScopeContext*, TypeCon*> find_var(std::string_view name);
+    AST::Function* find_func(std::string_view name);
 
     ScopeContext& get_cur_scope();
 

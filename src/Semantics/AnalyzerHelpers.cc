@@ -44,6 +44,22 @@ namespace Metro::Semantics {
     return { };
   }
 
+  AST::Function* Analyzer::find_func(std::string_view name) {
+    for( auto&& scope_ast : scopelist ) {
+      auto& scocon = scopemap[scope_ast];
+
+      if( scocon.ast->kind == ASTKind::Scope ) {
+        for( auto&& elem : ((AST::Scope*)scocon.ast)->elems ) {
+          if( elem && elem->kind == ASTKind::Function && ((AST::Function*)elem)->name == name ) {
+            return (AST::Function*)elem;
+          }
+        }
+      }
+    }
+
+    return nullptr;
+  }
+
   void Analyzer::append_assign(TypeCon& type, AST::Base* ast) {
     auto ctx = walk(ast);
 
