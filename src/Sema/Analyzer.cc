@@ -19,10 +19,11 @@ namespace Metro::Sema {
     auto& ret = caches[ast];
 
     ret.ast = ast;
+    ret.cond = TypeContext::Condition::Inferred;
 
     switch( ast->kind ) {
       case ASTKind::Boolean: {
-        ret.type = ValueType::Kind::Bool;
+        ret = ValueType::Kind::Bool;
         break;
       }
 
@@ -38,28 +39,31 @@ namespace Metro::Sema {
         }
 
         x->object = obj;
-        ret.type = obj->type;
+        ret = obj->type;
         break;
       }
 
       case ASTKind::Variable: {
-        auto x = (AST::Variable*)ast;
+        auto& type = walk_lval(ast);
 
-        auto [scope, defined] = find_var(x->name);
-
-        if( !scope ) {
-          Error::add_error(ErrorKind::Undefined, x->token, "undefined variable name");
+        if( type.cond == TypeContext::Condition::None ) {
+          Error::add_error(ErrorKind::UninitializedValue, ast->token, "uninitialized value");
           Error::exit_app();
         }
-
-        
 
         break;
       }
 
       case ASTKind::Assign: {
+        auto x = (AST::Expr*)ast;
+        auto init = walk(x->rhs);
 
+        auto& dest = walk_lval(x->lhs);
 
+        append_assign(dest, x->rhs);
+        dest.cond = TypeContext::Condition::Inferred;
+
+        ret = dest;
         break;
       }
 
@@ -68,7 +72,7 @@ namespace Metro::Sema {
 
         auto cond = walk(x->cond);
 
-        if( !cond.type.equals(ValueType::Kind::Bool) ) {
+        if( !cond.equals_kind(ValueType::Kind::Bool) ) {
           Error::add_error(ErrorKind::TypeMismatch, x->cond, "condition must be boolean expression");
         }
 
@@ -89,13 +93,28 @@ namespace Metro::Sema {
         auto x = (AST::Let*)ast;
 
         walk(x->type);
-        walk(x->init);
+
+        //walk(x->init);
 
         auto scope = get_cur_scope();
 
         auto& ctx = scope.variable_types[x->name];
+        auto [scope, typectx] = find_var(x->name);
 
+        if( typectx && typectx->cond != TypeContext::Condition::None ) {
+          Error::add_error(ErrorKind::MultipleDefinition, x->token, "multiple definition");
+          break;
+        }
 
+        ctx.defined = ast;
+
+        if( x->init ) {
+          alert;
+          walk(x->init);
+
+          append_assign(ctx, x->init);
+          ctx.cond = TypeContext::Condition::Inferred;
+        }
 
         break;
       }
@@ -103,7 +122,9 @@ namespace Metro::Sema {
       case ASTKind::Scope: {
         auto x = (AST::Scope*)ast;
 
-        auto& scope = scope_history.emplace_front();
+        scopelist.push_front(ast);
+
+        auto& scope = get_cur_scope();
         scope.ast = ast;
 
         for( auto&& elem : x->elems ) {
@@ -111,7 +132,17 @@ namespace Metro::Sema {
           scope.cur_index++;
         }
 
-        scope_history.pop_front();
+        scopelist.pop_front();
+        break;
+      }
+
+      default: {
+        auto x = (AST::Expr*)ast;
+        auto lhs = walk(x->lhs);
+        auto rhs = walk(x->rhs);
+
+
+        ret = lhs;
         break;
       }
     }
@@ -119,12 +150,35 @@ namespace Metro::Sema {
     return ret;
   }
 
+  TypeContext& Analyzer::walk_lval(AST::Base* ast) {
+    switch( ast->kind ) {
+      case ASTKind::Variable: {
+        auto x = (AST::Variable*)ast;
+        auto [scope, type] = find_var(x->name);
+
+        if( !scope ) {
+          Error::add_error(ErrorKind::Undefined, ast->token, "undefined variable name");
+          Error::exit_app();
+        }
+        else {
+          x->defined = type->defined;
+        }
+
+        return *type;
+      }
+    }
+
+    throw 1;
+  }
+
   void Analyzer::check_symbols() {
 
   }
 
-  std::pair<ScopeContext*, AST::Base*> Analyzer::find_var(std::string_view name) {
-    for( auto&& scopeContext : scope_history ) {
+  std::tuple<ScopeContext*, TypeContext*> Analyzer::find_var(std::string_view name) {
+    for( auto&& scope_ast : scopelist ) {
+      auto& scopeContext = scopemap[scope_ast];
+
       switch( scopeContext.ast->kind ) {
         case ASTKind::Scope: {
           auto scope = (AST::Scope*)scopeContext.ast;
@@ -137,7 +191,11 @@ namespace Metro::Sema {
             }
 
             if( elem && elem->kind == ASTKind::Let && ((AST::Let*)elem)->name == name ) {
-              return { &scopeContext, elem };
+              auto& type = scopeContext.variable_types[name];
+
+              type.defined = elem;
+
+              return { &scopeContext, &type };
             }
           }
 
@@ -149,8 +207,21 @@ namespace Metro::Sema {
     return { };
   }
 
+  void Analyzer::append_assign(TypeContext& type, AST::Base* ast) {
+    auto ctx = walk(ast);
+
+    for( auto&& i : type.assignmented ) {
+      if( !walk(i).equals(ctx) ) {
+        Error::add_error(ErrorKind::TypeMismatch, ast->token, "type mismatch");
+        return;
+      }
+    }
+
+    type.assignmented.emplace_back(ast);
+  }
+
   ScopeContext& Analyzer::get_cur_scope() {
-    return *scope_history.begin();
+    return scopemap[*scopelist.begin()];
   }
 
 }

@@ -15,22 +15,56 @@ namespace Metro::AST {
 namespace Metro::Sema {
   struct TypeContext {
     enum class Condition {
-      NotAnalyzed,
-      Unknown,    // unknown type name
+      None,
       Inferred,
+      UnknownTypeName,    // unknown type name
     };
+
+    ValueType::Kind   kind;
+    bool  is_constant;
+    bool  is_reference;
+    std::vector<TypeContext> elems;
 
     AST::Base*  ast;
     Condition   cond;
-    ValueType   type;
 
     std::vector<AST::Base*> inferred;
     std::vector<AST::Base*> canbe_last;
 
-    TypeContext(ValueType::Kind kind = ValueType::Kind::None)
-      : ast(nullptr),
-        cond(Condition::NotAnalyzed),
-        type(kind)
+    AST::Base* defined;
+    std::vector<AST::Base*> assignmented;
+
+    bool equals_kind(ValueType::Kind kind) const {
+      return !is_constant && !is_reference && this->kind == kind;
+    }
+
+    bool equals(TypeContext const& ctx) const {
+      return
+        kind == ctx.kind &&
+        is_constant == ctx.is_constant &&
+        is_reference == ctx.is_reference;
+    }
+
+    std::string to_string() const {
+
+      return "";
+    }
+
+    TypeContext& operator = (ValueType::Kind kind) {
+      this->kind = kind;
+      this->is_constant = false;
+      this->is_reference = false;
+
+      return *this;
+    }
+
+    TypeContext(ValueType const& valtype = ValueType::Kind::None)
+      : kind(valtype.kind),
+        is_constant(valtype.is_constant),
+        is_reference(valtype.is_reference),
+        ast(nullptr),
+        cond(Condition::None),
+        defined(nullptr)
     {
     }
   };
@@ -45,6 +79,7 @@ namespace Metro::Sema {
   class Analyzer {
   public:
     TypeContext walk(AST::Base* ast);
+    TypeContext& walk_lval(AST::Base* ast);
 
     void check_symbols();
 
@@ -52,13 +87,16 @@ namespace Metro::Sema {
 
   private:
 
-    std::pair<ScopeContext*, AST::Base*> find_var(std::string_view name);
+    void append_assign(TypeContext& type, AST::Base* ast);
+
+    std::tuple<ScopeContext*, TypeContext*> find_var(std::string_view name);
 
     ScopeContext& get_cur_scope();
 
     std::map<AST::Base*, TypeContext> caches;
 
     std::list<AST::Base*> walking;
-    std::list<ScopeContext> scope_history;
+    std::list<AST::Base*> scopelist;
+    std::map<AST::Base*, ScopeContext> scopemap;
   };
 }
