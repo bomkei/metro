@@ -4,7 +4,6 @@
 #include "GC.h"
 
 namespace Metro {
-
   #define make_bifun_lambda(e...) \
     [] (std::vector<Object*> const& args) -> Object* { e }
 
@@ -52,5 +51,4 @@ namespace Metro {
   std::vector<BuiltinFunc> const& Evaluator::get_builtin_functions() {
     return builtin_funcs;
   }
-
 }
