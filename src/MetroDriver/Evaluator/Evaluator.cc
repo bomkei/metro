@@ -1,25 +1,8 @@
 #include "Types.h"
-#include "Evaluator.h"
+#include "MetroDriver/Evaluator.h"
 #include "GC.h"
 
 namespace Metro {
-  Object* Evaluator::create_obj(Token* token) {
-    auto obj = new Object;
-
-    switch( token->kind ) {
-      case TokenKind::Int: {
-        obj->type = ValueType::Kind::Int;
-        obj->v_int = atoi(token->str.data());
-        break;
-      }
-
-      default:
-        crash;
-    }
-
-    return obj;
-  }
-
   Object* Evaluator::eval(AST::Base* ast) {
     using AST::Kind;
 
@@ -30,6 +13,9 @@ namespace Metro {
     Object* ret = Object::none;
 
     switch( ast->kind ) {
+      case Kind::None:
+        break;
+
       case Kind::Boolean: {
         ret = gcnew(ValueType::Kind::Bool);
 
@@ -69,7 +55,7 @@ namespace Metro {
           std::vector<Object*> args;
 
           for( auto&& arg : x->args ) {
-            args.emplace_back(eval(arg));
+            args.emplace_back(eval(arg)->clone());
           }
 
           ret = x->callee_builtin->func(args);

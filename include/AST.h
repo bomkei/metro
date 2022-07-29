@@ -7,6 +7,7 @@
 
 #include "AST/Kind.h"
 #include "AST/Base.h"
+#include "AST/None.h"
 #include "AST/Type.h"
 #include "AST/Boolean.h"
 #include "AST/Value.h"

@@ -1,7 +1,7 @@
+.vscode/
+.old/
 /build
-/.vscode
-/.old
-/doc
+doc/
 __pycache__/
 
 *.lnk

@@ -4,14 +4,77 @@
 #include <list>
 #include "AST.h"
 
+/*
+
+1   
+
+*/
+
 namespace Metro::Semantics {
 
   class Analyzer {
+    struct ScopeList {
+      AST::Scope*   scope = nullptr;
+      ScopeList*    prev = nullptr;
+
+      ScopeList* clone() const {
+        auto x = new ScopeList;
+
+        x->scope = scope;
+        
+        if( prev ) {
+          x->prev = prev->clone();
+        }
+
+        return x;
+      }
+    };
+
+    struct WalkedTemp {
+      AST::Base*  ast;
+      ScopeList*  scope;
+
+      WalkedTemp(AST::Base* ast, ScopeList* scope)
+        : ast(ast),
+          scope(scope)
+      {
+      }
+    };
+
   public:
 
+    Analyzer();
+
+    // ast_if, ast_let, ... を作成する
+    void walk(AST::Base* ast);
+
+    //
+    void check_type_matches();
+
+    //
+    void analyze();
+
+    AST::Function* find_func(WalkedTemp* tmp);
+
+    // 型
+    ValueType evaltype(AST::Base* ast);
+
+    static Object* create_obj(Token* token);
 
   private:
-  
+
+    void enter_scope(AST::Scope* ast);
+    void leave_scope();
+
+    ScopeList* scope_list;
+
+    std::vector<WalkedTemp>
+      tmp_if,
+      tmp_let,
+      tmp_callfunc,
+      tmp_function;
+
+
   };
 
 }
