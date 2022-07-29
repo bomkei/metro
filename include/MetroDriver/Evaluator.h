@@ -13,6 +13,8 @@ namespace Metro {
     Object* eval(AST::Base* ast);
     Object** eval_lvalue(AST::Base* ast);
 
+    static Object* create_obj(Token* token);
+
     static std::vector<BuiltinFunc> const& get_builtin_functions();
 
   private:

@@ -1,8 +1,6 @@
 #pragma once
 
-namespace Metro {
-  struct BuiltinFunc;
-}
+#include "Types.h"
 
 namespace Metro::AST {
   struct Base;

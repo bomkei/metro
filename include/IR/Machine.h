@@ -3,12 +3,16 @@
 #include "Instruction.h"
 #include "CallStack.h"
 
+namespace Metro {
+  struct Object;
+}
+
 namespace Metro::IR {
   class Machine {
   public:
     Machine() { }
 
-    void execute_inst(InstructionBase& inst);
+    Object* execute_inst(Instruction const& inst);
 
   private:
 

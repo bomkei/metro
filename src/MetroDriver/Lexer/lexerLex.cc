@@ -4,14 +4,14 @@
 #include "Error.h"
 #include "Utils.h"
 
-static constexpr char const operators[] =
+static constexpr char const punctuaters[] =
   "(){}[]<>"
   "+-*/%="
   "&^|~"
   ":;,."
   "!?%";
 
-static constexpr char const* long_operators[] = {
+static constexpr char const* long_punctuaters[] = {
   ">>=",
   "<<=",
   "->",
@@ -83,7 +83,7 @@ namespace Metro {
       else {
         cur->kind = TokenKind::Punctuator;
 
-        for( std::string_view s : long_operators ) {
+        for( std::string_view s : long_punctuaters ) {
           if( match(s) ) {
             position += s.length();
             cur->str = s;
@@ -91,7 +91,7 @@ namespace Metro {
           }
         }
 
-        for( char const& c : operators ) {
+        for( char const& c : punctuaters ) {
           if( ch == c ) {
             position++;
             cur->str = { &c, 1 };

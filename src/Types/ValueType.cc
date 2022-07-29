@@ -30,11 +30,11 @@ namespace Metro {
       }
     }
 
-    if( is_constant ) {
+    if( attr & ATTR_CONST ) {
       ret += " const";
     }
 
-    if( is_reference ) {
+    if( attr & ATTR_REFERENCE ) {
       ret += "&";
     }
 

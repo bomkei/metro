@@ -2,7 +2,25 @@
 
 #include <map>
 #include <list>
-#include "Types/ValueType.h"
+#include "AST.h"
+
+namespace Metro::Semantics {
+
+  class Analyzer {
+  public:
+
+
+  private:
+  
+  };
+
+}
+
+
+/*
+#include <map>
+#include <list>
+#include "AST.h"
 #include "TypeContext.h"
 
 namespace Metro::Semantics {
@@ -45,3 +63,4 @@ namespace Metro::Semantics {
     std::map<AST::Base*, ScopeContext> scopemap;
   };
 }
+*/

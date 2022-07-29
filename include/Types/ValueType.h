@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#define BIT(N)  (1 << N)
+
 namespace Metro {
   struct ValueType {
     enum class Kind {
@@ -16,23 +18,27 @@ namespace Metro {
       None
     };
 
-    Kind      kind;
-    bool      is_constant;
-    bool      is_reference;
+    enum Attributes : uint8_t {
+      ATTR_NONE,
+      ATTR_LVALUE = BIT(1),
+      ATTR_RVALUE = BIT(2),
+      ATTR_CONST  = BIT(3),
+      ATTR_REFERENCE = BIT(4),
+      ATTR_CONSTREF  = ATTR_CONST | ATTR_REFERENCE,
+    };
+
+    Kind        kind;
+    uint8_t     attr;
     std::vector<ValueType>   elems;
 
     ValueType(Kind kind = Kind::None)
       : kind(kind),
-        is_constant(false),
-        is_reference(false)
+        attr(ATTR_NONE)
     {
     }
 
     bool have_extensions() const {
-      return
-        is_constant ||
-        is_reference ||
-        elems.size() != 0;
+      return attr != ATTR_NONE;
     }
 
     bool equals_kind(Kind kind) const {

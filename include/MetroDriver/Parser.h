@@ -3,6 +3,7 @@
 #include "AST.h"
 
 namespace Metro {
+  struct Object;
   class Parser {
   public:
     explicit Parser(Token* token);

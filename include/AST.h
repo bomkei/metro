@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "Types/Token.h"
+#include "Types.h"
 
 #include "AST/Kind.h"
 #include "AST/Base.h"

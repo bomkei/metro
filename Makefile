@@ -11,19 +11,20 @@ INCLUDE	= include
 SOURCES	= \
 	src \
 	src/Application \
-	src/AST \
 	src/Debug \
-	src/Driver \
-	src/Driver/Compiler \
 	src/Error \
-	src/Evaluator \
-	src/Evaluator/parts \
 	src/GC \
-	src/Lexer \
-	src/Parser \
-	src/Semantics \
+	src/IR \
+	src/MetroDriver \
+	src/MetroDriver/Compiler \
+	src/MetroDriver/Evaluator \
+	src/MetroDriver/Lexer \
+	src/MetroDriver/Parser \
+	src/MetroDriver/Semantics \
 	src/Types \
-	src/Utils
+	src/Types/AST \
+	src/Utils \
+	src/VM
 
 USE_DEBUG			?= 0
 DEBUGFLAGS		?=
@@ -80,6 +81,7 @@ $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
 
 debug: $(BUILD)
+	clear
 	@$(MAKE) --no-print-directory BASEFLAGS="-O0 -g" USE_DEBUG="1" LDFLAGS="" -C $(BUILD) -f $(CURDIR)/Makefile
 
 install: all

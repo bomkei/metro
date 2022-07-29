@@ -1,0 +1,30 @@
+includes:
+  include
+
+sources:
+  .use_glob
+  .no_overwrite
+  .aeae
+  src
+
+flags:
+  opt   = -O2
+  c     = $opt -Wno-switch -Wfallthrough
+  cpp   = $c -std=c++20
+
+extensions:
+  c   = c
+  cpp = cc cxx cpp
+
+compiler:
+  c   = clang
+  cpp = clang++
+
+linker:
+  .use_cxx
+  flags   = -Wl,--gc-sections
+
+output:
+  objects = build
+  binary  = metro
+
