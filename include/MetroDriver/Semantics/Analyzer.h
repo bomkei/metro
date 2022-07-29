@@ -28,6 +28,14 @@ namespace Metro::Semantics {
 
         return x;
       }
+
+      static void destroy(ScopeList* list) {
+        if( list->prev ) {
+          destroy(list->prev);
+        }
+
+        delete list;
+      }
     };
 
     struct WalkedTemp {
@@ -38,6 +46,10 @@ namespace Metro::Semantics {
         : ast(ast),
           scope(scope)
       {
+      }
+
+      ~WalkedTemp() {
+        ScopeList::destroy(scope);
       }
     };
 
@@ -69,11 +81,11 @@ namespace Metro::Semantics {
     ScopeList* scope_list;
 
     std::vector<WalkedTemp>
+      tmp_variable,
       tmp_if,
       tmp_let,
       tmp_callfunc,
       tmp_function;
-
 
   };
 

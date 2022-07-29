@@ -22,6 +22,11 @@ namespace Metro::Semantics {
         break;
       }
 
+      case ASTKind::Variable: {
+
+        break;
+      }
+
       case ASTKind::Function: {
         auto x = (AST::Function*)ast;
 
@@ -42,6 +47,12 @@ namespace Metro::Semantics {
         for( auto&& arg : x->args ) {
           walk(arg);
         }
+
+        break;
+      }
+
+      case ASTKind::If: {
+        
 
         break;
       }
