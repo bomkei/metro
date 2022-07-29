@@ -23,7 +23,7 @@ namespace Metro::Semantics {
       }
 
       case ASTKind::Variable: {
-        push_temp(tmp_variable, ast);
+        add_task(Task::Kind::Variable, ast);
         break;
       }
 
@@ -32,7 +32,7 @@ namespace Metro::Semantics {
 
         alert;
 
-        push_temp(tmp_callfunc, x);
+        add_task(Task::Kind::Callfunc, ast);
         //tmp_callfunc.emplace_back(x, scope_list->clone());
 
         for( auto&& arg : x->args ) {
@@ -90,9 +90,9 @@ namespace Metro::Semantics {
 
         walk(x->code);
 
-        auto& tmp = push_temp(tmp_function, x);
+        auto& task = add_task(Task::Kind::Function, x);
 
-        get_last_expr(tmp.last_expr, x->code);
+        get_last_expr(task.last_expr_list, x->code);
 
         leave_scope();
 
@@ -161,49 +161,56 @@ namespace Metro::Semantics {
 
   void Analyzer::analyze() {
     // check callee
-    for( auto&& tmp : tmp_callfunc ) {
-      auto ast = (AST::CallFunc*)tmp.ast;
-      auto find = find_func(&tmp);
+    for( auto&& task : tasks ) {
+      switch( task.kind ) {
+        case Task::Kind::Callfunc: {
+          auto ast = (AST::CallFunc*)task.ast;
+          auto find = find_func(task);
 
-      if( find == nullptr ) {
-        auto const& bifunlist = Evaluator::get_builtin_functions();
+          if( find == nullptr ) {
+            auto const& bifunlist = Evaluator::get_builtin_functions();
 
-        for( auto&& bifun : bifunlist ) {
-          if( bifun.name == ast->name ) {
-            ast->callee_builtin = &bifun;
+            for( auto&& bifun : bifunlist ) {
+              if( bifun.name == ast->name ) {
+                ast->callee_builtin = &bifun;
+              }
+            }
+
+            if( !ast->callee_builtin ) {
+              Error::add_error(ErrorKind::Undefined, ast->token, "undefined function name");
+            }
           }
+          else {
+            ast->callee = find;
+          }
+          
+          break;
         }
 
-        if( !ast->callee_builtin ) {
-          Error::add_error(ErrorKind::Undefined, ast->token, "undefined function name");
+        case Task::Kind::Variable: {
+          auto ast = (AST::Variable*)task.ast;
+          auto defined = find_var_defined(task);
+
+          if( defined == nullptr ) {
+            Error::add_error(ErrorKind::Undefined, ast->token, "undefined variable name");
+          }
+          else {
+            ast->defined = defined;
+          }
+
+          break;
         }
       }
-      else {
-        ast->callee = find;
-      }
     }
-
-    for( auto&& tmp : tmp_variable ) {
-      auto ast = (AST::Variable*)tmp.ast;
-      auto defined = find_var_defined(&tmp);
-
-      if( defined == nullptr ) {
-        Error::add_error(ErrorKind::Undefined, ast->token, "undefined variable name");
-      }
-      else {
-        ast->defined = defined;
-      }
-    }
-
   }
 
-  AST::Function* Analyzer::find_func(WalkedTemp* tmp) {
-    for( auto&& x : tmp->scope ) {
+  AST::Function* Analyzer::find_func(Analyzer::Task& task) {
+    for( auto&& x : task.scope ) {
       if( x->kind == ASTKind::Scope ) {
         auto scope = (AST::Scope*)x;
 
         for( auto&& elem : scope->elems ) {
-          if( elem->kind == ASTKind::Function && ((AST::Function*)elem)->name == ((AST::CallFunc*)tmp->ast)->name ) {
+          if( elem->kind == ASTKind::Function && ((AST::Function*)elem)->name == ((AST::CallFunc*)task.ast)->name ) {
             return (AST::Function*)elem;
           }
         }
@@ -213,10 +220,10 @@ namespace Metro::Semantics {
     return nullptr;
   }
 
-  AST::Base* Analyzer::find_var_defined(WalkedTemp* tmp) {
-    auto var = (AST::Variable*)tmp->ast;
+  AST::Base* Analyzer::find_var_defined(Analyzer::Task& task) {
+    auto var = (AST::Variable*)task.ast;
 
-    for( auto&& x : tmp->scope ) {
+    for( auto&& x : task.scope ) {
       switch( x->kind ) {
         case ASTKind::Scope: {
           auto scope = (AST::Scope*)x;
