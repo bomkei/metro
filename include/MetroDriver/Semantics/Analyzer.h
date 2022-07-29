@@ -4,21 +4,28 @@
 #include <list>
 #include "AST.h"
 
+namespace Metro::Semantics {
+
 /*
 
-1   
+scope_list に追加されるもの :
+  If
+  For
+  Scope
+  Function
 
 */
 
-namespace Metro::Semantics {
-
   class Analyzer {
 
-    using ScopeList = std::list<AST::Scope*>;
+    using ScopeList = std::list<AST::Base*>;
 
     struct WalkedTemp {
       AST::Base*  ast;
       ScopeList   scope;
+
+      // if function
+      std::vector<AST::Base*> last_expr;
 
       WalkedTemp(AST::Base* ast, ScopeList scope)
         : ast(ast),
@@ -37,10 +44,13 @@ namespace Metro::Semantics {
     //
     void check_type_matches();
 
+    void get_last_expr(std::vector<AST::Base*>& out, AST::Base* ast);
+
     //
     void analyze();
 
     AST::Function* find_func(WalkedTemp* tmp);
+    AST::Base* find_var_defined(WalkedTemp* tmp);
 
     // 型
     ValueType evaltype(AST::Base* ast);
@@ -49,7 +59,7 @@ namespace Metro::Semantics {
 
   private:
 
-    void enter_scope(AST::Scope* ast) {
+    void enter_scope(AST::Base* ast) {
       scope_list.push_front(ast);
     }
 
@@ -57,12 +67,12 @@ namespace Metro::Semantics {
       scope_list.pop_front();
     }
 
-    AST::Scope* get_current_scope() {
+    AST::Base* get_current_scope() {
       return *scope_list.begin();
     }
 
-    void push_temp(std::vector<WalkedTemp>& _d, AST::Base* ast) {
-      _d.emplace_back(ast, scope_list);
+    auto& push_temp(std::vector<WalkedTemp>& _d, AST::Base* ast) {
+      return _d.emplace_back(ast, scope_list);
     }
 
     ScopeList scope_list;

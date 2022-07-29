@@ -23,18 +23,7 @@ namespace Metro::Semantics {
       }
 
       case ASTKind::Variable: {
-
-        break;
-      }
-
-      case ASTKind::Function: {
-        auto x = (AST::Function*)ast;
-
-        push_temp(tmp_function, x);
-        //tmp_function.emplace_back(x, scope_list);
-
-        walk(x->code);
-
+        push_temp(tmp_variable, ast);
         break;
       }
 
@@ -53,8 +42,24 @@ namespace Metro::Semantics {
         break;
       }
 
+      case ASTKind::Compare: {
+        auto x = (AST::Compare*)ast;
+
+        walk(x->first);
+
+        for( auto&& item : x->list ) {
+          walk(item.ast);
+        }
+
+        break;
+      }
+
       case ASTKind::If: {
-        
+        auto x = (AST::If*)ast;
+
+        walk(x->cond);
+        walk(x->if_true);
+        walk(x->if_false);
 
         break;
       }
@@ -76,6 +81,24 @@ namespace Metro::Semantics {
         break;
       }
 
+      case ASTKind::Function: {
+        auto x = (AST::Function*)ast;
+
+        //tmp_function.emplace_back(x, scope_list);
+
+        enter_scope(ast);
+
+        walk(x->code);
+
+        auto& tmp = push_temp(tmp_function, x);
+
+        get_last_expr(tmp.last_expr, x->code);
+
+        leave_scope();
+
+        break;
+      }
+
       default: {
         auto x = (AST::Expr*)ast;
 
@@ -89,6 +112,51 @@ namespace Metro::Semantics {
 
   void Analyzer::check_type_matches() {
 
+  }
+
+  void Analyzer::get_last_expr(std::vector<AST::Base*>& out, AST::Base* ast) {
+    switch( ast->kind ) {
+      case ASTKind::Type:
+      case ASTKind::Argument:
+      case ASTKind::Let:
+        break;
+
+      case ASTKind::For:
+      case ASTKind::Loop:
+      case ASTKind::While: {
+        TODO_IMPL
+      }
+
+      case ASTKind::If: {
+        auto x = (AST::If*)ast;
+
+        get_last_expr(out, x->if_true);
+        get_last_expr(out, x->if_false);
+
+        break;
+      }
+
+      case ASTKind::Scope: {
+        auto x = (AST::Scope*)ast;
+
+        if( x->elems.empty() ) {
+          out.emplace_back(ast);
+        }
+        else {
+          get_last_expr(out, *x->elems.rbegin());
+        }
+
+        break;
+      }
+
+      case ASTKind::Function:
+        break;
+
+      default: {
+        out.emplace_back(ast);
+        break;
+      }
+    }
   }
 
   void Analyzer::analyze() {
@@ -107,7 +175,7 @@ namespace Metro::Semantics {
         }
 
         if( !ast->callee_builtin ) {
-          Error::add_error(ErrorKind::Undefined, ast->token, "undefiend function name");
+          Error::add_error(ErrorKind::Undefined, ast->token, "undefined function name");
         }
       }
       else {
@@ -115,13 +183,69 @@ namespace Metro::Semantics {
       }
     }
 
+    for( auto&& tmp : tmp_variable ) {
+      auto ast = (AST::Variable*)tmp.ast;
+      auto defined = find_var_defined(&tmp);
+
+      if( defined == nullptr ) {
+        Error::add_error(ErrorKind::Undefined, ast->token, "undefined variable name");
+      }
+      else {
+        ast->defined = defined;
+      }
+    }
+
   }
 
   AST::Function* Analyzer::find_func(WalkedTemp* tmp) {
-    for( auto&& scope : tmp->scope ) {
-      for( auto&& elem : scope->elems ) {
-        if( elem->kind == ASTKind::Function && ((AST::Function*)elem)->name == ((AST::CallFunc*)tmp->ast)->name ) {
-          return (AST::Function*)elem;
+    for( auto&& x : tmp->scope ) {
+      if( x->kind == ASTKind::Scope ) {
+        auto scope = (AST::Scope*)x;
+
+        for( auto&& elem : scope->elems ) {
+          if( elem->kind == ASTKind::Function && ((AST::Function*)elem)->name == ((AST::CallFunc*)tmp->ast)->name ) {
+            return (AST::Function*)elem;
+          }
+        }
+      }
+    }
+
+    return nullptr;
+  }
+
+  AST::Base* Analyzer::find_var_defined(WalkedTemp* tmp) {
+    auto var = (AST::Variable*)tmp->ast;
+
+    for( auto&& x : tmp->scope ) {
+      switch( x->kind ) {
+        case ASTKind::Scope: {
+          auto scope = (AST::Scope*)x;
+
+          for( auto&& elem : scope->elems ) {
+            switch( elem->kind ) {
+              case ASTKind::Let: {
+                auto let = (AST::Let*)elem;
+
+                if( let->name == var->name ) {
+                  return let;
+                }
+              }
+            }
+          }
+
+          break;
+        }
+
+        case ASTKind::Function: {
+          auto fn = (AST::Function*)x;
+
+          for( auto&& arg : fn->args ) {
+            if( arg.name == var->name ) {
+              return &arg;
+            }
+          }
+
+          break;
         }
       }
     }
