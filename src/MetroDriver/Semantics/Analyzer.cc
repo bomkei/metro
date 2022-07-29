@@ -8,8 +8,8 @@
 namespace Metro::Semantics {
   using ASTKind = AST::Kind;
 
-  Analyzer::Analyzer() {
-    scope_list = new ScopeList;
+  Analyzer::Analyzer()
+  {
   }
 
   void Analyzer::walk(AST::Base* ast) {
@@ -30,7 +30,8 @@ namespace Metro::Semantics {
       case ASTKind::Function: {
         auto x = (AST::Function*)ast;
 
-        tmp_function.emplace_back(x, scope_list->clone());
+        push_temp(tmp_function, x);
+        //tmp_function.emplace_back(x, scope_list);
 
         walk(x->code);
 
@@ -42,7 +43,8 @@ namespace Metro::Semantics {
 
         alert;
 
-        tmp_callfunc.emplace_back(x, scope_list->clone());
+        push_temp(tmp_callfunc, x);
+        //tmp_callfunc.emplace_back(x, scope_list->clone());
 
         for( auto&& arg : x->args ) {
           walk(arg);
@@ -116,12 +118,8 @@ namespace Metro::Semantics {
   }
 
   AST::Function* Analyzer::find_func(WalkedTemp* tmp) {
-    for( auto scope = tmp->scope; scope->scope; scope = scope->prev ) {
-      alert;
-      alertios("scope         " << scope);
-      alertios("scope->scope  " << scope->scope);
-
-      for( auto&& elem : scope->scope->elems ) {
+    for( auto&& scope : tmp->scope ) {
+      for( auto&& elem : scope->elems ) {
         if( elem->kind == ASTKind::Function && ((AST::Function*)elem)->name == ((AST::CallFunc*)tmp->ast)->name ) {
           return (AST::Function*)elem;
         }
@@ -167,23 +165,6 @@ namespace Metro::Semantics {
     }
 
     return obj;
-  }
-
-  void Analyzer::enter_scope(AST::Scope* ast) {
-    auto x = new ScopeList;
-
-    x->scope = ast;
-    x->prev = scope_list;
-
-    scope_list = x;
-  }
-
-  void Analyzer::leave_scope() {
-    auto x = scope_list;
-
-    scope_list = scope_list->prev;
-
-    delete x;
   }
 
 }

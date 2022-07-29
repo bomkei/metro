@@ -13,43 +13,17 @@
 namespace Metro::Semantics {
 
   class Analyzer {
-    struct ScopeList {
-      AST::Scope*   scope = nullptr;
-      ScopeList*    prev = nullptr;
 
-      ScopeList* clone() const {
-        auto x = new ScopeList;
-
-        x->scope = scope;
-        
-        if( prev ) {
-          x->prev = prev->clone();
-        }
-
-        return x;
-      }
-
-      static void destroy(ScopeList* list) {
-        if( list->prev ) {
-          destroy(list->prev);
-        }
-
-        delete list;
-      }
-    };
+    using ScopeList = std::list<AST::Scope*>;
 
     struct WalkedTemp {
       AST::Base*  ast;
-      ScopeList*  scope;
+      ScopeList   scope;
 
-      WalkedTemp(AST::Base* ast, ScopeList* scope)
+      WalkedTemp(AST::Base* ast, ScopeList scope)
         : ast(ast),
           scope(scope)
       {
-      }
-
-      ~WalkedTemp() {
-        ScopeList::destroy(scope);
       }
     };
 
@@ -75,10 +49,23 @@ namespace Metro::Semantics {
 
   private:
 
-    void enter_scope(AST::Scope* ast);
-    void leave_scope();
+    void enter_scope(AST::Scope* ast) {
+      scope_list.push_front(ast);
+    }
 
-    ScopeList* scope_list;
+    void leave_scope() {
+      scope_list.pop_front();
+    }
+
+    AST::Scope* get_current_scope() {
+      return *scope_list.begin();
+    }
+
+    void push_temp(std::vector<WalkedTemp>& _d, AST::Base* ast) {
+      _d.emplace_back(ast, scope_list);
+    }
+
+    ScopeList scope_list;
 
     std::vector<WalkedTemp>
       tmp_variable,
