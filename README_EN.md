@@ -23,7 +23,7 @@ Welcome! Read [this](CONTRIBUTE.md).
 ## Interpreter
 
 No other libraries or tools such as yacc or lex are used.<br>
-The interpreter is written in C++ including lexer and parser.
+The interpreter is written in C++ including lexer and evaluator.
 
 # Memory safety
 The garbage collector will manage the objects for you.
