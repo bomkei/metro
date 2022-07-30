@@ -8,4 +8,6 @@ jobs:
     container: silkeh/clang:latest
     steps:
     - uses: actions/checkout@v3
-    - run: make
+    - run: make -j
+      env:
+        TERM: xterm-256color
