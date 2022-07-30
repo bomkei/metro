@@ -1,15 +1,29 @@
-# Metro: A Typed Script Language written in C++
-ver 0.0.1
+recruiting translator: need translate to English!
 
-## I want to contribute to this!
-Excellente! Please read [this](ContributeGuide.md)!
+# Metro: v0.0.1
+静的型付けスクリプト言語です。強力で精度の良い型推論が特徴です。
 
-## What is this
-A typed script language with garbage collector. You can write code like Python.
+# 使用方法
+## リポジトリをクローンし、ビルドする
+```
+git clone --recursive git@github.com:bomkei/metro
+cd metro
+make -j
+```
 
-# Implementation
-Not used another libraries and tools for lex, parse, semantics, evaluate in metro. <br>
+## 実行
+```
+./metro.out [your script files]
+```
 
+# 開発に参加する
+歓迎します！[これ](CONTRIBUTE.md)を読んでください。
 
-# How safe ?
+# 実装
+## インタプリタ
+yacc や lex といった他のライブラリ、ツールは一切使用しておりません。<br>
+字句解析から構文木の評価まで、すべて C++ でオリジナルのソースコードが書かれています。
+
+# メモリ安全性
+ガベージコレクタがオブジェクトを管理してくれます。
 
