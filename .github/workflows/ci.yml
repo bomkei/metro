@@ -5,9 +5,9 @@ on: pull_request
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: silkeh/clang:latest
     steps:
     - uses: actions/checkout@v3
+    - uses: egor-tensin/setup-clang@v1
     - run: make -j
       env:
         TERM: xterm-256color
