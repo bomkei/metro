@@ -1,4 +1,4 @@
-recruiting translator: need translate to endlish!
+recruiting translator: need translate to English!
 
 # Metro: v0.0.1
 静的型付けスクリプト言語です。強力で精度の良い型推論が特徴です。
