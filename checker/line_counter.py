@@ -9,7 +9,7 @@ def com_line_count(folders: list, ext: list):
 
   for folder in folders:
     path = f'./{folder}/'
-    files = glob.glob(f'{path}/**/*')
+    files = glob.glob(f'{path}/**/*', recursive=True)
     print(f'\n{folder}:')
 
     for file in files:
