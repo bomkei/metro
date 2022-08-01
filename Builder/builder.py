@@ -3,6 +3,7 @@ from collections import defaultdict
 from curses import use_default_colors
 from email.policy import default
 import os
+import re
 import glob
 import subprocess
 from enum import Enum
@@ -50,38 +51,47 @@ class Builder:
       self.name = name
 
   def __init__(self):
-    self.context = BuilderContext()
+    self.target = ''
+    self.script = ''
+    self.script_path = ''
+    self.context = 0
     self.ndlist = [ ]
+    self.argv = [ ]
+
+    self.f_clean = False
 
   # ==== Parse arguments passed to application ====
   def parse_argv(self, argv) -> bool:
     i = 1
 
-    try:
-      while i < len(argv):
-        arg = argv[i]
+#    try:
+    while i < len(argv):
+      arg = argv[i]
 
-        if arg.startswith('-'):
-          arg = arg[1:]
+      if arg.startswith('-'):
+        arg = arg[1:]
 
-          if arg == 'fast':
-            self.context.fastmode = True
-            i += 1
-          else:
-            raise Builder.InvalidArgument()
+        if arg == 'fast':
+          self.context.fastmode = True
+          i += 1
+        elif arg == 'clean':
+          self.f_clean = True
+          i += 1
         else:
-          if self.context.script_path == '':
-            self.context.script_path = arg + '.buildpy'
+          raise Builder.InvalidArgument()
+      elif self.context == 0:
+        self.target = arg
+        self.script_path = arg + '.buildpy'
 
-            with open(self.context.script_path, mode='r') as fs:
-              self.context.script = ''.join(fs.readlines())
-            
-            i += 1
-          else:
-            print('script file already specified')
-            raise Builder.InvalidArgument()
-    except:
-      return False
+        with open(self.script_path, mode='r') as fs:
+          self.script = ''.join(fs.readlines())
+
+        i += 1
+      else:
+        print('script file already specified')
+        raise Builder.InvalidArgument()
+    # except:
+    #   return False
 
     return True
   
@@ -154,14 +164,9 @@ class Builder:
       for extkey in ret.extensions.keys():
         for ext in ret.extensions[extkey]:
           if ret.use_glob:
-            #print(1231231232)
-            #print(fol, ext)
             ret.src_files.extend(glob.glob(f'{fol}/**/*.{ext}', recursive=True))
           else:
             ret.src_files.extend(glob.glob(f'{fol}/*.{ext}'))
-
-    # ===== Object files =====
-    ret.obj_files = [self.
 
     # ===== builder flag: no_overwrite =====
     if (e := self.get_elem('build.no_overwrite')) != 0:
@@ -173,9 +178,6 @@ class Builder:
             ret.object_subdir.append(objdir)
       elif e.value == 'mangle':
         ret.no_overwrite = BuilderContext.OverwriteProtector.NameMangle
-
-    #print(f'source files = {ret.src_files}')
-    #print(ret.compilers)
 
     return ret
 
@@ -190,18 +192,53 @@ class Builder:
 
     com = self.context.compilers[lang]
     destpath = self.to_output_path(file)
+    dep_path = destpath[:-1] + 'd'
 
     flags = self.context.src_flags[lang]
     incl_flag = ' '.join(['-I' + x for x in self.context.include])
 
-    line = f'{com} {flags} {incl_flag} {file} -c -o {destpath}'
+    line = f'{com} -MP -MMD -MF {dep_path} {flags} {incl_flag} {file} -c -o {destpath}'
+    need2do = False
 
-    print(file)
+    if (need2do := os.path.exists(destpath)):
+      chk = []
 
+      if os.path.exists(dep_path):
+        with open(dep_path, encoding='utf-8') as fs:
+          tmp = ''
+
+          for i, l in enumerate(fs.readlines()):
+            line = l.strip()
+
+            if line == '':
+              break
+            elif i == 0:
+              tmp += line[line.find(':') + 2 : -2]
+            elif '\\' in line:
+              tmp += line[:-2] + ' '
+            else:
+              tmp += line
+
+          chk.extend(re.split(' +', tmp))
+    else:
+      print(file)
+      need2do ^= True
+
+    return subprocess.run(line, shell=True)
+
+  def link(self):
+    line = f'{self.context.compilers["cpp"]} ' \
+      f'{" ".join(self.context.obj_files)} ' \
+      f'{" ".join(self.get_elem("build.flags.link").value)} -pthread -o {self.target}'
+
+    #print(line)
+    print('linking...')
     return subprocess.run(line, shell=True)
 
   def execute(self) -> int:
     self.context = self.init_context()
+    
+    self.context.obj_files = [self.to_output_path(x) for x in self.context.src_files]
 
     # == create subdirs in objects folder ==
     for sub in self.context.object_subdir:
@@ -214,17 +251,22 @@ class Builder:
       for src in self.context.src_files:
         res = self.compile(src)
 
+    # == Link ==
+    self.link()
+
   def run(self, argv) -> int:
-    if not self.parse_argv(argv):
-      print('invalid argument')
-      return 1
-
-    if self.context.script_path == '':
-      print('no build-script file')
-      return 1
-
     try:
-      prs = Parser(self.context.script)
+      self.argv = argv
+
+      if not self.parse_argv(argv):
+        print('invalid argument')
+        return 1
+
+      if self.script_path == '':
+        print('no build-script file')
+        return 1
+
+      prs = Parser(self.script)
 
       self.ndlist = prs.parse()
 

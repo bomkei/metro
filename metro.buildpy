@@ -21,6 +21,7 @@ build {
     opti  = -O2
     c     = $opti -Wno-switch -Wimplicit-fallthrough
     cpp   = $c -std=c++20
+    link  = -Wl,--gc-sections
   }
 
   objects_folder = build
