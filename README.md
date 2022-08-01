@@ -13,7 +13,7 @@ make -j
 
 ## 実行
 ```
-./metro.out [your script files]
+./metro [your script files]
 ```
 
 # 開発に参加する
