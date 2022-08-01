@@ -8,6 +8,7 @@ import glob
 import subprocess
 from enum import Enum
 from parser import *
+from threading import Thread
 
 class BuilderContext:
   class OverwriteProtector(Enum):
@@ -57,6 +58,7 @@ class Builder:
     self.context = 0
     self.ndlist = [ ]
     self.argv = [ ]
+    self.updated = False
 
     self.f_clean = False
 
@@ -197,62 +199,102 @@ class Builder:
     flags = self.context.src_flags[lang]
     incl_flag = ' '.join(['-I' + x for x in self.context.include])
 
-    line = f'{com} -MP -MMD -MF {dep_path} {flags} {incl_flag} {file} -c -o {destpath}'
+    cmdline = f'{com} -MP -MMD -MF {dep_path} {flags} {incl_flag} {file} -c -o {destpath}'
     need2do = False
 
     if (need2do := os.path.exists(destpath)):
-      chk = []
+      chklist = []
 
       if os.path.exists(dep_path):
+        need2do = False
+
         with open(dep_path, encoding='utf-8') as fs:
           tmp = ''
 
           for i, l in enumerate(fs.readlines()):
             line = l.strip()
 
+            if '\\' in line:
+              line = line[:-1]
+
             if line == '':
               break
             elif i == 0:
-              tmp += line[line.find(':') + 2 : -2]
-            elif '\\' in line:
-              tmp += line[:-2] + ' '
+              tmp += line[line.find(':') + 2:]
             else:
               tmp += line
 
-          chk.extend(re.split(' +', tmp))
+          chklist.extend(re.split(' +', tmp))
+
+        for chk in chklist:
+          if os.path.getmtime(chk) > os.path.getmtime(destpath):
+            need2do = True
+            break
     else:
-      print(file)
       need2do ^= True
 
-    return subprocess.run(line, shell=True)
+    if need2do:
+      self.updated = True
+      print(file)
+    else:
+      return 0
+
+    return subprocess.run(cmdline, shell=True, capture_output=True)
 
   def link(self):
     line = f'{self.context.compilers["cpp"]} ' \
       f'{" ".join(self.context.obj_files)} ' \
       f'{" ".join(self.get_elem("build.flags.link").value)} -pthread -o {self.target}'
 
-    #print(line)
     print('linking...')
-    return subprocess.run(line, shell=True)
+    return subprocess.run(line, shell=True, capture_output=True)
 
   def execute(self) -> int:
     self.context = self.init_context()
     
     self.context.obj_files = [self.to_output_path(x) for x in self.context.src_files]
 
+    if self.f_clean:
+      os.system(f'rm -rf {self.context.object_outdir}')
+      return 0
+
     # == create subdirs in objects folder ==
     for sub in self.context.object_subdir:
       os.system(f'mkdir -p {self.context.object_outdir}/{sub}')
 
     # == Compile ==
+    errlist = [ ]
+
+    def comp(src):
+      res = self.compile(src)
+
+      if res != 0 and res.returncode != 0:
+        print('error!')
+        errlist.append(f'error of {src}:\n{res.stderr.decode()}\n')
+
     if self.context.fastmode:
-      pass
+      with ThreadPoolExecutor() as executor:
+        executor.map(comp, self.context.src_files)
     else:
       for src in self.context.src_files:
-        res = self.compile(src)
+        comp(src)
+
+    if errlist != [ ]:
+      print('\n')
+
+      for err in errlist:
+        print(err)
+
+      print('failed to build.')
+      return 1
 
     # == Link ==
-    self.link()
+    if self.updated:
+      self.link()
+    else:
+      print('already up to date.')
+    
+    return 0
 
   def run(self, argv) -> int:
     try:

@@ -4,6 +4,7 @@ folders {
 }
 
 build {
+  .fast = true
   .use_glob = true
   .no_overwrite = copy_folder
 
