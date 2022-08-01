@@ -8,12 +8,12 @@
 ```
 git clone --recursive git@github.com:bomkei/metro
 cd metro
-make -j
+python3 BuildPy/__main__.py metro
 ```
 
 ## 実行
 ```
-./metro.out [your script files]
+./metro [your script files]
 ```
 
 # 開発に参加する

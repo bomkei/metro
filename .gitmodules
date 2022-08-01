@@ -1,0 +1,3 @@
+[submodule "BuildPy"]
+	path = BuildPy
+	url = git@github.com:bomkei/BuildPy

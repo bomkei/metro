@@ -4,6 +4,11 @@
 doc/
 __pycache__/
 
+.temp/
+.removed/
+
+metro
+
 *.lnk
 desktop.ini
 

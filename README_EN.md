@@ -8,12 +8,12 @@ A statically typed scripting language. Powerful and accurate type inference is i
 ```
 git clone --recursive git@github.com:bomkei/metro
 cd metro
-make -j
+python3 BuildPy/__main__.py metro
 ```
 
 ## Run
 ```
-./metro.out [your script files]
+./metro [your script files]
 ```
 
 # How to contribute
