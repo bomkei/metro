@@ -1,34 +1,25 @@
 import os
 import sys
-from b_parser import BuildpyParser
-from b_types import *
-from builder import BuildPy
+from builder import *
 
-argv = sys.argv
-
-if len(argv) <= 1:
-  print('no input files')
-  os._exit(1)
-
+# ---------------------------
+#  BuildPy
+# ---------------------------
 def main():
+  argv = sys.argv
+
   try:
-    if len(argv) == 1:
-      print('no input file')
-      return
+    builder = Builder()
 
-    builder = BuildPy(argv[1])
-
-    builder.parse()
-
-    builder.init_ctx()
-
-    builder.build()
-
+    return builder.run(argv)
   except FileNotFoundError as e:
-    print(f'cannot open file \'{e.filename}\'')
-  #except:
-  #  print('oh,, unhandled exception.')
+    print(f'cannot open file "{e.filename}"')
+#  except:
+#    print('unhandled exception have been occurred')
 
+  return 1
+
+# ------
 
 if __name__ == '__main__':
   main()
