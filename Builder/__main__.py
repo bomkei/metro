@@ -8,12 +8,12 @@ from builder import *
 def main():
   argv = sys.argv
 
-  try:
-    builder = Builder()
+#  try:
+  builder = Builder()
 
-    return builder.run(argv)
-  except FileNotFoundError as e:
-    print(f'cannot open file "{e.filename}"')
+  return builder.run(argv)
+#  except FileNotFoundError as e:
+#    print(f'cannot open file "{e.filename}"')
 #  except:
 #    print('unhandled exception have been occurred')
 

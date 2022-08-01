@@ -1,10 +1,15 @@
+from concurrent.futures import ThreadPoolExecutor
+from collections import defaultdict
+from curses import use_default_colors
+from email.policy import default
 import os
 import glob
+import subprocess
 from enum import Enum
 from parser import *
 
 class BuilderContext:
-  class NoOverwrite(Enum):
+  class OverwriteProtector(Enum):
     FolderCopy = 0
     NameMangle = 1
 
@@ -12,12 +17,29 @@ class BuilderContext:
     self.target = ''
     self.script_path = ''
     self.script = ''
-    self.fastmode = False
-    self.no_overwrite = False
 
+    # flags
+    self.fastmode = False
+    self.use_glob = False
+    self.no_overwrite = BuilderContext.OverwriteProtector.FolderCopy
+
+    # source file flags
+    self.src_flags = defaultdict(str)
+
+    # directories
     self.include  = [ ]
     self.source   = [ ]
-    self.objects  = ''
+    self.object_outdir  = 'build'
+    self.object_subdir  = [ ]
+
+    # compilers
+    self.compilers = { }
+
+    # files
+    self.src_files = [ ]
+    self.obj_files = [ ]
+
+    self.extensions = defaultdict(list)
 
 class Builder:
   class InvalidArgument(Exception):
@@ -31,6 +53,7 @@ class Builder:
     self.context = BuilderContext()
     self.ndlist = [ ]
 
+  # ==== Parse arguments passed to application ====
   def parse_argv(self, argv) -> bool:
     i = 1
 
@@ -72,7 +95,7 @@ class Builder:
         break
 
     if ret == -1:
-      raise Builder.ElementNotFound()
+      return 0
 
     for sym in li[1:]:
       found = False
@@ -84,16 +107,16 @@ class Builder:
           break
 
       if not found:
-        raise Builder.ElementNotFound()
+        return 0
 
     return ret
 
-  def detect_lang(self, ext):
-    extlist = self.get_elem('build.extensions').value
+  def detect_lang(self, file):
+    ext = file[file.rfind('.') + 1:]
 
-    for x in extlist:
-      if ext in x.value:
-        return x.name
+    for key in self.context.extensions.keys():
+      if ext in self.context.extensions[key]:
+        return key
 
     return 0
 
@@ -103,33 +126,93 @@ class Builder:
   def init_context(self) -> BuilderContext:
     ret = BuilderContext()
 
-    extensions = [ ]
+    ret.include = self.get_elem('folders.include').value
+    ret.source = self.get_elem('folders.source').value
 
-    for ext in self.get_elem('build.extensions'):
-      
+    # === builder flags ===
+    if (e := self.get_elem('build.fast')) != 0:
+      ret.fastmode = e.value == 'true'
 
-  def compile(self, com, file, destpath, flags):
-    line = f'{com} {flags} {file} -o {destpath}'
+    if (e := self.get_elem('build.use_glob')) != 0:
+      ret.use_glob = e.value == 'true'
+
+    # ===== Extensions =====
+    for prop in self.get_elem('build.extensions').value:
+      for item in prop.value:
+        ret.extensions[prop.name].append(item.name)
+
+    # ===== Flags =====
+    for item in self.get_elem('build.flags').value:
+      ret.src_flags[item.name] = ' '.join(item.value)
+
+    # ===== Compilers =====
+    for clist in self.get_elem('build.compiler').value:
+      ret.compilers[clist.name] = clist.value[0]
+
+    # ===== Source files =====
+    for fol in ret.source:
+      for extkey in ret.extensions.keys():
+        for ext in ret.extensions[extkey]:
+          if ret.use_glob:
+            #print(1231231232)
+            #print(fol, ext)
+            ret.src_files.extend(glob.glob(f'{fol}/**/*.{ext}', recursive=True))
+          else:
+            ret.src_files.extend(glob.glob(f'{fol}/*.{ext}'))
+
+    # ===== Object files =====
+    ret.obj_files = [self.
+
+    # ===== builder flag: no_overwrite =====
+    if (e := self.get_elem('build.no_overwrite')) != 0:
+      if e.value == 'copy_folder':
+        ret.no_overwrite = BuilderContext.OverwriteProtector.FolderCopy
+
+        for src in ret.src_files:
+          if not (objdir := src[src.find('/') + 1 : src.rfind('/')]) in ret.object_subdir:
+            ret.object_subdir.append(objdir)
+      elif e.value == 'mangle':
+        ret.no_overwrite = BuilderContext.OverwriteProtector.NameMangle
+
+    #print(f'source files = {ret.src_files}')
+    #print(ret.compilers)
+
+    return ret
+
+  def to_output_path(self, file):
+    if self.context.no_overwrite == BuilderContext.OverwriteProtector.FolderCopy:
+      return self.context.object_outdir + file[file.find('/') : file.rfind('.')] + '.o'
+    else:
+      return self.context.object_outdir + file[file.find('/') + 1:].replace('/', '@')
+
+  def compile(self, file):
+    lang = self.detect_lang(file)
+
+    com = self.context.compilers[lang]
+    destpath = self.to_output_path(file)
+
+    flags = self.context.src_flags[lang]
+    incl_flag = ' '.join(['-I' + x for x in self.context.include])
+
+    line = f'{com} {flags} {incl_flag} {file} -c -o {destpath}'
 
     print(file)
 
-    os.system(line)
+    return subprocess.run(line, shell=True)
 
   def execute(self) -> int:
-    use_glob = self.get_elem('build.use_glob').value == 'true'
-    extlist = self.get_elem('build.extensions').value
-    src_files = [ ]
+    self.context = self.init_context()
 
-    for fol in self.get_elem('folders.source').value:
-      for ext in extlist:
-        for e in ext.value:
-          if use_glob:
-            src_files.extend(glob.glob(f'{fol}/**/*.{e.name}', recursive=True))
-          else:
-            src_files.extend(glob.glob(f'{fol}/*.{e.name}'))
+    # == create subdirs in objects folder ==
+    for sub in self.context.object_subdir:
+      os.system(f'mkdir -p {self.context.object_outdir}/{sub}')
 
-    for src in src_files:
+    # == Compile ==
+    if self.context.fastmode:
       pass
+    else:
+      for src in self.context.src_files:
+        res = self.compile(src)
 
   def run(self, argv) -> int:
     if not self.parse_argv(argv):
