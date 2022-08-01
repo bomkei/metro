@@ -5,9 +5,9 @@ on: pull_request
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: silkeh/clang:latest
     steps:
     - uses: actions/checkout@v3
-    - run: python3 BuildPy/__main__.py metro
+    - uses: egor-tensin/setup-clang@v1
+    - run: make -j
       env:
         TERM: xterm-256color
