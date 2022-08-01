@@ -8,7 +8,7 @@
 ```
 git clone --recursive git@github.com:bomkei/metro
 cd metro
-make -j
+python3 BuildPy/__main__.py metro
 ```
 
 ## 実行
