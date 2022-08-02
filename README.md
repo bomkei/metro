@@ -7,8 +7,9 @@
 ## リポジトリをクローンし、ビルドする
 ```
 git clone --recursive git@github.com:bomkei/metro
+pip install fbp
 cd metro
-python3 BuildPy/__main__.py metro
+fbp metro
 ```
 
 ## 実行

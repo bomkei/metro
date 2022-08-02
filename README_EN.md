@@ -7,8 +7,9 @@ A statically typed scripting language. Powerful and accurate type inference is i
 ## Clone this repository, and build
 ```
 git clone --recursive git@github.com:bomkei/metro
+pip install fbp
 cd metro
-python3 BuildPy/__main__.py metro
+fbp metro
 ```
 
 ## Run

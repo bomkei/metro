@@ -4,7 +4,7 @@
 
 namespace Metro {
   bool Parser::check() {
-    return cur->kind != TokenKind::End;
+    return cur && cur->kind != TokenKind::End;
   }
 
   void Parser::next() {
@@ -12,7 +12,7 @@ namespace Metro {
   }
 
   bool Parser::eat(std::string_view str) {
-    if( cur->str == str ) {
+    if( check() && cur->str == str ) {
       ate = cur;
       next();
       return true;
@@ -31,6 +31,7 @@ namespace Metro {
   void Parser::expect_ident() {
     if( cur->kind != TokenKind::Ident ) {
       Error::add_error(ErrorKind::ExpectedToken, cur, "expected identifier");
+      Error::exit_app();
     }
   }
 

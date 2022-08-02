@@ -110,7 +110,9 @@ namespace Metro {
       pass_space();
     }
 
-    cur = new Token(TokenKind::End, cur, position);
+    cur = new Token(TokenKind::End, cur, position - 1);
+    cur->str = " ";
+
     return top.next;
   }
 }
