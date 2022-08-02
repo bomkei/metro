@@ -8,8 +8,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: egor-tensin/setup-clang@v1
-    - run: |
-        pip install fbp
-        fbp metro
+    - run: pip install fbp
+
+    - name: Build
+      run: fbp metro
       env:
         TERM: xterm-256color
